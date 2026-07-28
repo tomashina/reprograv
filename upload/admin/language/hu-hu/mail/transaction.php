@@ -1,0 +1,1 @@
+<?php// Text$_['text_subject']  = '%s - Partner kredit';$_['text_received'] = 'Kaptál %s kreditet!';$_['text_total']    = 'Kreditjeid száma összesen: %s.';$_['text_credit']   = 'Kreditedet a következő vásárlás alkalmával tudod felhasználni.';

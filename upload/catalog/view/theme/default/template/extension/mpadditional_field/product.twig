@@ -1,0 +1,20 @@
+{% if mpadditional_fields %}
+
+{% for mpadditional_field in mpadditional_fields %}
+  {% if mpadditional_field.image is empty %}
+    <li class="mpadditional_field mpadditional_field_text"><b>{{ mpadditional_field.name }}:</b> <span>{{ mpadditional_field.value }}</span></li>
+  {% endif %}
+{% endfor %}
+{% for mpadditional_field in mpadditional_fields %}
+  {% if mpadditional_field.image|length %}
+
+<p class="info"><b>{{ mpadditional_field.name }}:</b> {{ mpadditional_field.value }}</p>
+     
+  <p class="info"><img class="img-responsive" src="{{ mpadditional_field.image }}" alt="{{ mpadditional_field.name }}" /></p>
+     
+
+  {% endif %}
+{% endfor %}
+
+{% endif %}
+

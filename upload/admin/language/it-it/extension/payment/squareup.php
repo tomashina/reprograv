@@ -1,0 +1,200 @@
+<?php
+
+// Heading
+$_['heading_title']                                     = 'Square';
+$_['heading_title_transaction']                         = 'Vedi Transazione #%s';
+
+// Help
+$_['help_total']                                        = 'Totale ordine da raggiungere prima di poter rendere attivo questo metodo di pagamento.';
+$_['help_local_cron']                                   = 'Insert this command in your web server CRON tab. Set it up to run at least once per day.';
+$_['help_remote_cron']                                  = 'Use this URL to set up a CRON task via a web-based CRON service. Set it up to run at least once per day.';
+$_['help_recurring_status']                             = 'Enable to allow periodic recurring payments.<br />NOTE: You must also setup a daily CRON task.';
+$_['help_cron_email']                                   = 'A summary of the recurring task will be sent to this e-mail after completion.';
+$_['help_cron_email_status']                            = 'Enable to receive a summary after every CRON task.';
+$_['help_notify_recurring_success']                     = 'Notify customers about successful recurring transactions.';
+$_['help_notify_recurring_fail']                        = 'Notify customers about failed recurring transactions.';
+
+// Tab
+$_['tab_setting']                                       = 'Impostazioni';
+$_['tab_transaction']                                   = 'Transazioni';
+$_['tab_cron']                                          = 'CRON';
+$_['tab_recurring']                                     = 'Pagamenti Ricorrenti';
+
+// Text
+$_['text_access_token_expires_label']                   = 'Scadenza token accesso';
+$_['text_access_token_expires_placeholder']             = 'Non configurato';
+$_['text_acknowledge_cron']                             = 'Confermo di aver impostato e automatizzato CRON usando uno dei metodi sopra riportati.';
+$_['text_admin_notifications']                          = 'Notifiche Admin';
+$_['text_authorize_label']                              = 'Autorizza';
+$_['text_canceled_success']                             = 'Pagamento annullato con successo!';
+$_['text_capture']                                      = 'Acquisizione';
+$_['text_client_id_help']                               = 'Recuperalo dalla pagina -Manage Application- su Square';
+$_['text_client_id_label']                              = 'ID Applicazione Square';
+$_['text_client_id_placeholder']                        = 'ID Applicazione Square';
+$_['text_client_secret_help']                           = 'Recuperalo dalla pagina -Manage Application- su Square';
+$_['text_client_secret_label']                          = 'Application Secret OAuth';
+$_['text_client_secret_placeholder']                    = 'Application Secret OAuth';
+$_['text_confirm_action']                               = 'Sei sicuro?';
+$_['text_confirm_cancel']                               = 'Are you sure you want to cancel the recurring payments?';
+$_['text_confirm_capture']                              = 'You are about to capture the following amount: <strong>%s</strong>. Click OK to proceed.';
+$_['text_confirm_refund']                               = 'Please provide a reason for the refund:';
+$_['text_confirm_void']                                 = 'You are about to void the following amount: <strong>%s</strong>. Click OK to proceed.';
+$_['text_connected']                                    = 'Connesso';
+$_['text_connected_info']                               = "Reconnect if you want to switch accounts or have manually revoked this extension's access from the Square App console. Manually refresh the access token if it has been close to 45 days since the last sale or reconnect.";
+$_['text_connection_section']                           = 'Connessione Square';
+$_['text_connection_success']                           = 'Successfully connected!';
+$_['text_cron_email']                                   = 'Send task summary to this e-mail:';
+$_['text_cron_email_status']                            = 'Send e-mail summary:';
+$_['text_customer_notifications']                       = 'Notifiche Cliente';
+$_['text_debug_disabled']                               = 'Disabilitato'; 
+$_['text_debug_enabled']                                = 'Abilitato'; 
+$_['text_debug_help']                                   = 'API requests and responses will be logged in the OpenCart error log. Use this for only for debugging and development purposes.';
+$_['text_debug_label']                                  = 'Debug Logging';
+$_['text_delay_capture_help']                           = 'Only authorize transactions or perform charges automatically';
+$_['text_delay_capture_label']                          = 'Tipo di Transazione';
+$_['text_disabled_connect_help_text']                   = 'The client id and secret are required fields.';
+$_['text_edit_heading']                                 = 'Modifica Square';
+$_['text_enable_sandbox_help']                          = 'Enable sandbox mode for testing transactions';
+$_['text_enable_sandbox_label']                         = 'Enable sandbox mode';
+$_['text_executables']                                  = 'Metodi di esecuzione CRON';
+$_['text_extension']                                    = 'Estensioni';
+$_['text_extension_status']                             = 'Stato Estensione';
+$_['text_extension_status_disabled']                    = 'Disabilitato'; 
+$_['text_extension_status_enabled']                     = 'Abilitato'; 
+$_['text_extension_status_help']                        = 'Abilita o disabilita il metodo di pagamento'; 
+$_['text_insert_amount']                                = 'Please insert the refund amount. Maximum: %s in %s:';
+$_['text_loading']                                      = 'Loading data... Please wait...';
+$_['text_loading_short']                                = 'Attendere...';
+$_['text_local_cron']                                   = 'Metodo #1 - CRON Task:';
+$_['text_location_error']                               = 'There was an error when trying to sync locations and token: %s';
+$_['text_location_help']                                = 'Select which configured Square location to be used for transactions. Has to have card processing capabilities enabled.';
+$_['text_location_label']                               = 'Luogo';
+$_['text_manage']                                       = 'Credit Card Transaction (Square)';
+$_['text_manage_tooltip']                               = 'See details / Capture / Void / Refund';
+$_['text_merchant_info_section_heading']                = 'Informazioni Commerciante';
+$_['text_merchant_name_label']                          = 'Merchant name';
+$_['text_merchant_name_placeholder']                    = 'Not setup';
+$_['text_no_appropriate_locations_warning']             = 'Non sono stati selezionati luoghi per i quali sia possibile impostare l&apos;utilizzo di carte con il conto Square.';
+$_['text_no_location_selected_warning']                 = 'Non &egrave; stato selezionato un luogo.';
+$_['text_no_locations_label']                           = 'Nessun luogo valido';
+$_['text_no_transactions']                              = 'Non &egrave; stata registrata nessuna transazione.';
+$_['text_not_connected']                                = 'Non connesso';
+$_['text_not_connected_info']                           = 'By clicking this button you will connect this module to your Square account and activate the service.';
+$_['text_notification_ssl']                             = 'Make sure you have SSL enabled on your checkout page. Otherwise, the extension will not work.';
+$_['text_notify_recurring_fail']                        = 'Recurring Transaction Failed:';
+$_['text_notify_recurring_success']                     = 'Recurring Transaction Successful:';
+$_['text_ok']                                           = 'OK';
+$_['text_order_history_cancel']                         = 'An administrator has canceled your recurring payments. Your card will no longer be charged.';
+$_['text_payment_method_name_help']                     = 'Checkout payment method name';
+$_['text_payment_method_name_label']                    = 'Payment method name';
+$_['text_payment_method_name_placeholder']              = 'Credit / Debit Card';
+$_['text_recurring_info']                               = 'Please make sure to set up a daily CRON task using one of the methods below. CRON jobs help you with:<br /><br />&bull; Automatic refresh of your API access token<br />&bull; Processing of recurring transactions';
+$_['text_recurring_status']                             = 'Status of recurring payments:';
+$_['text_redirect_uri_help']                            = 'Paste this link into the Redirect URI field under Manage Application/oAuth';
+$_['text_redirect_uri_label']                           = 'Square OAuth Redirect URL';
+$_['text_refresh_access_token_success']                 = 'Successfully refreshed the connection to your Square account.'; 
+$_['text_refresh_token']                                = 'Re-create token';
+$_['text_refund']                                       = 'Rimborso';
+$_['text_refund_details']                               = 'Refund details';
+$_['text_refunded_amount']                              = 'Refunded: %s. Status of the refund: %s. Reason for the refund: %s';
+$_['text_refunds']                                      = 'Refunds (%s)';
+$_['text_remote_cron']                                  = 'Metodo #2 - CRON Remoto:';
+$_['text_sale_label']                                   = 'Vendita';
+$_['text_sandbox_access_token_help']                    = 'Get this from the Manage Application page on  Square';
+$_['text_sandbox_access_token_label']                   = 'Sandbox Access Token';
+$_['text_sandbox_access_token_placeholder']             = 'Sandbox Access Token';
+$_['text_sandbox_client_id_help']                       = 'Get this from the Manage Application page on Square';
+$_['text_sandbox_client_id_label']                      = 'Sandbox Application ID';
+$_['text_sandbox_client_id_placeholder']                = 'Sandbox Application ID';
+$_['text_sandbox_disabled_label']                       = 'Disabilitato'; 
+$_['text_sandbox_enabled']                              = 'Sandbox mode is enabled! Transactions will appear to go through, but no charges will be carried out.';
+$_['text_sandbox_enabled_label']                        = 'Abilitato'; 
+$_['text_sandbox_section_heading']                      = 'Square Sandbox Settings';
+$_['text_select_location']                              = 'Seleziona Luogo';
+$_['text_settings_section_heading']                     = 'Impostazioni Square';
+$_['text_squareup']                                     = '<a target="_BLANK" href="https://squareup.com"><img src="view/image/payment/squareup.png" alt="Square" title="Square" style="border: 1px solid #EEEEEE;" /></a>';
+$_['text_success']                                      = 'Success: You have modified Square payment module!';
+$_['text_success_capture']                              = 'Transaction successfully captured!';
+$_['text_success_refund']                               = 'Transaction successfully refunded!';
+$_['text_success_void']                                 = 'Transaction successfully voided!';
+$_['text_token_expired']                                = 'Your Square access token has expired! <a href="%s">Click here</a> to renew it now.';
+$_['text_token_expiry_warning']                         = 'Your Square access token will expire on %s. <a href="%s">Click here</a> to renew it now.';
+$_['text_token_revoked']                                = 'Your Square access token has expired or has been revoked! <a href="%s">Click here</a> to re-authorize the Square extension.';
+$_['text_transaction_statuses']                         = 'Transaction Statuses';
+$_['text_view']                                         = 'Visualizza Altro';
+$_['text_void']                                         = 'Nullo';
+$_['text_na']                                           = 'N/A';
+$_['text_no_reason_provided']                           = 'Motivazione non fornita.';
+
+// Statuses
+$_['squareup_status_comment_authorized']                = 'La transazione della carta &egrave; stata autorizzata ma non ancora acquisita.';
+$_['squareup_status_comment_captured']                  = 'La transazione della carta &egrave; stata autorizzata e di conseguenza acquisita (i.e., completato).';
+$_['squareup_status_comment_voided']                    = 'La transazione della carta &egrave; stata autorizzata e di conseguenza annullata (i.e., annullato).   ';
+$_['squareup_status_comment_failed']                    = 'La transazione della carta &egrave; non &egrave; andata a buon fine.';
+
+// Entry
+$_['entry_total']                                       = 'Totale';
+$_['entry_geo_zone']                                    = 'Zona Geografica';
+$_['entry_sort_order']                                  = 'Ordinamento';
+$_['entry_merchant']                                    = 'ID Commerciante';
+$_['entry_transaction_id']                              = 'ID Transazione';
+$_['entry_order_id']                                    = 'ID Ordine';
+$_['entry_partner_solution_id']                         = 'Partner Solution ID';
+$_['entry_type']                                        = 'Tipo di Transazione';
+$_['entry_currency']                                    = 'Valuta';
+$_['entry_amount']                                      = 'Importo';
+$_['entry_browser']                                     = 'User Agent del Cliente';
+$_['entry_ip']                                          = 'IP del Cliente';
+$_['entry_date_created']                                = 'Data Creazione';
+$_['entry_billing_address_company']                     = 'Azienda di Fatturazione';
+$_['entry_billing_address_street']                      = 'strada di Fatturazione';
+$_['entry_billing_address_city']                        = 'Citt&agrave; di fatturazione';
+$_['entry_billing_address_postcode']                    = 'CAP di fatturazione';
+$_['entry_billing_address_province']                    = 'Provincia/stato di fatturazione';
+$_['entry_billing_address_country']                     = 'Nazione di fatturazione';
+$_['entry_status_authorized']                           = 'Autorizzato';
+$_['entry_status_captured']                             = 'Acquisito';
+$_['entry_status_voided']                               = 'Annullato';
+$_['entry_status_failed']                               = 'Fallito';
+$_['entry_setup_confirmation']                          = 'Conferma Configurazione:';
+
+// Error
+$_['error_permission']                                  = '<strong>Attenzione:</strong> Non si hanno i permessi per poter modificare il metodo di pagamento Square!';
+$_['error_permission_recurring']                        = '<strong>Attenzione:</strong> Non si hanno i permessi per poter modificare il metodo di pagamento ricorrenti!';
+$_['error_transaction_missing']                         = 'Transazione non trovata!';
+$_['error_no_ssl']                                      = '<strong>Attenzione:</strong> SSL non &egrave; abilitato per il pannello di amministrazione. &Egrave; necessario abilitarlo per terminare la configurazione.';
+$_['error_user_rejected_connect_attempt']               = 'Il tentativo di connessione &egrave; stato annullato dall&apos;utente.';
+$_['error_possible_xss']                                = 'Abbiamo identificato un possibile attacco XSS ed abbiamo terminato il tentativo di connessione. Si prega di verificare il proprio ID applicazione, codice segreto e riprovare.';
+$_['error_invalid_email']                               = 'Indirizzo e-mail non valido!';
+$_['error_cron_acknowledge']                            = 'Confermare di aver impostato CRON.';
+$_['error_client_id']                                   = 'ID app client obbligatorio';
+$_['error_client_secret']                               = 'Codice Segreto obbligatorio';
+$_['error_sandbox_client_id']                           = 'The sandbox client ID is a required field when sandbox mode is enabled';
+$_['error_sandbox_token']                               = 'The sandbox token is a required field when sandbox mode is enabled';
+$_['error_no_location_selected']                        = 'The location is a required field';
+$_['error_refresh_access_token']                        = "An error occurred when trying to refresh the extension's connection to your Square account. Please verify your application credentials and try again.";
+$_['error_form']                                        = 'Please check the form for errors and try to save agian.';
+$_['error_token']                                       = 'An error was encountered while refreshing the token: %s';
+$_['error_no_refund']                                   = 'Rimborso fallito.';
+
+// Column
+$_['column_transaction_id']                             = 'ID Transazione';
+$_['column_order_id']                                   = 'ID Ordine';
+$_['column_customer']                                   = 'Cliente';
+$_['column_status']                                     = 'Stato';
+$_['column_type']                                       = 'Tipo';
+$_['column_amount']                                     = 'Importo';
+$_['column_ip']                                         = 'IP';
+$_['column_date_created']                               = 'Data Creazione';
+$_['column_action']                                     = 'Azione';
+$_['column_refunds']                                    = 'Rimborsi';
+$_['column_reason']                                     = 'Motivazione';
+$_['column_fee']                                        = 'Costo di elaborazione';
+
+// Button
+$_['button_void']                                       = 'Nullo';
+$_['button_refund']                                     = 'Rimborso';
+$_['button_capture']                                    = 'Acquisizione';
+$_['button_connect']                                    = 'Connetti';
+$_['button_reconnect']                                  = 'Riconnetti';
+$_['button_refresh']                                    = 'Aggiorna token';

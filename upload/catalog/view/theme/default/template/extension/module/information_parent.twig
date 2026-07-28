@@ -1,0 +1,51 @@
+<div id="tmdinfomation_list">
+	<div class="list-group">
+		<h3 class="title">{{ heading_title }}</h3>
+		{% for information in informations %}
+		<a href="{{ information.href }}" class="list-group-item">{{ information.title }}
+			{% if information.informations_children %}
+			{% for informations_child in information.informations_children %}
+			<a href="{{ informations_child.href }}" class="list-group-item">&nbsp;&nbsp;&nbsp;- {{ informations_child.title }}</a>
+			{% endfor %}
+			{% endif %}
+		</a>
+		{% endfor %}
+		
+		<a href="{{ contact }}" class="list-group-item">{{ text_contact }}</a>
+		<a href="{{ sitemap }}" class="list-group-item">{{ text_sitemap }}</a>
+	</div>
+</div>
+
+<style type="text/css">
+#tmdinfomation_list .list-group {
+	margin:0;
+}
+#tmdinfomation_list .list-group a{
+	text-decoration-line: none !important;
+	text-shadow: none;
+	font-size: 13px;
+	border-radius: 0;
+	transition: all .5s ease;
+	border-color: {{ listbordercolor }} !important;
+	background:{{ infolistbgcolor }} !important;
+	color:{{ infolisttextcolor }} !important;
+}
+#tmdinfomation_list .list-group a:hover {
+	background:{{ infolistbghovercolor }} !important;
+	color:{{ infolistbgtexthovercolor }} !important;
+}
+#tmdinfomation_list .title{
+	margin:0px !important;
+	padding: 10px;
+    font-size: 16px;
+	background:{{ headingbgcolor }} !important;
+	color:{{ headingtextcolor }} !important;
+}
+.grid-item:has(#tmdinfomation_list) {
+    padding:0px !important;
+}
+.desktop #column-left>.grid-rows:has(#tmdinfomation_list) {
+    max-height: inherit;
+	overflow: initial;
+}
+</style>

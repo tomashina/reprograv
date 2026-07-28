@@ -1,0 +1,174 @@
+{{ header }}
+<div class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-md-9 col-sm-8' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }} info">
+      {{ content_top }}
+      <h1 id="page-title">{{ heading_title }}</h1>
+      {{ description }}
+
+<style>
+  .pdf-grid .card      { border:1px solid #e5e5e5; border-radius:6px; background:#fff; margin-bottom:20px; }
+  .pdf-grid .thumbbox  { width:100%; padding-top:62.5%; border-radius:6px 6px 0 0; border-bottom:1px solid #eee; }
+  .pdf-grid .thumbbox.is-bg {
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-color:#f7f7f7;
+  }
+  .pdf-grid .caption   { padding:12px 15px; }
+
+  #pdf-category-filters .btn { margin: 0 6px 6px 0; }
+
+
+  /* A4 portret omjer i "letterbox" prikaz bez reza */
+.pdf-grid .thumbbox {
+  width: 100%;
+  /* A4 H/W ≈ 1.414 -> padding-top u % je po širini */
+  padding-top: 141.421356%;   /* A4 portret */
+  border-radius: 6px 6px 0 0;
+  border-bottom: 1px solid #eee;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;   /* ključ: NEMA rezanja */
+  background-color: #f7f7f7;  /* pasice oko slike */
+}
+
+/* (opcionalno) lagani okvir da izgleda kao list */
+.pdf-grid .thumbbox {
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+}
+
+/* moderni browse ri: dodatno precizno (fallback je padding-top gore) */
+@supports (aspect-ratio: 1 / 1) {
+  .pdf-grid .thumbbox {
+    padding-top: 0;
+    aspect-ratio: 1 / 1.414;
+  }
+}
+
+.pdf-grid > [class*="col-"] { display: flex; }
+.pdf-grid .card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.pdf-grid .thumbbox { flex-shrink: 0; }
+.pdf-grid .caption {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+.pdf-grid .caption h4 {
+  min-height: 3em;               /* oko 2 reda */
+  line-height: 1.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pdf-grid .caption .btn { margin-top: auto; }
+
+
+
+</style>
+
+{% if information_pdfs %}
+  {# === Izračun unikatnih kategorija === #}
+  {% set categories = [] %}
+  {% for item in information_pdfs %}
+    {% if item.category is defined and item.category not in categories %}
+      {% set categories = categories|merge([item.category]) %}
+    {% endif %}
+  {% endfor %}
+
+  {# === Gumbi za filtriranje === #}
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <div id="pdf-category-filters" class="btn-group" role="group" aria-label="Filteri kategorija" style="margin:10px 0 20px 0; flex-wrap:wrap;">
+        <button type="button" class="btn btn-default active" data-filter="__all">Prikaži sve</button>
+        {% for cat in categories %}
+          {% set cat_slug = cat|lower|replace({' ':'-','/':'-','_':'-','č':'c','ć':'c','š':'s','đ':'d','ž':'z'}) %}
+          <button type="button" class="btn btn-default" data-filter="{{ cat_slug }}">{{ cat }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# === Grid s PDF karticama === #}
+  <div class="row pdf-grid">
+    {% for item in information_pdfs %}
+      {% set raw_thumb = item.thumb|default('pdf-icon.png') %}
+      {% set norm_thumb = raw_thumb|replace({'image/':''}) %}
+      {% set thumb_src = image_base is defined ? image_base ~ norm_thumb : 'image/' ~ norm_thumb %}
+      {% set cat = item.category|default('Bez kategorije') %}
+      {% set cat_slug = cat|lower|replace({' ':'-','/':'-','_':'-','č':'c','ć':'c','š':'s','đ':'d','ž':'z'}) %}
+
+      <div class="col-sm-6 col-md-3 pdf-card" data-category="{{ cat_slug }}">
+        <div class="card">
+          <a href="index.php?route=information/download&f={{ item.filename }}" target="_blank" rel="noopener">
+            <div class="thumbbox is-bg" style="background-image:url('{{ thumb_src }}');"></div>
+          </a>
+          <div class="caption">
+            <h4 style="margin:10px 0 5px 0; word-break:break-word;">{{ item.title ?: item.mask }}</h4>
+            <p style="margin:0 0 15px 0; word-break:break-word;">{{ cat }}</p>
+            <a class="btn btn-outline btn-block"
+               href="index.php?route=information/download&f={{ item.filename }}"
+               target="_blank" rel="noopener">
+              <i class="fa fa-download"></i> Pogledaj / Preuzmi
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<script>
+(function () {
+  var group = document.getElementById('pdf-category-filters');
+  if (!group) return;
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.pdf-grid .pdf-card'));
+
+  function setActive(btn) {
+    Array.prototype.forEach.call(group.querySelectorAll('button'), function(b) {
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+  }
+
+  group.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-filter]');
+    if (!btn) return;
+
+    var filter = btn.getAttribute('data-filter');
+    setActive(btn);
+
+    cards.forEach(function(card) {
+      var cat = card.getAttribute('data-category');
+      var show = (filter === '__all') || (cat === filter);
+      card.style.display = show ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+      {{ content_bottom }}
+     </div>
+    {{ column_right }}
+  </div>
+</div>
+{{ footer }}

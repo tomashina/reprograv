@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>SEO - BulkTranslate PRO [3xxx]</name>
+    <version>{huntbee_version}</version>
+    <author>HuntBee OpenCart Services</author>
+    <link>https://www.huntbee.com</link>
+	<code>hb_translate_ocmod</code>
+	
+	<file path="admin/controller/catalog/{product,category,information}.php">		
+	    <operation error="skip">
+            <search><![CDATA[$this->error['name'][$language_id] = $this->language->get('error_name');]]></search>
+            <add position="replace"><![CDATA[//$this->error['name'][$language_id] = $this->language->get('error_name');]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[$this->error['meta_title'][$language_id] = $this->language->get('error_meta_title');]]></search>
+            <add position="replace"><![CDATA[//$this->error['meta_title'][$language_id] = $this->language->get('error_meta_title');]]></add>
+        </operation>
+
+        <operation error="skip">
+            <search><![CDATA[$this->error['title'][$language_id] = $this->language->get('error_title');]]></search>
+            <add position="replace"><![CDATA[//$this->error['title'][$language_id] = $this->language->get('error_title');]]></add>
+        </operation>
+    </file>	
+		
+</modification>

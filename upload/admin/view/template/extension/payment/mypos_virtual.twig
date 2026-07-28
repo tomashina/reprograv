@@ -1,0 +1,284 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-cod" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_mypos_join }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+
+        {% if error_warning is defined and not error_warning is empty %}
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success is defined and not success is empty %}
+            <div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-cod" class="form-horizontal">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#tab_general" aria-controls="home" role="tab" data-toggle="tab">{{ text_setting }}</a></li>
+                        <li role="presentation"><a href="#tab_order_status" aria-controls="profile" role="tab" data-toggle="tab">{{ text_order_status }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_general">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_mypos_virtual_status" id="input-status" class="form-control">
+                                        {% if payment_mypos_virtual_status %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-test">{{ entry_test }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_mypos_virtual_test" id="input-test" class="form-control">
+                                        {% if payment_mypos_virtual_test %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-logging">{{ entry_logging }}</label>
+                                <div class="col-sm-10">
+                                    <select name="payment_mypos_virtual_logging" id="input-logging" class="form-control">
+                                        {% if payment_mypos_virtual_logging %}
+                                            <option value="1" selected="selected">{{ text_enabled }}</option>
+                                            <option value="0">{{ text_disabled }}</option>
+                                        {% else %}
+                                            <option value="1">{{ text_enabled }}</option>
+                                            <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="payment_mypos_virtual_sort_order" value="{{ payment_mypos_virtual_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div role="tabpanel">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" {% if payment_mypos_virtual_test %} class="active" {% endif %} style="padding-left: 117px;"><a href="#developer" aria-controls="home" role="tab" data-toggle="tab">Developer</a></li>
+                                    <li role="presentation" {% if not payment_mypos_virtual_test %} class="active" {% endif %}><a href="#production" aria-controls="profile" role="tab" data-toggle="tab">Production</a></li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane {% if payment_mypos_virtual_test %} active {% endif %}" id="developer">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-ppr"><span data-toggle="tooltip" title="{{ tooltip_ppr }}">{{ entry_ppr }}</label>
+                                            <div class="col-sm-10">
+                                                <select id="input-developer-ppr" name="payment_mypos_virtual_developer_ppr" class="form-control">
+                                                    <option value="1" {% if 1 == payment_mypos_virtual_developer_ppr %}selected{% endif %}>{{ text_full_requests }}</option>
+                                                    <option value="2" {% if 2 == payment_mypos_virtual_developer_ppr %}selected{% endif %}>{{ text_simplified_request }}</option>
+                                                    <option value="3" {% if 3 == payment_mypos_virtual_developer_ppr %}selected{% endif %}>{{ text_simplified_payment_page }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-ppr"><span data-toggle="tooltip" title="{{ text_payment_method }}">{{ text_payment_method }}</label>
+                                            <div class="col-sm-10">
+                                                <select id="input-developer-pm" name="payment_mypos_virtual_developer_payment_method" class="form-control">
+                                                    <option value="1" {% if 1 == payment_mypos_virtual_developer_payment_method %}selected{% endif %}>{{ text_card_payment }}</option>
+                                                    <option value="2" {% if 2 == payment_mypos_virtual_developer_payment_method %}selected{% endif %}>{{ text_ideal }}</option>
+                                                    <option value="3" {% if 3 == payment_mypos_virtual_developer_payment_method %}selected{% endif %}>{{ text_all }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <h3 class="col-sm-12">{{ text_easy_setup }}</h3>
+                                            <label class="col-sm-2 control-label" for="input-developer-private-key"><span data-toggle="tooltip" title="{{ tooltip_config_pack }}">{{ configuration_package }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-developer-private-key" name="payment_mypos_virtual_test_configuration_package" class="form-control" rows="15">{{ payment_mypos_virtual_test_configuration_package }}</textarea>
+                                            </div>
+
+                                            <div class="col-sm-12" style="margin-top: 20px">
+                                                <a href="https://developers.mypos.com/en/doc/online_payments/v1_4/226-test-data" class="col-sm-offset-2 col-sm-2" target="_blank">{{ text_generate_new_pack }}</a>
+                                                <button type="submit" form="form-cod" data-toggle="tooltip" title="" class="btn btn-primary pull-right" data-original-title="Save">{{ text_configure }}</button>
+                                            </div>
+                                            <div class="col-sm-12" style="margin-top: 20px">
+                                                <div class="alert alert-info  col-sm-3 pull-right"><i class="fa fa-info-circle"></i> This will override your current plug-in settings.</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <h3 class="col-sm-12">{{ text_advanced_setup }}</h3>
+                                            <label class="col-sm-2 control-label" for="input-developer-sid"><span data-toggle="tooltip" title="{{ tooltip_sid }}">{{ entry_sid }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_developer_sid" value="{{ payment_mypos_virtual_developer_sid }}" placeholder="{{ entry_sid }}" id="input-developer-sid" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-wallet-number"><span data-toggle="tooltip" title="{{ tooltip_wallet_number }}">{{ entry_wallet_number }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_developer_wallet_number" value="{{ payment_mypos_virtual_developer_wallet_number }}" placeholder="{{ entry_wallet_number }}" id="input-developer-wallet-number" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-private-key"><span data-toggle="tooltip" title="{{ tooltip_private_key }}">{{ entry_private_key }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-developer-private-key" name="payment_mypos_virtual_developer_private_key" class="form-control" rows="15">{{ payment_mypos_virtual_developer_private_key }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-public-certificate"><span data-toggle="tooltip" title="{{ tooltip_public_certificate }}">{{ entry_public_certificate }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-developer-public-certificate" name="payment_mypos_virtual_developer_public_certificate" class="form-control" rows="11">{{ payment_mypos_virtual_developer_public_certificate }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-url">{{ entry_developer_url }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_developer_url" value="{{ payment_mypos_virtual_developer_url }}" placeholder="{{ entry_developer_url }}" id="input-developer-url" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-developer-keyindex"><span data-toggle="tooltip" title="{{ tooltip_keyindex }}">{{ entry_developer_keyindex }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_developer_keyindex" value="{{ payment_mypos_virtual_developer_keyindex }}" placeholder="{{ entry_developer_keyindex }}" id="input-developer-keyindex" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane {% if not payment_mypos_virtual_test %} active {% endif %}" id="production">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-ppr"><span data-toggle="tooltip" title="{{ tooltip_ppr }}">{{ entry_ppr }}</label>
+                                            <div class="col-sm-10">
+                                                <select id="input-production-ppr" name="payment_mypos_virtual_production_ppr" class="form-control">
+                                                    <option value="1" {% if 1 == payment_mypos_virtual_production_ppr %}selected{% endif %}>{{ text_full_requests }}</option>
+                                                    <option value="2" {% if 2 == payment_mypos_virtual_production_ppr %}selected{% endif %}>{{ text_simplified_request }}</option>
+                                                    <option value="3" {% if 3 == payment_mypos_virtual_production_ppr %}selected{% endif %}>{{ text_simplified_payment_page }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-ppr"><span data-toggle="tooltip" title="{{ text_payment_method }}">{{ text_payment_method }}</label>
+                                            <div class="col-sm-10">
+                                                <select id="input-production-pm" name="payment_mypos_virtual_production_payment_method" class="form-control">
+                                                    <option value="1" {% if 1 == payment_mypos_virtual_production_payment_method %}selected{% endif %}>{{ text_card_payment }}</option>
+                                                    <option value="2" {% if 2 == payment_mypos_virtual_production_payment_method %}selected{% endif %}>{{ text_ideal }}</option>
+                                                    <option value="3" {% if 3 == payment_mypos_virtual_production_payment_method %}selected{% endif %}>{{ text_all }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <h3 class="col-sm-12">{{ text_easy_setup }}</h3>
+                                            <label class="col-sm-2 control-label" for="input-developer-private-key"><span data-toggle="tooltip" title="{{ tooltip_config_pack }}">{{ configuration_package }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-developer-private-key" name="payment_mypos_virtual_production_configuration_package" class="form-control" rows="15">{{ payment_mypos_virtual_production_configuration_package }}</textarea>
+                                            </div>
+
+                                            <div class="col-sm-12" style="margin-top: 20px">
+                                                <a href="https://developers.mypos.com/en/doc/online_payments/v1_4/5-store-management" class="col-sm-offset-2 col-sm-2" target="_blank">{{ text_generate_new_pack }}</a>
+                                                <button type="submit" form="form-cod" data-toggle="tooltip" title="" class="btn btn-primary pull-right" data-original-title="Save">{{ text_configure }}</button>
+                                            </div>
+                                            <div class="col-sm-12" style="margin-top: 20px">
+                                                <div class="alert alert-info  col-sm-3 pull-right"><i class="fa fa-info-circle"></i> This will override your current plug-in settings.</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <h3 class="col-sm-12">{{ text_advanced_setup }}</h3>
+                                            <label class="col-sm-2 control-label" for="input-production-sid"><span data-toggle="tooltip" title="{{ tooltip_sid }}">{{ entry_sid }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_production_sid" value="{{ payment_mypos_virtual_production_sid }}" placeholder="{{ entry_sid }}" id="input-production-sid" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-wallet-number"><span data-toggle="tooltip" title="{{ tooltip_wallet_number }}">{{ entry_wallet_number }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_production_wallet_number" value="{{ payment_mypos_virtual_production_wallet_number }}" placeholder="{{ entry_wallet_number }}" id="input-production-wallet-number" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-private-key"><span data-toggle="tooltip" title="{{ tooltip_private_key }}">{{ entry_private_key }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-production-private-key" name="payment_mypos_virtual_production_private_key" class="form-control" rows="15">{{ payment_mypos_virtual_production_private_key }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-public-certificate"><span data-toggle="tooltip" title="{{ tooltip_public_certificate }}">{{ entry_public_certificate }}</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="input-production-public-certificate" name="payment_mypos_virtual_production_public_certificate" class="form-control" rows="11">{{ payment_mypos_virtual_production_public_certificate }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-url">{{ entry_production_url }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_production_url" value="{{ payment_mypos_virtual_production_url }}" placeholder="{{ entry_production_url }}" id="input-production-url" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="input-production-keyindex"><span data-toggle="tooltip" title="{{ tooltip_keyindex }}">{{ entry_production_keyindex }}</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" name="payment_mypos_virtual_production_keyindex" value="{{ payment_mypos_virtual_production_keyindex }}" placeholder="{{ entry_production_keyindex }}" id="input-production-keyindex" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab_order_status">
+                            {% for key, order_status_settings in order_status_settings_list %}
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="input_order_status_{{ key }}">{{ attribute(_context, order_status_settings['name']) }}</label>
+                                    <div class="col-sm-9">
+                                        <select name="payment_mypos_virtual_order_statuses[{{ key }}][id]" id="input_{{ key }}_status" class="form-control">
+                                            {% for order_status in order_statuses %}
+                                                {% if order_status['order_status_id'] == order_status_settings['id'] %}
+                                                    <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                                                {% else %}
+                                                    <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <div class="col-sm-12" style="margin-top: 20px">
+                                <button type="submit" form="form-cod" data-toggle="tooltip" title="" class="btn btn-primary pull-right" data-original-title="Save">{{ text_configure }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ footer }}

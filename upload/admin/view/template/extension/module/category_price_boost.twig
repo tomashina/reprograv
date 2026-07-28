@@ -1,0 +1,101 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" name="form_action" value="save" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_category_price_boost_status" id="input-status" class="form-control">
+                {% if module_category_price_boost_status %}
+                  <option value="1" selected="selected">{{ text_enabled }}</option>
+                  <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                  <option value="1">{{ text_enabled }}</option>
+                  <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="form-group{% if error_category_ids %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-categories">{{ entry_categories }}</label>
+            <div class="col-sm-10">
+              <select name="category_ids[]" id="input-categories" multiple="multiple" size="14" class="form-control">
+                {% for category in categories %}
+                  {% if category.category_id in category_ids %}
+                    <option value="{{ category.category_id }}" selected="selected">{{ category.name }}</option>
+                  {% else %}
+                    <option value="{{ category.category_id }}">{{ category.name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              {% if error_category_ids %}
+                <div class="text-danger">{{ error_category_ids }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-include-subcategories">{{ entry_include_subcategories }}</label>
+            <div class="col-sm-10">
+              <input type="checkbox" name="include_subcategories" id="input-include-subcategories" value="1" {% if include_subcategories %}checked="checked"{% endif %} />
+            </div>
+          </div>
+
+          <div class="form-group{% if error_percentage %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-percentage">{{ entry_percentage }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="percentage" value="{{ percentage }}" placeholder="10" id="input-percentage" class="form-control" />
+              {% if error_percentage %}
+                <div class="text-danger">{{ error_percentage }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+              <button type="submit" name="form_action" value="preview" class="btn btn-info">{{ button_preview }}</button>
+              <button type="submit" name="form_action" value="apply" class="btn btn-success">{{ button_apply }}</button>
+              <button type="submit" name="form_action" value="apply_relatedoptions" class="btn btn-warning">{{ button_apply_relatedoptions }}</button>
+              <button type="submit" name="form_action" value="apply_relatedoptions_only" class="btn btn-danger">{{ button_apply_relatedoptions_only }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

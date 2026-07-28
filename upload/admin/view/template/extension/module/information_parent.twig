@@ -1,0 +1,199 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+			<button type="submit" form="form-information" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+			<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	
+	{{ getkeyform }}
+	
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+		  <button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+			</div>
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-information" class="form-horizontal">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#tab-general" data-toggle="tab"><i class="fa fa-cog"></i> {{ text_general }}</a></li>
+						<li><a href="#tab-colour" data-toggle="tab"><i class="fa fa-paint-brush"></i> {{ text_colour }}</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab-general">
+							<div class="form-group required">
+								<label class="col-sm-2 control-label" for="input-status">{{ entry_moduletitle }}</label>
+								<div class="col-sm-10">
+									{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/></span> 
+									<input type="text" name="module_information_parent_description[{{ language.language_id }}][title]" value="{{ module_information_parent_description[language.language_id] ? module_information_parent_description[language.language_id].title }}" placeholder="{{ entry_moduletitle }}" class="form-control"/>
+									</div>
+									{% if error_title[language.language_id] %}
+									<div class="text-danger">{{ error_title[language.language_id] }}</div>
+								  {% endif %}
+									{% endfor %}
+								</div>
+							</div>
+					  
+							<div class="form-group required">
+								<label class="col-sm-2 control-label" for="input-width">{{ entry_width }}</label>
+								<div class="col-sm-4">
+								  <input type="text" name="module_information_parent_width" value="{{ module_information_parent_width }}" placeholder="{{ entry_width }}" id="input-width" class="form-control" />
+								  {% if error_width %}
+								  <div class="text-danger">{{ error_width }}</div>
+								  {% endif %}
+								</div>
+							
+								<label class="col-sm-2 control-label" for="input-height">{{ entry_height }}</label>
+								<div class="col-sm-4">
+								  <input type="text" name="module_information_parent_height" value="{{ module_information_parent_height }}" placeholder="{{ entry_height }}" id="input-height" class="form-control" />
+								  {% if error_height %}
+								  <div class="text-danger">{{ error_height }}</div>
+								  {% endif %}
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+								<div class="col-sm-10">
+								  <select name="module_information_parent_status" id="input-status" class="form-control"> 
+									{% if module_information_parent_status %}
+									<option value="1" selected="selected">{{ text_enabled }}</option>
+									<option value="0">{{ text_disabled }}</option>
+									{% else %}
+									<option value="1">{{ text_enabled }}</option>
+									<option value="0" selected="selected">{{ text_disabled }}</option>
+									{% endif %}
+								  </select>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="tab-colour">
+						
+							<div class="form-group">
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-headingbgcolor">{{ entry_headingbgcolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_headingbgcolor" value="{{ module_information_parent_headingbgcolor }}" placeholder="{{ entry_headingbgcolor }}" id="input-headingbgcolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-headingtextcolor">{{ entry_headingtextcolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_headingtextcolor" value="{{ module_information_parent_headingtextcolor }}" placeholder="{{ entry_headingtextcolor }}" id="input-headingtextcolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-infolistbgcolor">{{ entry_infolistbgcolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_infolistbgcolor" value="{{ module_information_parent_infolistbgcolor }}" placeholder="{{ entry_infolistbgcolor }}" id="input-infolistbgcolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-infolisttextcolor">{{ entry_infolisttextcolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_infolisttextcolor" value="{{ module_information_parent_infolisttextcolor }}" placeholder="{{ entry_infolisttextcolor }}" id="input-infolisttextcolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-infolistbghovercolor">{{ entry_infolistbghovercolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_infolistbghovercolor" value="{{ module_information_parent_infolistbghovercolor }}" placeholder="{{ entry_infolistbghovercolor }}" id="input-infolistbghovercolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-infolistbghovercolor">{{ entry_infolistbgtexthovercolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_infolistbgtexthovercolor" value="{{ module_information_parent_infolistbgtexthovercolor }}" placeholder="{{ entry_infolistbgtexthovercolor }}" id="input-infolistbghovercolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<div class="col-sm-6">
+									<div class="row">
+										<label class="col-sm-6 control-label" for="input-listbordercolor">{{ entry_listbordercolor }}</label>
+										<div class="col-sm-6">
+										  <input type="text" name="module_information_parent_listbordercolor" value="{{ module_information_parent_listbordercolor }}" placeholder="{{ entry_listbordercolor }}" id="input-listbordercolor" class="form-control colorinput" />
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+<script type="text/javascript">
+$(document).ready( function() {
+	$('.colorinput').each( function() {
+		$(this).minicolors({
+			control: $(this).attr('data-control') || 'hue',
+			defaultValue: $(this).attr('data-defaultValue') || '',
+			inline: $(this).attr('data-inline') === 'true',
+			letterCase: $(this).attr('data-letterCase') || 'lowercase',
+			opacity: $(this).attr('data-opacity'),
+			position: $(this).attr('data-position') || 'bottom left',
+			change: function(hex, opacity) {
+				if( !hex ) return;
+				if( opacity ) hex += ', ' + opacity;
+				try {
+					console.log(hex);
+				} catch(e) {}
+			},
+			theme: 'bootstrap'
+		});
+	});
+});
+</script>
+<style type="text/css">
+#form-information .nav-tabs li a {
+	background: #f5f5f5;
+	border-color: #f5f5f5;
+	color: #333;
+	font-weight:600;
+	border-radius:0;
+}
+#form-information .nav-tabs li.active a {
+	background: #1C95DE;
+	border-color: #1C95DE;
+	color: #fff;
+}
+</style>
+</div>
+{{ footer }}

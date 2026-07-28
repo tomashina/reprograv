@@ -1,0 +1,171 @@
+<?php
+// match_otisci_allwords_v5.php
+// Pravila:
+// - Radi samo za proizvode koji su u parent kategoriji 275.
+// - Od URL-a slike uzmi dio do (i uključivo) modela, sve nakon toga ignoriraj za usporedbu.
+// - Svi tokeni iz imena proizvoda moraju biti u odrezanom dijelu URL-a.
+// - Samo 1 slika po proizvodu. Ako short_description već sadrži <img>, preskoči.
+// - Ako postoji više slika, odaberi najbolju (prefer 'printy', zatim kraći URL).
+
+ini_set('max_execution_time', 0);
+ini_set('memory_limit', '1024M');
+header('Content-Type: text/plain; charset=utf-8');
+
+require_once __DIR__ . '/config.php';
+
+// --- Postavke ---
+$DRY_RUN       = true;    // test mod, promijeni na false kad želiš upis
+$WRAP_P        = true;    // <p><img ...></p>
+$CATEGORY_ID   = 275;     // samo proizvodi čiji parent category_id = 275
+$MIN_TOKEN_LEN = 2;
+$STOP_WORDS    = ['rezervni','jastučić','jastucic','mm','x','o','-'];
+
+// --- DB helperi ---
+function db(): mysqli {
+  static $m=null;
+  if ($m===null) {
+    $m = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, defined('DB_PORT')?DB_PORT:3306);
+    if ($m->connect_error) die("DB connect error: ".$m->connect_error."\n");
+    $m->set_charset('utf8mb4');
+  }
+  return $m;
+}
+function q($sql,$params=[]){
+  $m=db();
+  $st=$m->prepare($sql); if(!$st) die("Prepare failed: ".$m->error."\n".$sql."\n");
+  if($params){
+    $types=''; $vals=[];
+    foreach($params as $p){ $types.=is_int($p)?'i':(is_float($p)?'d':'s'); $vals[]=$p; }
+    $st->bind_param($types, ...$vals);
+  }
+  if(!$st->execute()) die("Execute failed: ".$st->error."\n".$sql."\n");
+  return $st;
+}
+
+// --- Normalizacija ---
+function strip_accents($s){
+  if(class_exists('Transliterator')){
+    $tr = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC');
+    if($tr) return $tr->transliterate($s);
+  }
+  $map=['č'=>'c','ć'=>'c','ž'=>'z','š'=>'s','đ'=>'d','Č'=>'c','Ć'=>'c','Ž'=>'z','Š'=>'s','Đ'=>'d'];
+  return strtr($s,$map);
+}
+function norm($s){
+  $s = strip_accents($s);
+  $s = mb_strtolower($s,'UTF-8');
+  $s = str_replace(['_','.','%20'], ['-','-','-'], $s);
+  $s = preg_replace('~[^a-z0-9\-]+~u', ' ', $s);
+  $s = preg_replace('~\s+~', ' ', $s);
+  return trim($s);
+}
+
+// --- Ekstrakcije ---
+function first_model_in_text($s){
+  if(preg_match('~\b(\d{2,6})\b~u',$s,$m)) return $m[1];
+  return null;
+}
+function url_head_until_model_norm($fullUrl){
+  $path = parse_url($fullUrl, PHP_URL_PATH) ?? '';
+  $file = basename($path);
+  $model = first_model_in_text($file);
+  $head  = $file;
+  if($model && ($pos = mb_strpos($file, $model)) !== false){
+    $head = mb_substr($file, 0, $pos + mb_strlen($model));
+  }
+  return [norm($head), $fullUrl];
+}
+function tokens_from_name($name, $minLen, $stops){
+  $n = norm($name);
+  $parts = array_filter(explode(' ', str_replace('-', ' ', $n)));
+  $out = [];
+  foreach($parts as $p){
+    if(in_array($p, $stops, true)) continue;
+    if(mb_strlen($p) < $minLen && !ctype_digit($p)) continue;
+    $out[] = $p;
+  }
+  return array_values(array_unique($out));
+}
+function all_name_tokens_in_url_head($name, $urlHeadNorm, $minLen, $stops){
+  $toks = tokens_from_name($name, $minLen, $stops);
+  if(!$toks) return false;
+  foreach($toks as $t){
+    if(mb_strpos($urlHeadNorm, $t) === false) return false;
+  }
+  return true;
+}
+function html_has_any_img($html){ return (bool)preg_match('~<\s*img\b~i', $html); }
+function already_has_image_url($html, $url){ return $html && stripos($html, $url)!==false; }
+function pick_one_url(array $urls): string {
+  usort($urls, function($a,$b){
+    $ap = stripos($a,'printy')!==false ? 0 : 1;
+    $bp = stripos($b,'printy')!==false ? 0 : 1;
+    if ($ap !== $bp) return $ap <=> $bp;
+    $la = strlen($a); $lb = strlen($b);
+    if ($la !== $lb) return $la <=> $lb;
+    return strcmp($a,$b);
+  });
+  return $urls[0];
+}
+
+// --- Glavno ---
+$prefix = defined('DB_PREFIX') ? DB_PREFIX : 'oc_';
+
+// samo proizvodi u kategoriji 275
+$sqlProds = "
+SELECT pd.product_id, pd.language_id, pd.name, pd.short_description
+FROM {$prefix}product_description pd
+JOIN {$prefix}product_to_category pc ON pc.product_id = pd.product_id
+JOIN {$prefix}category_path cp ON cp.category_id = pc.category_id
+WHERE cp.path_id = ?
+GROUP BY pd.product_id, pd.language_id";
+$prods = q($sqlProds, [$CATEGORY_ID])->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$imgs = q("SELECT slika FROM otisak")->get_result()->fetch_all(MYSQLI_ASSOC);
+
+echo "Učitao ".count($prods)." proizvoda iz kategorije $CATEGORY_ID i ".count($imgs)." slika.\n";
+
+$added=0; $skipped=0; $cand=0;
+
+foreach($prods as $p){
+  $pid = (int)$p['product_id'];
+  $lid = (int)$p['language_id'];
+  $name = $p['name'];
+  $short = (string)$p['short_description'];
+
+  if (html_has_any_img($short)) { $skipped++; continue; }
+
+  $candUrls=[];
+  foreach($imgs as $ir){
+    $url = trim($ir['slika'] ?? '');
+    if(!$url) continue;
+    [$urlHeadNorm, $fullUrl] = url_head_until_model_norm($url);
+    if(!$urlHeadNorm) continue;
+    if(all_name_tokens_in_url_head($name, $urlHeadNorm, $MIN_TOKEN_LEN, $STOP_WORDS)){
+      $candUrls[]=$fullUrl;
+    }
+  }
+  $candUrls = array_unique($candUrls);
+  if(!$candUrls) continue;
+  $cand++;
+
+  $already = false;
+  foreach($candUrls as $u){ if(already_has_image_url($short, $u)){ $already=true; break; } }
+  if($already){ $skipped++; continue; }
+
+  $chosen = pick_one_url($candUrls);
+  $img = '<img src="'.htmlspecialchars($chosen,ENT_QUOTES).'" alt="'.htmlspecialchars($name,ENT_QUOTES).'">';
+  if($WRAP_P) $img="<p>$img</p>";
+  $newShort = $img."\n".$short;
+
+  if($DRY_RUN){
+    echo "[DRY ADD] PID=$pid LID=$lid | URL=$chosen | $name\n";
+  }else{
+    q("UPDATE {$prefix}product_description SET short_description=? WHERE product_id=? AND language_id=?",
+      [$newShort, $pid, $lid])->close();
+    echo "[OK] PID=$pid | + $chosen\n";
+    $added++;
+  }
+}
+
+echo "\nGotovo.\nKandidata: $cand | Dodano: $added | Preskočeno: $skipped\n";

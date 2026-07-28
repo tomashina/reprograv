@@ -1,0 +1,194 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="button" onclick="$('#form-json-api').attr('action', '{{ action }}').attr('target', '_self').submit()" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid" style="height: 80vh;">
+        {% if error_warning %}
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">General</a></li>
+            <li><a href="#tab-test" data-toggle="tab">Test</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab-general">
+
+                <div class="row">
+
+
+                    <div class="col-sm-12 ">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Update</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="eracuni-update-price" data-toggle="tooltip" title="Obnovi cijene sa Eračuna." class="btn btn-info btn-block">Update Prices</a>
+                                    </div>
+                                    <p class="col-sm-7">Obnovi cijene sa Eračuna.</p>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="eracuni-update-name" data-toggle="tooltip" title="Obnovi nazive Eračuna." class="btn btn-info btn-block">Update Names</a>
+                                    </div>
+                                    <p class="col-sm-7">Obnovi nazive sa Eračuna.</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="eracuni-update-quantity" data-toggle="tooltip" title="Obnovi količine sa Eračuna." class="btn btn-info btn-block">Update Quantity</a>
+                                    </div>
+                                    <p class="col-sm-7">Obnovi količine sa Eračuna.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                 
+
+                   
+
+                </div>
+
+            </div>
+            <div class="tab-pane" id="tab-test">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="input-index-test">Testing info</label>
+                </div>
+                <div class="buttons">
+                    <input type="button" value="Original import" id="view-raw" data-loading-text="{{ text_loading }}" class="btn btn-primary api-test" />
+                    <input type="button" value="After split" id="view-split" data-loading-text="{{ text_loading }}" class="btn btn-primary api-test" />
+                    <input type="button" value="After grouping" id="view-grouping" data-loading-text="{{ text_loading }}" class="btn btn-primary api-test" />
+                    <input type="button" value="After modification" id="view-modified" data-loading-text="{{ text_loading }}" class="btn btn-primary api-test" />
+                </div>
+                <div id="test-result" style="min-height:500px"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript"><!--
+        $(() => {
+            $('#ideus-products').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/importProducts&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#ideus-products-images').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/importImages&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#braytron-products-images').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/updateBraytronImages&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#ideus-products-quantity').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/updateQuantity&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#special-import').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/specialImport&query=1&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+            $('#special-import2').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/specialImport&query=2&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+            $('#special-import3').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/specialImport&query=3&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#eracuni-update-price').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/updatePriceEracuni&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+
+            //
+            $('#eracuni-update-name').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/updateNameEracuni&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+
+            //
+            $('#eracuni-update-quantity').on('click', (e) => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/agm_api/updateQuantityEracuni&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                    }
+                });
+            });
+        });
+      //--></script>
+{{ footer }}

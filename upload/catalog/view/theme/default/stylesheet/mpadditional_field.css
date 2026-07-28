@@ -1,0 +1,32 @@
+/*additional */
+.mpadditional_field.mpadditional_field_img {
+border: 1px solid #ddd;
+border-radius: 4px;
+-webkit-border-radius: 4px;
+margin: 5px 0;
+padding: 5px;
+}
+.mpadditional_field.mpadditional_field_img .image {
+/*display:inline-block;
+vertical-align: top;
+padding-left: 5px;*/
+text-align: center;
+}
+.mpadditional_field.mpadditional_field_img .image img {
+margin-right: auto;
+margin-left: auto;
+}
+.mpadditional_field.mpadditional_field_img .text {
+/*display:block;
+padding-left: 5px;*/
+float: left;
+}
+.mpadditional_field.mpadditional_field_img .text h4 {
+font-weight: normal;
+}
+/*.mpadditional_field.mpadditional_field_img .text b {
+text-transform:capitalize;
+}*/
+.mpadditional_field.mpadditional_field_text b {
+font-weight: normal;
+}

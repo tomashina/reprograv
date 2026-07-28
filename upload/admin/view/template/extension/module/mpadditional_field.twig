@@ -1,0 +1,184 @@
+{{ header }}{{ column_left }}
+<div id="content" class="mp-content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+        <button type="submit" onclick="$('#stay_here').val(1)" form="form-module" class="btn btn-success"><i class="fa fa-save"></i> {{ button_stay_here }}</button>
+        <a href="{{ cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
+        <a href="{{ mpadditional_field }}" class="btn btn-default"> {{ text_additional_field }}</a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    {% if disable_events %}
+    <div class="activate_evs">
+      <div class="alert alert-warning">{{ text_disable_events }}</div>
+      <script type="text/javascript">
+        $('.mpadditional_field_activate_evs').on('click', function() {
+          let $this = $(this);
+          $.ajax({
+            url: 'index.php?route={{ extension_path }}module/mpadditional_field/activateEvents&{{ get_token }}={{ token }}',
+            type: 'get',
+            data: 'ae=1',
+            dataType: 'json',
+            beforeSend: function() {
+              $('.alert-dismissible').remove();
+              $this.button('loading');
+            },
+            complete: function() {
+              $this.button('reset');
+            },
+            success: function(json) {
+              if (json['success']) {
+                $this.parent('.alert').after('<div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> '+ json['success'] +' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                setTimeout(() => {
+                  $('.activate_evs').remove();
+                }, 5000);
+              }
+              if (json['error']) {
+                if (json['error']['warning']) {
+                  $this.parent('.alert').after('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> '+ json['error']['warning'] +' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+              }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+              if (xhr.responseText) {
+              }
+            }
+          });
+        });
+      </script>
+    </div>
+    {% endif %}
+    {% if files %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ text_files_permission }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <button type="button" class="btn btn-primary" id="addfiles"><i class="fa fa-plus-circle" data-class="fa fa-plus-circle"></i> {{ button_files_permission }}</button>
+    </div>
+    <script type="text/javascript">
+    $('#addfiles').on('click', function() {
+      var el = this;
+      $.ajax({
+        url: 'index.php?route={{ extension_path }}module/mpadditional_field/updatePermissions&{{ get_token }}={{ token }}',
+        type: 'get',
+        data: '',
+        dataType: 'json',
+        beforeSend: function() {
+        $(el).attr('disabled','disabled');
+        $(el).find('i').attr('class', 'fa fa-refresh fa-spin');
+        },
+        complete: function() {
+          $(el).removeAttr('disabled');
+          $(el).find('i').attr('class', $(el).find('i').attr('data-class'));
+        },
+        success: function(json) {
+          $('.alert-dismissible, .text-danger').remove();
+
+          if (json['redirect']) {
+            location = json['redirect'];
+          }
+
+          if (json['success']) {
+            $('#content').parent().before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    });
+    </script>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <input type="hidden" name="stay_here" id="stay_here" value="0">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_mpadditional_field_status" id="input-status" class="form-control">
+                {% if module_mpadditional_field_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_image_size }}</label>
+            <div class="col-sm-10">
+              <div class="row">
+                <div class="col-sm-6">
+                  <input type="text" name="module_mpadditional_field_imgage_width" value="{{ module_mpadditional_field_imgage_width }}" id="input-additional-width" placeholder="{{ entry_awidth }}" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" name="module_mpadditional_field_imgage_height" value="{{ module_mpadditional_field_imgage_height }}" id="input-additional-height" placeholder="{{ entry_aheight }}" class="form-control" />
+                </div>
+              </div>
+              <div class="help">{{ help_image_size }}</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-product_listing">{{ entry_product_listing }}</label>
+            <div class="col-sm-10">
+              <select name="module_mpadditional_field_product_listing" id="input-product_listing" class="form-control">
+                {% if module_mpadditional_field_product_listing %}
+                <option value="1" selected="selected">{{ text_yes }}</option>
+                <option value="0">{{ text_no }}</option>
+                {% else %}
+                <option value="1">{{ text_yes }}</option>
+                <option value="0" selected="selected">{{ text_no }}</option>
+                {% endif %}
+              </select>
+              <div class="help">{{ help_product_listing }}</div>
+            </div>
+          </div>
+          <fieldset>
+            <legend>{{ tab_support }}</legend>
+            <div class="" id="tab-support">
+              <div class="bs-callout bs-callout-info">
+                <h4>ModulePoints {{ heading_title }}</h4>
+                <center><strong>{{ heading_title }} </strong></center> <br/>
+              </div>
+              <fieldset>
+                <div class="form-group">
+                  <div class="col-md-12 col-xs-12">
+                    <h4 class="text-mpsuccess text-center"><i class="fa fa-thumbs-up" aria-hidden="true"></i> Thanks For Choosing Our Extension</h4>
+                    <h4 class="text-mpsuccess text-center"><i class="fa fa-phone" aria-hidden="true"></i>Kindly Write Us At Support Email For Support</h4>
+                    <ul class="list-group">
+                      <li class="list-group-item clearfix">support@modulepoints.com <span class="badge"><a href="mailto:support@modulepoints.com?Subject=Request Support: {{ heading_title }} Extension"><i class="fa fa-envelope"></i> Contact Us</a></span></li>
+                    </ul>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

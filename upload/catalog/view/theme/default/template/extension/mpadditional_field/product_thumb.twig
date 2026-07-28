@@ -1,0 +1,22 @@
+{% if mpadditional_field_status and mpadditional_field_product_listing and product.mpadditional_fields|length %}
+<div class="product_mpadditional_field mp-related-listing" id="product_mpadditional_field{{ product.product_id }}">
+  <ul class="list-unstyled">
+    {% for mpadditional_field in product.mpadditional_fields %}
+      {% if mpadditional_field.image is empty %}
+      <li class="mpadditional_field mpadditional_field_text"><b>{{ mpadditional_field.name }}</b>: <span>{{ mpadditional_field.value }}</span></li>
+      {% endif %}
+    {% endfor %}
+    {% for mpadditional_field in product.mpadditional_fields %}
+      {% if mpadditional_field.image|length %}
+      <li class="mpadditional_field mpadditional_field_img clearfix">
+        <span class="text">
+          <h4>{{ mpadditional_field.name }}</h4>
+          <p>{{ mpadditional_field.value }}</p>
+        </span>
+        <span class="image"><img class="img-responsive" src="{{ mpadditional_field.image }}" alt="{{ mpadditional_field.name }}" /></span>
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

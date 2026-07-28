@@ -1,0 +1,46 @@
+# Local configuration and IDE metadata
+.env
+.idea/
+.DS_Store
+**/.DS_Store
+**/__MACOSX/
+*.log
+error_log
+
+# Runtime-generated OpenCart data
+/storage/cache/*
+/storage/logs/*
+/storage/modification/*
+/storage/session/*
+/storage/upload/*
+/storage/download/*
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+!/storage/modification/.gitkeep
+!/storage/session/.gitkeep
+!/storage/upload/.gitkeep
+!/storage/download/.gitkeep
+
+# Generated image cache and uploaded media stay local
+/upload/image/
+/upload/wp-content/uploads/
+/upload/admin/ImportProductList*.xlsx
+
+# No image assets are stored in Git
+*.avif
+*.bmp
+*.gif
+*.ico
+*.jpeg
+*.jpg
+*.png
+*.svg
+*.tif
+*.tiff
+*.webp
+
+# Other generated or machine-specific files
+/upload/.well-known/
+/upload/cgi-bin/
+/upload/sitemaps/
+/.ftpquota

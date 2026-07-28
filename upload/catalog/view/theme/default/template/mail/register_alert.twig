@@ -1,0 +1,13 @@
+{{ text_signup }}
+{% if custom_fields %}
+{% for custom_field in custom_fields %}
+- {{ custom_field.name }}: {{ custom_field.value }}
+{% endfor %}
+{% endif %}
+{{ text_firstname }} {{ firstname }}
+{{ text_lastname }} {{ lastname }}
+{% if customer_group %}
+{{ text_customer_group }} {{ customer_group }}
+{% endif %}
+{{ text_email }} {{ email }}
+{{ text_telephone }} {{ telephone }}

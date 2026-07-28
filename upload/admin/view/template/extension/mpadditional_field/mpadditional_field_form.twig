@@ -1,0 +1,353 @@
+{{ header }}{{ column_left }}
+<div id="content" class="mp-content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-mpadditional_field" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+        <a href="{{ cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-mpadditional_field" class="form-horizontal">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-general">
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+                <div class="col-sm-10">
+                  <select name="status" id="input-status" class="form-control">
+                    {% if status %}
+                    <option value="1" selected="selected">{{ text_enabled }}</option>
+                    <option value="0">{{ text_disabled }}</option>
+                    {% else %}
+                    <option value="1">{{ text_enabled }}</option>
+                    <option value="0" selected="selected">{{ text_disabled }}</option>
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group required">
+                <label class="col-sm-2 control-label">{{ entry_name }}</label>
+                <div class="col-sm-10">
+                  {% for language in languages %}
+                  <div class="input-group"><span class="input-group-addon"><img src="{{ language.lang_flag }}" title="{{ language.name }}" /></span>
+                    <input type="text" name="description[{{ language.language_id }}][name]" value="{{ description[language.language_id] ? description[language.language_id].name : '' }}" placeholder="{{ entry_name }}" class="form-control" />
+                  </div>
+                  {% if error_name[language.language_id] %}
+                  <div class="text-danger">{{ error_name[language.language_id] }}</div>
+                  {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="tab-data">
+              <div class="row" id="tab-maf-product">
+                <div class="col-sm-3">
+                  <ul class="nav nav-pills nav-stacked ostab" id="maf-product">
+
+                    {% for maf_product in maf_products %}
+                    <li class="{% if loop.first %}active{% endif %}"><a href="#tab-maf-product{{ maf_product.product_id }}" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$('a[href=\'#tab-maf-product{{ maf_product.product_id }}\']').parent().remove(); $('#tab-maf-product{{ maf_product.product_id }}').remove(); $('#maf_product a:first').tab('show');"></i> #{{ maf_product.product_id }} - {{ maf_product.name }} - <label class="label {% if maf_product['ostatus'] %}label-success{% else %}label-danger{% endif %}">{{ maf_product.status }}<label></a></li>
+                    {% endfor %}
+                    <li>
+                      <input type="text" name="mafproduct" value="" placeholder="{{ entry_mpadditional_field }}" id="input-additional_field" class="form-control" />
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-sm-9">
+                  <div class="tab-content">
+
+                    {% for maf_product in maf_products %}
+
+                    <div class="tab-pane {% if loop.first %}active{% endif %}" id="tab-maf-product{{ maf_product.product_id }}">
+
+                      <input type="hidden" name="maf_product[{{ maf_product.product_id }}][product_id]" value="{{ maf_product.product_id }}" />
+                      <input type="hidden" name="maf_product[{{ maf_product.product_id }}][status]" value="{{ maf_product.ostatus }}" />
+
+                      <div id="product_mafs-{{ maf_product.product_id }}" class="product_mafs">
+
+                      {% set mafp_row = 0 %}
+
+                      {% for mpadditional_field in maf_product.mpadditional_fields %}
+                      <div id="product_maf-{{ mafp_row }}" class="product_maf">
+                        <input type="hidden" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][product_mpadditional_field_id]" value="{{ mpadditional_field.product_mpadditional_field_id }}" />
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-value">{{ entry_maf_description }}</label>
+                          <div class="col-sm-10">
+                            {% for language in languages %}
+                            <div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+                              <input type="text" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][description][{{ language.language_id }}][value]" value="{{ mpadditional_field.description[language.language_id] ? mpadditional_field.description[language.language_id].value : '' }}" placeholder="{{ entry_maf_description }}" class="form-control"/>
+                            </div>
+                            {% if error_maf_product[maf_product.product_id].mpadditional_fields[mafp_row].description[language.language_id].value %}
+                            <div class="text-danger">{{ error_maf_product[maf_product.product_id].mpadditional_fields[mafp_row].description[language.language_id].value }}</div>
+                            {% endif %}
+
+                            {% endfor %}
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-status">{{ entry_status }}</label>
+                          <div class="col-sm-10">
+                            <select name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][status]" id="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-status{{ mpadditional_field_row }}" class="form-control">
+                              <option value="1" {% if mpadditional_field.ostatus %}selected="selected"{% endif %}>{{ text_enabled }}</option>
+                              <option value="0" {% if not mpadditional_field.status %}selected="selected"{% endif %}>{{ text_disabled }}</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-sort-order{{ mpadditional_field_row }}">{{ entry_sort_order }}</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][sort_order]" id="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-sort-order{{ mpadditional_field_row }}" class="form-control" value="{{ mpadditional_field.sort_order }}">
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">{{ entry_image }}</label>
+                          <div class="col-sm-10"><a href="" id="thumb-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-image" data-toggle="image" class="img-thumbnail"><img src="{{ mpadditional_field.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+                            <input type="hidden" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][image]" value="{{ mpadditional_field.image }}" id="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-image" />
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">{{ entry_image_size }}</label>
+                          <div class="col-sm-10">
+                            <div class="row">
+                              <div class="col-sm-5">
+                                <input type="text" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][width]" value="{{ mpadditional_field.width }}" id="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-width" placeholder="{{ entry_maf_width }}" class="form-control" />
+                              </div>
+                              <div class="col-sm-5">
+                                <input type="text" name="maf_product[{{ maf_product.product_id }}][mpadditional_fields][{{ mafp_row }}][height]" value="{{ mpadditional_field.height }}" id="input-product-{{ maf_product.product_id }}-mafp-{{ mafp_row }}-height" placeholder="{{ entry_maf_height }}" class="form-control" />
+                              </div>
+                            </div>
+                            <div class="help">{{ help_image_size }}</div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {% set mafp_row = mafp_row + 1 %}
+
+                      {% endfor %}
+                      </div>
+                      <div class="buttons text-right">
+                        <button type="button" class="btn btn-success add_maf_product" id="btn-maf-product-{{ maf_product.product_id }}" data-product_id="{{ maf_product.product_id }}" data-row="{{ mafp_row }}"><i class="fa fa-plus"></i> {{ button_add }}</button>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+
+  var maf_products = {};
+
+  {% for maf_product in maf_products %}
+  maf_products[{{ maf_product.product_id }}] = {
+    'product_id': '{{ maf_product.product_id }}',
+    'name': '{{ maf_product.name|e }}',
+    'status': '{{ maf_product.status|e }}',
+    'ostatus': '{{ maf_product.ostatus }}'
+  };
+  {% endfor %}
+
+  $('input[name=\'mafproduct\']').autocomplete({
+    'source': function(request, response) {
+      $.ajax({
+        url: 'index.php?route={{ extension_path }}mpadditional_field/mpadditional_field/autocompleteProductMpAdditionalField&{{ get_token }}={{ token }}&mpadditional_field_id={{ mpadditional_field_id }}&filter_name=' +  encodeURIComponent(request),
+        dataType: 'json',
+        success: function(json) {
+          response($.map(json, function(item) {
+            return {
+              label: '#' + item.product_id +' - '+ item.name + ' - ' + item.status,
+              value: item.product_id,
+              status: item.status,
+              product_id: item.product_id,
+              name: item.name,
+              ostatus: item.ostatus,
+              mpadditional_fields: item.mpadditional_fields,
+            }
+          }));
+        }
+      });
+    },
+    'select': function(maf_product) {
+
+      if ($('#tab-maf-product' + maf_product.product_id + '').length) {
+
+          $('#maf-product a[href=\'#tab-maf-product' + maf_product.product_id + '\']').trigger('click');
+          return;
+      }
+
+      maf_products[maf_product.product_id] = {
+        'product_id': maf_product.product_id,
+        'name': maf_product.name,
+        'status': maf_product.status,
+        'ostatus': maf_product.ostatus
+      };
+
+      let html = '<div class="tab-pane" id="tab-maf-product' + maf_product.product_id + '">';
+
+        html += '<input type="hidden" name="maf_product[' + maf_product.product_id + '][product_id]" value="' + maf_product.product_id + '" />';
+        html += '<input type="hidden" name="maf_product[' + maf_product.product_id + '][status]" value="' + maf_product.ostatus + '" />';
+
+        html += '<div id="product_mafs-' + maf_product.product_id + '" class="product_mafs">';
+        let mafp_row = 0;
+
+        for (let i in maf_product.mpadditional_fields) {
+          let mpadditional_field = maf_product.mpadditional_fields[i];
+
+          html += mafProduct(maf_product, mpadditional_field, mafp_row);
+
+          mafp_row++;
+        }
+
+        html += '</div>';
+        html += '<div class="buttons text-right">';
+          html += '<button type="button" class="btn btn-success add_maf_product" id="btn-maf-product-' + maf_product.product_id + '" data-product_id="' + maf_product.product_id + '" data-row="' + mafp_row + '"><i class="fa fa-plus"></i> {{ button_add }}</button>';
+        html += '</div>';
+      html += '</div>';
+
+
+      $('#tab-maf-product .tab-content').append(html);
+
+      $('#maf-product > li:last-child').before('<li><a href="#tab-maf-product' + maf_product.product_id + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick=" $(\'#maf-product a:first\').tab(\'show\');$(\'a[href=\\\'#tab-maf-product' + maf_product.product_id + '\\\']\').parent().remove(); $(\'#tab-maf-product' + maf_product.product_id + '\').remove();"></i> #' + maf_product.product_id + ' - ' + maf_product.name + ' - <label class="label '+ (maf_product.ostatus == 1 ? 'label-success' : 'label-danger' ) + '">'+ maf_product.status + '</label></li>');
+
+      $('#maf-product a[href=\'#tab-maf-product' + maf_product.product_id + '\']').trigger('click');
+
+    }
+  });
+
+  function mafProduct(maf_product, mpadditional_field, mafp_row) {
+
+    let html = '<div id="product_maf-' + mafp_row + '" class="product_maf">';
+      html += '<input type="hidden" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][product_mpadditional_field_id]" value="' + mpadditional_field.product_mpadditional_field_id + '" />';
+
+      html += '<div class="form-group">';
+        html += '<label class="col-sm-2 control-label" for="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-value">{{ entry_maf_description }}</label>';
+        html += '<div class="col-sm-10">';
+          {% for language in languages %}
+          html += '<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>';
+            html += '<input type="text" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][description][{{ language.language_id }}][value]" value="' + (typeof mpadditional_field.description != 'undefined' && typeof mpadditional_field.description[{{ language.language_id }}] != 'undefined' ? mpadditional_field.description[{{ language.language_id }}].value : '') + '" placeholder="{{ entry_maf_description }}" class="form-control"/>';
+          html += '</div>';
+          {% endfor %}
+        html += '</div>';
+      html += '</div>';
+      html += '<div class="form-group">';
+        html += '<label class="col-sm-2 control-label" for="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-status">{{ entry_status }}</label>';
+        html += '<div class="col-sm-10">';
+          html += '<select name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][status]" id="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-status{{ mpadditional_field_row }}" class="form-control">';
+            html += '<option value="1" ' + (mpadditional_field.ostatus ? 'selected="selected"' : '') + '>{{ text_enabled }}</option>';
+            html += '<option value="0" ' + (!mpadditional_field.ostatus ? 'selected="selected"' : '') + '>{{ text_disabled }}</option>';
+          html += '</select>';
+        html += '</div>';
+      html += '</div>';
+
+      html += '<div class="form-group">';
+        html += '<label class="col-sm-2 control-label" for="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-sort-order{{ mpadditional_field_row }}">{{ entry_sort_order }}</label>';
+        html += '<div class="col-sm-10">';
+          html += '<input type="text" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][sort_order]" id="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-sort-order{{ mpadditional_field_row }}" class="form-control" value="' + mpadditional_field.sort_order + '">';
+        html += '</div>';
+      html += '</div>';
+
+      html += '<div class="form-group">';
+        html += '<label class="col-sm-2 control-label">{{ entry_image }}</label>';
+        html += '<div class="col-sm-10"><a href="" id="thumb-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-image" data-toggle="image" class="img-thumbnail"><img src="' + mpadditional_field.thumb + '" alt="" title="" data-placeholder="{{ placeholder }}" /></a>';
+          html += '<input type="hidden" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][image]" value="' + mpadditional_field.image + '" id="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-image" />';
+        html += '</div>';
+      html += '</div>';
+
+      html += '<div class="form-group">';
+        html += '<label class="col-sm-2 control-label">{{ entry_image_size }}</label>';
+        html += '<div class="col-sm-10">';
+          html += '<div class="row">';
+            html += '<div class="col-sm-5">';
+              html += '<input type="text" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][width]" value="' + mpadditional_field.width + '" id="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-width" placeholder="{{ entry_maf_width }}" class="form-control" />';
+            html += '</div>';
+            html += '<div class="col-sm-5">';
+              html += '<input type="text" name="maf_product[' + maf_product.product_id + '][mpadditional_fields][' + mafp_row + '][height]" value="' + mpadditional_field.height + '" id="input-product-' + maf_product.product_id + '-mafp-' + mafp_row + '-height" placeholder="{{ entry_maf_height }}" class="form-control" />';
+            html += '</div>';
+          html += '</div>';
+          html += '<div class="help">{{ help_image_size }}</div>';
+        html += '</div>';
+      html += '</div>';
+
+    html += '</div>';
+
+    return html;
+  }
+
+  $('#tab-maf-product').on('click', '.add_maf_product', function() {
+
+    let maf_product = maf_products[$(this).attr('data-product_id')];
+
+    let description = {};
+    {% for language in languages %}
+      description[{{ language.language_id }}] = {};
+      description[{{ language.language_id }}].value = '';
+    {% endfor %}
+
+    let mpadditional_field = {
+      'product_mpadditional_field_id' : 0,
+      'description' : description,
+      'ostatus' : '{{ text_disabled }}',
+      'sort_order' : 0,
+      'thumb' : '{{ placeholder }}',
+      'image' : '',
+      'width' : '',
+      'height' : ''
+    };
+
+    let mafp_row = $(this).attr('data-row');
+
+    let html = mafProduct(maf_product, mpadditional_field, mafp_row);
+
+    $('#tab-maf-product' + maf_product.product_id + ' #product_mafs-' + maf_product.product_id + '').append(html);
+
+    mafp_row++;
+
+    $(this).attr('data-row', mafp_row).data('row', mafp_row);
+
+  });
+
+//   $('#mpadditional_field a:first').tab('show');
+</script>
+<style type="text/css">
+  .product_mafs .product_maf:not(:last-child) {
+    border-bottom: 2px solid #6F82FF;
+    margin-bottom: 1em;
+  }
+</style>
+{{ footer }}
