@@ -586,8 +586,9 @@ class ControllerProductCategory extends Controller {
 
 		foreach ($categories_by_parent[$parent_category_id] as $category) {
 			$category_id = (int)$category['category_id'];
+			$category_total = isset($category_totals[$category_id]) ? (int)$category_totals[$category_id] : 0;
 
-			if (isset($visited_category_ids[$category_id])) {
+			if (isset($visited_category_ids[$category_id]) || $category_total < 1) {
 				continue;
 			}
 
@@ -607,7 +608,7 @@ class ControllerProductCategory extends Controller {
 			$navigation[] = array(
 				'category_id' => $category_id,
 				'name'        => $category['name'],
-				'total'       => isset($category_totals[$category_id]) ? $category_totals[$category_id] : 0,
+				'total'       => $category_total,
 				'current'     => $category_id === (int)$current_category_id,
 				'expanded'    => in_array($category_id, $active_category_ids),
 				'href'        => $this->url->link('product/category', 'path=' . $category_path),
