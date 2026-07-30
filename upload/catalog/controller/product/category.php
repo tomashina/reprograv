@@ -126,6 +126,7 @@ class ControllerProductCategory extends Controller {
 			$data['text_mobile_one_column'] = $this->language->get('text_mobile_one_column');
 			$data['text_mobile_two_columns'] = $this->language->get('text_mobile_two_columns');
 			$data['text_mobile_grid_label'] = $this->language->get('text_mobile_grid_label');
+			$data['text_filter'] = $this->language->get('text_filter');
 			$data['text_category_navigation'] = $this->language->get('text_category_navigation');
 			$data['text_back_to_category'] = $this->language->get('text_back_to_category');
 			$data['text_breadcrumb_label'] = $this->language->get('text_breadcrumb_label');

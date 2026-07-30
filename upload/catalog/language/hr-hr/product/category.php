@@ -27,6 +27,7 @@ $_['text_category_faq']  = 'Česta pitanja: %s';
 $_['text_mobile_grid_label'] = 'Broj proizvoda u redu';
 $_['text_mobile_one_column'] = 'Jedan proizvod u redu';
 $_['text_mobile_two_columns'] = 'Dva proizvoda u redu';
+$_['text_filter'] = 'Filter';
 $_['text_category_navigation'] = 'Kategorija';
 $_['text_back_to_category'] = 'Sve iz kategorije %s';
 $_['text_breadcrumb_label'] = 'Putanja stranice';

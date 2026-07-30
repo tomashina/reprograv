@@ -26,6 +26,7 @@ $_['text_category_faq']  = 'Frequently asked questions: %s';
 $_['text_mobile_grid_label'] = 'Products per row';
 $_['text_mobile_one_column'] = 'One product per row';
 $_['text_mobile_two_columns'] = 'Two products per row';
+$_['text_filter'] = 'Filter';
 $_['text_category_navigation'] = 'Category';
 $_['text_back_to_category'] = 'All in %s';
 $_['text_breadcrumb_label'] = 'Breadcrumb';
