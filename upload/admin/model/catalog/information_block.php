@@ -62,6 +62,7 @@ class ModelCatalogInformationBlock extends Model {
 
 			$blocks[] = array(
 				'information_block_id' => $block_id,
+				'admin_title'          => $block['admin_title'],
 				'image'                => $block['image'],
 				'layout'               => $block['layout'],
 				'status'               => (int)$block['status'],
@@ -100,9 +101,10 @@ class ModelCatalogInformationBlock extends Model {
 			}
 
 			$image = isset($block['image']) ? trim((string)$block['image']) : '';
+			$admin_title = isset($block['admin_title']) ? trim((string)$block['admin_title']) : '';
 			$status = isset($block['status']) ? (int)$block['status'] : 0;
 
-			$this->db->query("INSERT INTO `" . DB_PREFIX . "information_block` SET information_id = '" . (int)$information_id . "', image = '" . $this->db->escape($image) . "', layout = '" . $this->db->escape($layout) . "', status = '" . ($status ? 1 : 0) . "', sort_order = '" . (int)$block_sort_order . "', date_added = NOW(), date_modified = NOW()");
+			$this->db->query("INSERT INTO `" . DB_PREFIX . "information_block` SET information_id = '" . (int)$information_id . "', admin_title = '" . $this->db->escape($admin_title) . "', image = '" . $this->db->escape($image) . "', layout = '" . $this->db->escape($layout) . "', status = '" . ($status ? 1 : 0) . "', sort_order = '" . (int)$block_sort_order . "', date_added = NOW(), date_modified = NOW()");
 
 			$block_id = $this->db->getLastId();
 

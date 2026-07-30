@@ -7,6 +7,7 @@
 CREATE TABLE IF NOT EXISTS `oc_information_block` (
   `information_block_id` int(11) NOT NULL AUTO_INCREMENT,
   `information_id` int(11) NOT NULL,
+  `admin_title` varchar(255) NOT NULL DEFAULT '',
   `image` varchar(1024) NOT NULL DEFAULT '',
   `layout` varchar(32) NOT NULL DEFAULT 'image_right',
   `status` tinyint(1) NOT NULL DEFAULT '1',
@@ -16,6 +17,24 @@ CREATE TABLE IF NOT EXISTS `oc_information_block` (
   PRIMARY KEY (`information_block_id`),
   KEY `information_id_sort_order` (`information_id`,`sort_order`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Omogućuje siguran ponovni import na instalacijama na kojima je tablica
+-- kreirana ranijom verzijom migracije.
+SET @admin_title_column_exists := (
+  SELECT COUNT(*)
+  FROM `information_schema`.`COLUMNS`
+  WHERE `TABLE_SCHEMA` = DATABASE()
+    AND `TABLE_NAME` = 'oc_information_block'
+    AND `COLUMN_NAME` = 'admin_title'
+);
+SET @admin_title_column_sql := IF(
+  @admin_title_column_exists = 0,
+  'ALTER TABLE `oc_information_block` ADD `admin_title` varchar(255) NOT NULL DEFAULT '''' AFTER `information_id`',
+  'SELECT 1'
+);
+PREPARE admin_title_column_statement FROM @admin_title_column_sql;
+EXECUTE admin_title_column_statement;
+DEALLOCATE PREPARE admin_title_column_statement;
 
 CREATE TABLE IF NOT EXISTS `oc_information_block_description` (
   `information_block_id` int(11) NOT NULL,
@@ -79,9 +98,9 @@ WHERE `information_id` = @information_id;
 
 -- 1. Uvodni Trotec blok
 INSERT INTO `oc_information_block`
-  (`information_id`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
+  (`information_id`, `admin_title`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
 VALUES
-  (@information_id, 'https://www.repro-grav.com/image/catalog/kategorije/TRO_Speedy400_2021_Mila_rechts_Laserkopf_rechts_ret.jpg', 'image_right', 1, 0, NOW(), NOW());
+  (@information_id, 'Trotec – uvod', 'https://www.repro-grav.com/image/catalog/kategorije/TRO_Speedy400_2021_Mila_rechts_Laserkopf_rechts_ret.jpg', 'image_right', 1, 0, NOW(), NOW());
 SET @block_id := LAST_INSERT_ID();
 
 INSERT INTO `oc_information_block_description`
@@ -114,9 +133,9 @@ VALUES
 
 -- 2. Serija Speedy
 INSERT INTO `oc_information_block`
-  (`information_id`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
+  (`information_id`, `admin_title`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
 VALUES
-  (@information_id, 'https://www.repro-grav.com/image/catalog/banneri/speedy.jpg', 'image_right', 1, 10, NOW(), NOW());
+  (@information_id, '', 'https://www.repro-grav.com/image/catalog/banneri/speedy.jpg', 'image_right', 1, 10, NOW(), NOW());
 SET @block_id := LAST_INSERT_ID();
 
 INSERT INTO `oc_information_block_description`
@@ -147,9 +166,9 @@ VALUES
 
 -- 3. Serija Q
 INSERT INTO `oc_information_block`
-  (`information_id`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
+  (`information_id`, `admin_title`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
 VALUES
-  (@information_id, 'https://www.repro-grav.com/image/catalog/kategorije/Q-serija.jpg', 'image_right', 1, 20, NOW(), NOW());
+  (@information_id, '', 'https://www.repro-grav.com/image/catalog/kategorije/Q-serija.jpg', 'image_right', 1, 20, NOW(), NOW());
 SET @block_id := LAST_INSERT_ID();
 
 INSERT INTO `oc_information_block_description`
@@ -178,9 +197,9 @@ VALUES
 
 -- 4. Serija SpeedMarker
 INSERT INTO `oc_information_block`
-  (`information_id`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
+  (`information_id`, `admin_title`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
 VALUES
-  (@information_id, 'https://www.repro-grav.com/image/catalog/banneri/speedmarker.jpg', 'image_right', 1, 30, NOW(), NOW());
+  (@information_id, '', 'https://www.repro-grav.com/image/catalog/banneri/speedmarker.jpg', 'image_right', 1, 30, NOW(), NOW());
 SET @block_id := LAST_INSERT_ID();
 
 INSERT INTO `oc_information_block_description`
@@ -211,9 +230,9 @@ VALUES
 
 -- 5. U serija
 INSERT INTO `oc_information_block`
-  (`information_id`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
+  (`information_id`, `admin_title`, `image`, `layout`, `status`, `sort_order`, `date_added`, `date_modified`)
 VALUES
-  (@information_id, 'https://www.repro-grav.com/image/catalog/kategorije/U-serija2.jpg', 'image_right', 1, 40, NOW(), NOW());
+  (@information_id, '', 'https://www.repro-grav.com/image/catalog/kategorije/U-serija2.jpg', 'image_right', 1, 40, NOW(), NOW());
 SET @block_id := LAST_INSERT_ID();
 
 INSERT INTO `oc_information_block_description`

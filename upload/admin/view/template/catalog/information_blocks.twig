@@ -21,7 +21,7 @@
           <span class="block-drag-handle" title="Povuci za sortiranje"><i class="fa fa-arrows-v"></i></span>
           <strong class="information-block-summary">
             {% set first_language = languages|first %}
-            {{ (block.description[first_language.language_id].title ?: 'Novi blok')|e }}
+            {{ (block.admin_title ?: block.description[first_language.language_id].title ?: 'Novi blok')|e }}
           </strong>
           <div class="pull-right">
             <button type="button" class="btn btn-xs btn-default btn-duplicate-information-block" title="Dupliciraj blok"><i class="fa fa-copy"></i> Dupliciraj</button>
@@ -34,6 +34,14 @@
         <div class="panel-collapse collapse" id="information-block-body-{{ block_row }}">
           <div class="panel-body">
             <input type="hidden" class="information-block-sort-order" name="information_blocks[{{ block_row }}][sort_order]" value="{{ block.sort_order }}" />
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Naziv u adminu</label>
+              <div class="col-sm-10">
+                <input type="text" name="information_blocks[{{ block_row }}][admin_title]" value="{{ block.admin_title|e }}" class="form-control information-block-admin-title" placeholder="Interni naziv; ne prikazuje se na web stranici" />
+                <p class="help-block">Služi samo za lakše prepoznavanje zatvorenog bloka u administraciji.</p>
+              </div>
+            </div>
 
             <div class="row">
               <div class="col-md-4">
@@ -199,6 +207,14 @@
     <div class="panel-collapse collapse" id="information-block-body-__BLOCK__">
       <div class="panel-body">
         <input type="hidden" class="information-block-sort-order" name="information_blocks[__BLOCK__][sort_order]" value="0" />
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Naziv u adminu</label>
+          <div class="col-sm-10">
+            <input type="text" name="information_blocks[__BLOCK__][admin_title]" value="" class="form-control information-block-admin-title" placeholder="Interni naziv; ne prikazuje se na web stranici" />
+            <p class="help-block">Služi samo za lakše prepoznavanje zatvorenog bloka u administraciji.</p>
+          </div>
+        </div>
 
         <div class="row">
           <div class="col-md-4">
@@ -389,7 +405,12 @@
   }
 
   function updateSummary($block) {
-    var value = $.trim($block.find('.information-block-title').first().val());
+    var value = $.trim($block.find('.information-block-admin-title').val());
+
+    if (!value) {
+      value = $.trim($block.find('.information-block-title').first().val());
+    }
+
     $block.find('> .information-block-heading .information-block-summary').text(value || 'Novi blok');
   }
 
@@ -550,7 +571,7 @@
     });
 
     $('#information-block-list')
-      .on('input', '.information-block-title', function() {
+      .on('input', '.information-block-title, .information-block-admin-title', function() {
         updateSummary($(this).closest('.information-block-row'));
       })
       .on('change', '.information-block-image-input', function() {
