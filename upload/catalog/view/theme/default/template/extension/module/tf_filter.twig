@@ -535,11 +535,16 @@
 
       isMobileMode = shouldUseMobile;
 
-      if (shouldUseMobile) {
-        $filter.attr('aria-hidden', $('html').hasClass('side-filter-open') ? 'false' : 'true');
+      $groupHeaders.each(function() {
+        var $header = $(this);
+        var isCategoryGroup = $header.closest('.tf-filter-group').hasClass('sub_category');
 
-        $groupHeaders.each(function() {
-          var $header = $(this);
+        if (isCategoryGroup) {
+          $header
+            .removeAttr('data-toggle data-target href role tabindex')
+            .removeClass('collapsed')
+            .attr('aria-expanded', 'true');
+        } else {
           $header
             .attr({
               'data-toggle': 'collapse',
@@ -548,13 +553,22 @@
               'tabindex': '0'
             })
             .removeAttr('href');
-        });
+        }
+      });
+
+      if (shouldUseMobile) {
+        $filter.attr('aria-hidden', $('html').hasClass('side-filter-open') ? 'false' : 'true');
 
         var $panels = $filter.find('.tf-filter-group > .collapse');
         $panels.removeClass('in').css('height', '').attr('aria-expanded', 'false');
         $groupHeaders.addClass('collapsed').attr('aria-expanded', 'false');
 
-        var $activeGroup = $filter.find('.tf-filter-group').filter(function() {
+        var $categoryPanels = $filter.find('.tf-filter-group.sub_category > .collapse');
+        $categoryPanels.addClass('in').attr('aria-expanded', 'true').each(function() {
+          syncGroupHeader($(this));
+        });
+
+        var $activeGroup = $filter.find('.tf-filter-group:not(.sub_category)').filter(function() {
           return getGroupSelectionCount($(this)) > 0;
         }).first();
 
@@ -566,16 +580,23 @@
       } else {
         $filter.removeAttr('aria-hidden');
 
-        $groupHeaders
-          .removeClass('collapsed')
-          .removeAttr('data-toggle data-target href role tabindex')
-          .attr('aria-expanded', 'true');
+        var $desktopPanels = $filter.find('.tf-filter-group > .collapse');
+        var $desktopActiveGroups = $filter.find('.tf-filter-group:not(.sub_category)').filter(function() {
+          return getGroupSelectionCount($(this)) > 0;
+        });
 
-        $filter
-          .find('.tf-filter-group > .collapse')
-          .addClass('in')
-          .attr('aria-expanded', 'true')
-          .css('height', 'auto');
+        $desktopPanels.removeClass('in').css('height', '').attr('aria-expanded', 'false');
+        $groupHeaders.addClass('collapsed').attr('aria-expanded', 'false');
+
+        $filter.find('.tf-filter-group.sub_category > .collapse').addClass('in').attr('aria-expanded', 'true').each(function() {
+          syncGroupHeader($(this));
+        });
+
+        $desktopActiveGroups.each(function() {
+          var $activePanel = $(this).children('.collapse');
+          $activePanel.addClass('in').attr('aria-expanded', 'true');
+          syncGroupHeader($activePanel);
+        });
       }
     }
 
@@ -624,7 +645,11 @@
         return;
       }
 
-      $filter.find('.tf-filter-group > .collapse.in').not(this).collapse('hide');
+      $filter.find('.tf-filter-group:not(.sub_category) > .collapse.in').not(this).collapse('hide');
+    });
+
+    $filter.on('hide.bs.collapse', '.tf-filter-group.sub_category > .collapse', function(e) {
+      e.preventDefault();
     });
 
     $filter.on('shown.bs.collapse hidden.bs.collapse', '.tf-filter-group > .collapse', function() {
@@ -632,7 +657,7 @@
     });
 
     $groupHeaders.on('keydown.tfFilter{{ module_class_id }}', function(e) {
-      if (mobileMedia.matches && (e.key === 'Enter' || e.key === ' ')) {
+      if ($(this).attr('role') === 'button' && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
         $(this).trigger('click');
       }
@@ -827,4 +852,4 @@
     });
   });
 </script>
-<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.8" rel="stylesheet" media="screen" />
+<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.10" rel="stylesheet" media="screen" />

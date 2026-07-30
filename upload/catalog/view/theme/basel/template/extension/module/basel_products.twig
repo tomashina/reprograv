@@ -1,4 +1,4 @@
-<div class="widget module{{ module }} {% if columns != 'list' %} grid{% endif %}{% if contrast %} contrast-bg{% endif %}{% if carousel and rows > 1 %}  multiple-rows{% endif %}" {% if use_margin %}style="margin-bottom: {{ margin }}"{% endif %}> 
+<div class="widget basel-products-module module{{ module }} {% if columns != 'list' %} grid{% endif %}{% if contrast %} contrast-bg{% endif %}{% if carousel and rows > 1 %}  multiple-rows{% endif %}{% if use_margin %} margin-b{{ margin|replace({'px':'', ' ':''}) }}{% endif %}">
 {% if block_title %}
 <!-- Block Title -->
 <div class="widget-title">
@@ -14,7 +14,7 @@
 {% endif %}
 {% if tabs|length > 1 %}
 <!-- Tabs -->
-<ul id="tabs-{{ module }}" class="nav nav-tabs {{ tabstyle }}" data-tabs="tabs" style="">
+<ul id="tabs-{{ module }}" class="nav nav-tabs {{ tabstyle }}" data-tabs="tabs">
     {% for keyTab, tab in tabs %}
         {% if keyTab == 0 %}
         <li class="active"><a href="#tab{{ module }}{{ keyTab }}" data-toggle="tab">{{ tab.title }}</a></li>
@@ -28,11 +28,11 @@
 <!-- Product Group(s) -->
 {% for key, tab in tabs %}
 <div class="tab-pane{% if key == 0 %} active in{% endif %} fade" id="tab{{ module }}{{ key }}">
-    <div class="grid-holder halfview grid{{ columns }} prod_module{{ module }}{% if carousel %} carousel{% endif %}{% if carousel_a and rows > 1 %} sticky-arrows{% endif %}">
+    <div class="grid-holder halfview grid{{ columns }} prod_module{{ module }}{% if carousel %} carousel{% endif %}{% if carousel_a and rows > 1 %} sticky-arrows{% endif %}{% if columns != 'list' %} product-card-grid{% endif %}">
         {% for product in tab.products %}
             <div class="item single-product">
                   <div class="edge">
-            <div class="image"{% if columns == 'list' %} style="width:{{ img_width }}px"{% endif %}>
+            <div class="image{% if columns == 'list' %} basel-products-list-image{% endif %}">
                 <a href="{{ product.href }}">
                 <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" />
                 {% if product.thumb2 %}
@@ -73,7 +73,7 @@
             {% endif %}
        
         
-            <div class="price-wrapper">
+            <div class="price-wrapper{% if product.attention != '1' and product.price %} has-price{% else %} no-price{% endif %}">
                 {% if product.attention !='1' %}
             {% if product.price   %}
             <div class="pwrap">

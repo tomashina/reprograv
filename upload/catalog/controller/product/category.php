@@ -126,6 +126,8 @@ class ControllerProductCategory extends Controller {
 			$data['text_mobile_one_column'] = $this->language->get('text_mobile_one_column');
 			$data['text_mobile_two_columns'] = $this->language->get('text_mobile_two_columns');
 			$data['text_mobile_grid_label'] = $this->language->get('text_mobile_grid_label');
+			$data['text_category_navigation'] = $this->language->get('text_category_navigation');
+			$data['text_back_to_category'] = $this->language->get('text_back_to_category');
 
 			// Set the last category breadcrumb
 			$data['breadcrumbs'][] = array(
@@ -212,6 +214,37 @@ class ControllerProductCategory extends Controller {
 
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
+			}
+
+			$data['category_navigation'] = array();
+			$data['category_navigation_parent'] = array();
+
+			$parent_category_id = (int)$category_info['parent_id'];
+
+			if ($parent_category_id) {
+				$parent_category_info = $this->model_catalog_category->getCategory($parent_category_id);
+				$parent_path = isset($path) && $path ? $path : (string)$parent_category_id;
+
+				if ($parent_category_info) {
+					$data['category_navigation_parent'] = array(
+						'name' => $parent_category_info['name'],
+						'href' => $this->url->link('product/category', 'path=' . $parent_path)
+					);
+				}
+
+				foreach ($this->model_catalog_category->getCategories($parent_category_id) as $sibling_category) {
+					$sibling_filter_data = array(
+						'filter_category_id'  => $sibling_category['category_id'],
+						'filter_sub_category' => true
+					);
+
+					$data['category_navigation'][] = array(
+						'name'     => $sibling_category['name'],
+						'total'    => $this->model_catalog_product->getTotalProducts($sibling_filter_data),
+						'current'  => (int)$sibling_category['category_id'] === $category_id,
+						'href'     => $this->url->link('product/category', 'path=' . $parent_path . '_' . (int)$sibling_category['category_id'])
+					);
+				}
 			}
 
 			$data['categories'] = array();

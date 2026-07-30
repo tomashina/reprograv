@@ -1,60 +1,12 @@
 {{ header }}
 
-{% if product_layout != "full-width" %}
-    <style>
-        .product-page .image-area {
-        {% if product_layout == "images-left" and images %}
-            width: {{img_w + img_a_w + 20 }}px;
-        {% else %}
-            width: {{ img_w }}px;
-        {% endif %}
-        }
-        .product-page .main-image {
-           /* width:{{ img_w }}px; */
-        }
-        .product-page .image-additional {
-        {% if product_layout == "images-left" %}
-            width: {{ img_a_w }}px;
-            height: {{ img_h }}px;
-        {% else %}
-            width: {{ img_w }}px;
-        {% endif %}
-        }
-        .product-page .image-additional.has-arrows {
-        {% if product_layout == "images-left" %}
-            height: {{ img_h - 40 }}px;
-        {% endif %}
-        }
-        @media (min-width: 992px) and (max-width: 1199px) {
-            .product-page .image-area {
-            {% if product_layout == "images-left" %}
-                width: {{((img_w + img_a_w)/1.25 + 20) }}px;
-            {% else %}
-                width: {{ img_w/1.25 }}px;
-            {% endif %}
-            }
-            .product-page .main-image {
-                width:{{ img_w/1.25 }}px;
-            }
-            .product-page .image-additional {
-            {% if product_layout == "images-left" %}
-                width: {{ img_a_w/1.25 }}px;
-                height: {{ img_h/1.25 }}px;
-            {% else %}
-                width: {{ img_w/1.25 }}px;
-            {% endif %}
-            }
-        }
-    </style>
-{% endif %}
-
-<ul class="breadcrumb">
+<ul class="breadcrumb product-breadcrumb">
     {% for breadcrumb in breadcrumbs %}
         <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
     {% endfor %}
 </ul>
 
-<div class="container product-layout {{ product_layout }}">
+<div class="container product-layout product-detail-page {{ product_layout }}">
 
     <div class="row">{{ column_left }}
         {% if column_left and column_right %}
@@ -72,7 +24,7 @@
                 <div class="table-cell left">
 
                     {% if thumb or images %}
-                    <div class="image-area {% if not hover_zoom %}hover-zoom-disabled{% endif %}" id="gallery">
+                    <div class="image-area{% if images %} has-additional-images{% endif %}{% if not hover_zoom %} hover-zoom-disabled{% endif %}" id="gallery">
 
                         {% if thumb %}
                             <div class="main-image">
@@ -89,7 +41,7 @@
                                     <span class="badge out_of_stock_badge"><i>{{ basel_text_out_of_stock}}</i></span>
                                 {% endif %}
 
-                                <a class="{% if not images %}link cloud-zoom{% endif %} {% if product_layout == 'full-width' %}link{% else %}link cloud-zoom{% endif %}" id="main-image" href="image/{{ popup }}" rel="position:'inside', showTitle: false"><img src="{{ thumb }}" style="" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
+                                <a class="{% if not images %}link cloud-zoom{% endif %} {% if product_layout == 'full-width' %}link{% else %}link cloud-zoom{% endif %}" id="main-image" href="image/{{ popup }}" rel="position:'inside', showTitle: false"><img src="{{ thumb }}" width="{{ img_w }}" height="{{ img_h }}" fetchpriority="high" decoding="async" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
                             </div>
                         {% endif %}
 
@@ -97,13 +49,58 @@
                             <ul class="image-additional" >
                                 {% for image in images %}
                                     <li>
-                                        <a class="link {% if product_layout != 'full-width' %}cloud-zoom-gallery locked{% endif %}" href="{{ image.fulsize }}" rel="useZoom: 'main-image', smallImage: '{{ image.popup }}'"><img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
+                                        <a class="link {% if product_layout != 'full-width' %}cloud-zoom-gallery locked{% endif %}" href="{{ image.fulsize }}" rel="useZoom: 'main-image', smallImage: '{{ image.popup }}'"><img src="{{ image.thumb }}" loading="lazy" decoding="async" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
                                     </li>
                                 {% endfor %}
                                 {% if thumb and (product_layout != "full-width") %}
-                                    <li><a class="link cloud-zoom-gallery locked active" href="image/{{ popup }}" rel="useZoom: 'main-image', smallImage: '{{ thumb }}'"><img src="{{ thumb_sm }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
+                                    <li><a class="link cloud-zoom-gallery locked active" href="image/{{ popup }}" rel="useZoom: 'main-image', smallImage: '{{ thumb }}'"><img src="{{ thumb_sm }}" loading="lazy" decoding="async" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
                                 {% endif %}
                             </ul>
+                        {% endif %}
+
+                        {% if thumb %}
+                            <div class="mobile-product-gallery{% if images %} has-multiple-images{% endif %}">
+                                {% if price and special and sale_badge %}
+                                    <span class="badge sale_badge"><i>{{ sale_badge }}</i></span>
+                                {% endif %}
+                                {% if is_new %}
+                                    <span class="badge new_badge"><i>{{ basel_text_new }}</i></span>
+                                {% endif %}
+                                {% if commercial_data_visible and ((qty < 1) and (stock_badge_status)) %}
+                                    <span class="badge out_of_stock_badge"><i>{{ basel_text_out_of_stock }}</i></span>
+                                {% endif %}
+
+                                <div class="mobile-product-gallery-slider">
+                                    <a class="mobile-product-gallery-slide" href="image/{{ popup }}" data-gallery-index="0" aria-label="{{ heading_title }}">
+                                        <img src="{{ thumb }}" width="{{ img_w }}" height="{{ img_h }}" fetchpriority="high" decoding="async" alt="{{ heading_title }}" />
+                                    </a>
+                                    {% for image in images %}
+                                        <a class="mobile-product-gallery-slide" href="{{ image.fulsize }}" data-gallery-index="{{ loop.index }}" aria-label="{{ heading_title }} – {{ loop.index + 1 }}">
+                                            <img src="{{ image.popup }}" loading="lazy" decoding="async" alt="{{ heading_title }} – {{ loop.index + 1 }}" />
+                                        </a>
+                                    {% endfor %}
+                                </div>
+
+                                {% if images %}
+                                    <div class="mobile-product-gallery-thumbnails" aria-label="Slike proizvoda">
+                                        <button type="button" class="mobile-product-gallery-thumbnail is-active" data-mobile-gallery-nav="0" aria-label="Slika 1" aria-current="true">
+                                            <img src="{{ thumb_sm }}" loading="lazy" decoding="async" alt="" />
+                                        </button>
+                                        {% for image in images %}
+                                            <button type="button" class="mobile-product-gallery-thumbnail" data-mobile-gallery-nav="{{ loop.index }}" aria-label="Slika {{ loop.index + 1 }}" aria-current="false">
+                                                <img src="{{ image.thumb }}" loading="lazy" decoding="async" alt="" />
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="product-lightbox-items" aria-hidden="true">
+                                <a href="image/{{ popup }}" title="{{ heading_title }}"></a>
+                                {% for image in images %}
+                                    <a href="{{ image.fulsize }}" title="{{ heading_title }}"></a>
+                                {% endfor %}
+                            </div>
                         {% endif %}
 
                     </div> <!-- .table-cell.left ends -->
@@ -130,7 +127,7 @@
                         {% if price %}
                             <ul class="list-unstyled price">
                                 {% if not special %}
-                                    <li><span class="live-price">{{ price }} <span>  </li>
+                                    <li><span class="live-price">{{ price }}</span></li>
                                 {% else %}
                                     <li><span class="price-old">{{ price }}</span> <span class="live-price-new"> {{ special }}  </span>  </li>
 
@@ -138,11 +135,11 @@
                                 {% endif %}
 
                                    {% if price and tax and not options %}
-                                <li>{{ text_tax }} {{ tax }}</p>
+                                <li class="price-tax">{{ text_tax }} {{ tax }}</li>
                             {% endif %}
                             </ul>
-                            <p><small>Cijena je iskazana bez PDV-a</small></p>
-                            <p><small><span style="color:red">*</span><strong>Napomena:</strong> Navedene cijene služe isključivo u informativne svrhe te se mogu razlikovati ovisno o količini narudžbe i uvjetima prodaje.</small></p>
+                            <p class="product-tax-note">Cijena je iskazana bez PDV-a</p>
+                            <p class="product-price-notice"><span class="required-marker" aria-hidden="true">*</span><strong>Napomena:</strong> Navedene cijene služe isključivo u informativne svrhe te se mogu razlikovati ovisno o količini narudžbe i uvjetima prodaje.</p>
 
 
 
@@ -162,7 +159,9 @@
                      
 
                
-                            {{short_description}}
+                            <div class="product-short-description">
+                                {{ short_description }}
+                            </div>
    
        
                        <!--tio-->
@@ -180,16 +179,18 @@
                                                     <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
                                                 </div>
                                                 <div class="table-cell">
-                                                    <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
-                                                        <option value="">{{ text_select }}</option>
-                                                        {% for option_value in option.product_option_value %}
-                                                            <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
-                                                                {% if option_value.price %}
-                                                                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                                                                {% endif %}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
+                                                    <div class="product-select-wrap">
+                                                        <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
+                                                            <option value="">{{ text_select }}</option>
+                                                            {% for option_value in option.product_option_value %}
+                                                                <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
+                                                                    {% if option_value.price %}
+                                                                        ({{ option_value.price_prefix }}{{ option_value.price }})
+                                                                    {% endif %}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         {% endif %}
@@ -236,12 +237,11 @@
                                                                     <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" data-uid="{{ option_value.sifra }}" />
 
                                                                         {% if option_value.image %}
-                                                                        <img src="{{ option_value.image }}" alt="{{ option_value.name }}{% if option_value.price %}({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" style="width:38px;height:38px"/>
+                                                                        <img class="product-option-image" src="{{ option_value.image }}" loading="lazy" decoding="async" alt="{{ option_value.name }}{% if option_value.price %}({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" />
                                                          
 
                                                                     {% elseif option_value.color and option.name =='Boja' or option_value.color and option.name =='Boja jastučića' %}
-                                                                        <span class="ccont" style="background-color: {{ option_value.color }}"  data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}"
-                                                                        > </span>
+                                                                        <svg class="ccont" viewBox="0 0 38 38" aria-hidden="true" focusable="false" data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}"><rect width="38" height="38" rx="2" fill="{{ option_value.color|e('html_attr') }}"></rect></svg>
 
 
                                                                     {% else %}
@@ -403,9 +403,9 @@
                                 {% else %}
                                     <div class="form-group quantity buttons_added buy catalog_hide">
 
-                                        <button type="button" class="minus"> <i class="fa fa-minus-circle" aria-hidden="true"></i> </button>
-                                        <input type="text" step="{{ minimum }}" min="{{ minimum }}" max="{{ quantity }}" id="input-quantity" name="quantity" value="{{ minimum }}" title="Qty" class="input-text qty text put-qty" size="4" pattern="" inputmode="">
-                                        <button type="button"  class="plus"> <i class="fa fa-plus-circle" aria-hidden="true"></i> </button>
+                                        <button type="button" class="minus" aria-label="Smanji količinu"> <i class="fa fa-minus" aria-hidden="true"></i> </button>
+                                        <input type="text" step="{{ minimum }}" min="{{ minimum }}" max="{{ quantity }}" id="input-quantity" name="quantity" value="{{ minimum }}" title="Količina" aria-label="Količina" class="input-text qty text put-qty" size="4" pattern="[0-9]*" inputmode="numeric">
+                                        <button type="button" class="plus" aria-label="Povećaj količinu"> <i class="fa fa-plus" aria-hidden="true"></i> </button>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
 
                                         {% if commercial_data_visible and ((qty < 1) and (stock_badge_status)) %}
@@ -433,13 +433,13 @@
 
 
 
-                        <p class="info is_wishlist"><a onclick="wishlist.add('{{ product_id }}');"><i class="icon-heart"></i> {{ button_wishlist }}</a></p>
-                        <p class="info is_compare"><a onclick="compare.add('{{ product_id }}');"><i class="icon-refresh"></i> {{ button_compare }}</a></p>
-                        {% if question_status %}
-                            <p class="info is_ask"><a class="to_tabs" onclick="$('a[href=\'#tab-questions\']').trigger('click'); return false;"><i class="icon-question"></i> {{ basel_button_ask }}</a></p>
-                        {% endif %}
-
-                        <div class="clearfix"></div>
+                        <div class="product-secondary-actions">
+                            <button type="button" class="product-secondary-action is_wishlist" onclick="wishlist.add('{{ product_id }}');"><i class="icon-heart" aria-hidden="true"></i> {{ button_wishlist }}</button>
+                            <button type="button" class="product-secondary-action is_compare" onclick="compare.add('{{ product_id }}');"><i class="icon-refresh" aria-hidden="true"></i> {{ button_compare }}</button>
+                            {% if question_status %}
+                                <button type="button" class="product-secondary-action is_ask to_tabs" onclick="$('a[href=\'#tab-questions\']').trigger('click'); return false;"><i class="icon-question" aria-hidden="true"></i> {{ basel_button_ask }}</button>
+                            {% endif %}
+                        </div>
 
                         <div class="info-holder">
 
@@ -456,7 +456,7 @@
                                 <p class="info"><b>{{ text_manufacturer }}</b> <a class="hover_uline" href="{{ manufacturers }}">{{ manufacturer }}</a></p>
                             {% endif %}
 
-                            <p class="info"><b>{{ text_model }}</b><font data-ro="product-model">{{ model }}</font></p>
+                            <p class="info"><b>{{ text_model }}</b><span class="product-model" data-ro="product-model">{{ model }}</span></p>
 
                             {% if reward %}
                                 <p class="info"><b>{{ text_reward }}</b> {{ reward }}</p>
@@ -485,10 +485,10 @@
 {% endif %}
 
 {% if full_width_tabs %}
-<div class="outer-container product-tabs-wrapper">
+<div class="outer-container product-tabs-wrapper product-detail-tabs">
     <div class="container">
         {% else %}
-        <div class="inline-tabs">
+        <div class="inline-tabs product-detail-tabs">
             {% endif %}
 
             <!-- Tabs area start -->
@@ -508,7 +508,7 @@
 
 
                         {% if attachfile.tab_name %}
-                            <li><a s href="#tab-attach-document" data-toggle="tab">{{ attachfile.tab_name }}</a></li>
+                            <li><a href="#tab-attach-document" data-toggle="tab">{{ attachfile.tab_name }}</a></li>
                         {% endif %}
 
                         {% if review_status %}
@@ -521,7 +521,7 @@
                     <div class="tab-content">
 
                         <div class="tab-pane active" id="tab-specification">
-                            <div class="row">
+                            <div class="row product-tab-pane-row">
                                 <div class="col-md-6">
 
 
@@ -540,23 +540,19 @@
 
                                 {% if attribute_groups %}
                                     <div class="col-md-6">
-                                        <table class="table table-striped specification">
+                                        <section class="product-specification-card" aria-labelledby="product-specification-title">
+                                            <h2 id="product-specification-title">Dodatne informacije</h2>
+                                            <dl>
                                             {% for attribute_group in attribute_groups %}
-                                                <thead>
-                                                <tr>
-                                                    <td colspan="2">Dodatne infomacije</td>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
                                                 {% for attribute in attribute_group.attribute %}
-                                                    <tr>
-                                                        <td class="text-left"><b>{{ attribute.name }}</b></td>
-                                                        <td class="text-right">{{ attribute.text }}</td>
-                                                    </tr>
+                                                    <div class="product-specification-row">
+                                                        <dt>{{ attribute.name }}</dt>
+                                                        <dd>{{ attribute.text }}</dd>
+                                                    </div>
                                                 {% endfor %}
-                                                </tbody>
                                             {% endfor %}
-                                        </table>
+                                            </dl>
+                                        </section>
                                     </div>
                                 {% endif %}
 
@@ -698,11 +694,11 @@
             <div class="widget widget-related">
 
                 <div class="widget-title">
-                    <p class="main-title"><span>{{ text_related }}</span></p>
+                    <h2 class="main-title"><span>{{ text_related }}</span></h2>
                     <p class="widget-title-separator"><i class="icon-line-cross"></i></p>
                 </div>
 
-                <div class="grid grid-holder related carousel grid{{ basel_rel_prod_grid }}">
+                <div class="grid grid-holder related carousel product-card-grid grid{{ basel_rel_prod_grid }}">
                     {% for product in products %}
                         {% include 'basel/template/product/single_product.twig' %}
                     {% endfor %}
@@ -916,7 +912,7 @@
 
         $('#form-upload').remove();
 
-        $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+        $('body').prepend('<form enctype="multipart/form-data" id="form-upload" class="product-upload-form"><input type="file" name="file" /></form>');
 
         $('#form-upload input[name=\'file\']').trigger('click');
 
@@ -1090,10 +1086,88 @@
 <script>
     $(document).ready(function() {
 // Image Gallery
-        $("#gallery").lightGallery({
-            selector: '.link',
+        var $productLightbox = $('.product-lightbox-items');
+
+        $productLightbox.lightGallery({
+            selector: 'a',
             download:false,
             hideBarsDelay:99999
+        });
+
+        $('#main-image').on('click.productGallery', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var activeHref = $('.image-additional a.link.active').attr('href') || $(this).attr('href');
+            var activeUrl = $('<a>').attr('href', activeHref)[0].href;
+            var galleryIndex = 0;
+
+            $productLightbox.find('a').each(function(index) {
+                if (this.href === activeUrl) {
+                    galleryIndex = index;
+                    return false;
+                }
+            });
+
+            $productLightbox.find('a').eq(galleryIndex).trigger('click');
+        });
+
+        $('.mobile-product-gallery-slide').on('click.productGallery', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var galleryIndex = parseInt($(this).attr('data-gallery-index'), 10) || 0;
+            $productLightbox.find('a').eq(galleryIndex).trigger('click');
+        });
+
+        var mobileGalleryResizeTimer;
+
+        function syncMobileGalleryNavigation($gallery, index) {
+            $gallery.find('[data-mobile-gallery-nav]').each(function(buttonIndex) {
+                var isActive = buttonIndex === index;
+                $(this).toggleClass('is-active', isActive).attr('aria-current', isActive ? 'true' : 'false');
+            });
+        }
+
+        function updateMobileProductGallery() {
+            $('.mobile-product-gallery').each(function() {
+                var $gallery = $(this);
+                var $slider = $gallery.find('.mobile-product-gallery-slider');
+                var isMobile = window.matchMedia('(max-width: 767px)').matches;
+
+                if (isMobile && !$slider.hasClass('slick-initialized')) {
+                    var hasMultipleImages = $slider.children().length > 1;
+
+                    $slider.on('init.mobileProductGallery afterChange.mobileProductGallery', function(event, slick, currentSlide) {
+                        syncMobileGalleryNavigation($gallery, currentSlide || 0);
+                    });
+
+                    $slider.slick({
+                        slidesToShow:1,
+                        slidesToScroll:1,
+                        arrows:false,
+                        dots:hasMultipleImages,
+                        infinite:false,
+                        adaptiveHeight:false,
+                        swipe:true,
+                        draggable:true
+                    });
+
+                    $gallery.find('[data-mobile-gallery-nav]').off('click.mobileProductGallery').on('click.mobileProductGallery', function() {
+                        $slider.slick('slickGoTo', parseInt($(this).attr('data-mobile-gallery-nav'), 10) || 0);
+                    });
+                } else if (!isMobile && $slider.hasClass('slick-initialized')) {
+                    $slider.slick('unslick').off('.mobileProductGallery');
+                } else if (isMobile && $slider.hasClass('slick-initialized')) {
+                    $slider.slick('setPosition');
+                }
+            });
+        }
+
+        updateMobileProductGallery();
+        $(window).on('resize.mobileProductGallery orientationchange.mobileProductGallery', function() {
+            clearTimeout(mobileGalleryResizeTimer);
+            mobileGalleryResizeTimer = setTimeout(updateMobileProductGallery, 150);
         });
     });
     //--></script>

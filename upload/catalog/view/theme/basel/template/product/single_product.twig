@@ -1,10 +1,10 @@
 <div class="item single-product">
     <div class="edge">
-<div class="image" {% if columns == 'list' %}style="width:{{ img_width }}px"{% endif %}>
+<div class="image{% if columns == 'list' %} product-list-image{% endif %}">
     <a href="{{ product.href }}">
-    <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy" title="{{ product.name }}" />
+    <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy" decoding="async" title="{{ product.name }}" />
     {% if product.thumb2 %}
-    <img class="thumb2" src="{{ product.thumb2 }}" loading="lazy" alt="{{ product.name }}" title="{{ product.name }}" />
+    <img class="thumb2" src="{{ product.thumb2 }}" loading="lazy" decoding="async" alt="{{ product.name }}" title="{{ product.name }}" />
     {% endif %}
     </a>
 {% if product.price and product.special and salebadge_status %}
@@ -39,7 +39,7 @@
 {% endif %}
 
 
-<div class="price-wrapper">
+<div class="price-wrapper{% if product.attention == '' and product.price %} has-price{% else %} no-price{% endif %}">
     {% if product.attention =='' %}
         {% if product.price  %}
                 <div class="pwrap">

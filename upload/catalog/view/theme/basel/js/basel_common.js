@@ -30,6 +30,22 @@ function addCookie(name, value, days) {
     document.cookie = name+"="+value+expires+"; path=/";
 }
 
+function moveBreadcrumbToHeader() {
+	var breadcrumb = document.querySelector('ul.breadcrumb');
+	var target = document.querySelector('.links-holder span');
+
+	if (!breadcrumb || !target || target.contains(breadcrumb)) {
+		return;
+	}
+
+	target.textContent = '';
+	target.appendChild(breadcrumb);
+}
+
+// This file is deferred, so the document is parsed before it runs.
+// Move the breadcrumb before DOM ready to avoid a visible layout shift.
+moveBreadcrumbToHeader();
+
 $(document).ready(function() {
 	
 	// Add body ready class //
@@ -41,7 +57,7 @@ $(document).ready(function() {
 	}
 
 	// Move breadcrumb to header //
-	$('ul.breadcrumb').appendTo($('.links-holder span').empty());
+	moveBreadcrumbToHeader();
 	
 	// Sticky header
 	var sticky_to_top = $('.sticky-header').offset().top;
