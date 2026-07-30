@@ -104,7 +104,7 @@ class ControllerProductCategory extends Controller {
 			}
 			if (!$seo_description) {
 				$seo_description = $this->cleanSeoText(
-					'Pregledajte ' . $category_info['name'] . ' za profesionalne pečatare i gravere. Tehnički podaci, primjene i podrška Repro-Grava.',
+					$category_info['name'] . ' – profesionalna rješenja iz ponude Repro-Grava. Pregledajte proizvode, tehničke podatke, područja primjene i stručnu podršku.',
 					160
 				);
 			}
