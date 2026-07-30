@@ -1,0 +1,19 @@
+# Repro-Grav
+
+Repro-Grav je B2B katalog opreme i materijala za pečatare i gravere.
+
+## Glavni javni sadržaj
+
+- [Naslovnica](https://www.repro-grav.com/)
+- [Pečatarstvo](https://www.repro-grav.com/pecatarstvo)
+- [Graverstvo](https://www.repro-grav.com/graverstvo)
+- [Strojevi za graviranje, rezanje i označavanje](https://www.repro-grav.com/strojevi-za-graviranje-rezanje-oznacavanje)
+- [Blog i stručni vodiči](https://www.repro-grav.com/blog)
+- [Kontakt](https://www.repro-grav.com/kontaktirajte-nas)
+- [XML sitemap](https://www.repro-grav.com/sitemap-index.xml)
+
+## Važna napomena
+
+Cijene i dostupnost proizvoda prikazuju se samo prijavljenim korisnicima.
+Javni katalog sadrži opise, namjenu, tehničke karakteristike, slike i poveznice
+za kontakt ili prijavu. Ova datoteka ne daje pristup privatnim podacima ni API-ju.
