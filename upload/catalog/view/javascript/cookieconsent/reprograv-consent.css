@@ -17,6 +17,10 @@ body.rg-consent-open {
   position: fixed;
   z-index: 2147483000;
   inset: 0;
+  bottom: auto;
+  height: 100vh;
+  height: 100dvh;
+  height: var(--rg-consent-viewport-height, 100vh);
   color: var(--rg-consent-text);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
@@ -37,6 +41,7 @@ body.rg-consent-open {
   width: calc(100% - 32px);
   max-height: calc(100vh - 32px);
   max-height: calc(100dvh - 32px);
+  max-height: calc(var(--rg-consent-viewport-height, 100vh) - 32px);
   overflow: hidden auto;
   background: #fff;
   border: 1px solid rgba(0, 36, 61, .18);
@@ -54,6 +59,7 @@ body.rg-consent-open {
   width: min(700px, calc(100% - 32px));
   height: min(650px, calc(100vh - 32px));
   height: min(650px, calc(100dvh - 32px));
+  height: min(650px, calc(var(--rg-consent-viewport-height, 100vh) - 32px));
   flex-direction: column;
 }
 
@@ -440,6 +446,7 @@ body.rg-consent-open {
     width: calc(100% - 20px);
     max-height: calc(100vh - 20px);
     max-height: calc(100svh - 20px);
+    max-height: calc(var(--rg-consent-viewport-height, 100vh) - 20px);
     border-radius: 13px;
   }
 
@@ -447,6 +454,7 @@ body.rg-consent-open {
     width: calc(100% - 20px);
     height: calc(100vh - 20px);
     height: calc(100svh - 20px);
+    height: calc(var(--rg-consent-viewport-height, 100vh) - 20px);
   }
 
   .rg-consent-body {

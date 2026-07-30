@@ -176,6 +176,18 @@
     '</section>';
   }
 
+  function syncViewportHeight() {
+    if (!modal) return;
+
+    var viewportHeight = window.visualViewport && window.visualViewport.height ?
+      window.visualViewport.height :
+      window.innerHeight;
+
+    if (viewportHeight) {
+      modal.style.setProperty('--rg-consent-viewport-height', Math.round(viewportHeight) + 'px');
+    }
+  }
+
   function renderShell(content, preferences, allowClose) {
     closeModal(false);
     opener = document.activeElement;
@@ -188,6 +200,7 @@
         content +
       '</div>';
     document.body.appendChild(modal);
+    syncViewportHeight();
     document.body.classList.add('rg-consent-open');
     bindModalEvents();
 
@@ -332,6 +345,11 @@
     });
 
     document.addEventListener('keydown', keepFocus);
+    window.addEventListener('resize', syncViewportHeight);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', syncViewportHeight);
+    }
   }
 
   window.ReprogravCookieConsent = {
