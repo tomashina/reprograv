@@ -346,6 +346,17 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		$json = [];
 		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!is_dir($this->directory)) {
+				umask(0);
+				@mkdir($this->directory, 0775, true);
+			}
+
+			if (!is_dir($this->directory) || !is_writable($this->directory)) {
+				$json['error'] = sprintf($this->language->get('error_directory'), $this->directory);
+				$this->response->setOutput(json_encode($json));
+				return;
+			}
+
 			$this->load->model('setting/setting');
 			
 			if (isset($this->request->post['selected'])) {

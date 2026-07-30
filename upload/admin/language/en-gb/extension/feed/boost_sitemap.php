@@ -83,6 +83,7 @@ $_['tab_custom_link'] 		= 'Custom Links';
 
 // Error
 $_['error_permission'] 		= 'Warning: You do not have permission to modify Boost Sitemap feed!';
+$_['error_directory'] 		= 'Warning: Sitemap directory could not be created or is not writable: %s';
 
 // Success
 $_['success_keyword'] 		= 'Success: %s keywords was generated successfully!';

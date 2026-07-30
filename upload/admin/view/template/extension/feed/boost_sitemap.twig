@@ -256,7 +256,12 @@
 			complete: function() {
 				$btn.button('reset');
 			},
-			success: function() {
+			success: function(json) {
+				if (json.error) {
+					alert(json.error);
+					return;
+				}
+
 				location.reload(true);
 			}
 		});

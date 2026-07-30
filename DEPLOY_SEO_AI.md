@@ -61,6 +61,11 @@ Iz korijena projekta pokrenuti:
 php tools/generate_sitemaps.php
 ```
 
+Ako hosting nema Terminal/SSH, u OpenCart administraciji otvoriti
+`Extensions > Extensions > Feeds > Boost Sitemap`, uključiti feed, označiti
+Product, Category, Information i Blog te kliknuti `Generate XML Files`.
+Generator će sam kreirati zapisivu mapu `upload/sitemaps` ako ona ne postoji.
+
 Sitemap indeks mora biti dostupan na:
 
 ```text
