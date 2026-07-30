@@ -199,21 +199,22 @@
 	}
 	
 	// Mandatory CSS
-	if ($this->cache->get('basel_mandatory_css_store_' . $this->config->get('config_store_id'))) {
-		$data['basel_mandatory_css'] = $this->cache->get('basel_mandatory_css_store_' . $this->config->get('config_store_id'));
+	$mandatory_css_cache_key = 'basel_mandatory_css_v2_store_' . $this->config->get('config_store_id');
+	if ($this->cache->get($mandatory_css_cache_key)) {
+		$data['basel_mandatory_css'] = $this->cache->get($mandatory_css_cache_key);
 		} else {
 		$madatory_css = '.top_line {line-height:' . $this->config->get('top_line_height') . 'px;}';
 		$madatory_css .= '.header-main,.header-main .sign-in,#logo {line-height:' . $this->config->get('main_header_height') . 'px;height:' . $this->config->get('main_header_height') . 'px;}';
 		$madatory_css .= '.sticky-enabled.sticky-active .sticky-header.short:not(.slidedown) .header-main,.sticky-enabled.offset250 .sticky-header.slidedown .header-main,.sticky-enabled.sticky-active .sticky-header.short .header-main .sign-in,.sticky-enabled.sticky-active .sticky-header.short:not(.slidedown) .header-main #logo,.sticky-enabled.sticky-active .header6 .sticky-header.short .header-main #logo {line-height:' . $this->config->get('main_header_height_sticky') . 'px;height:' . $this->config->get('main_header_height_sticky') . 'px;}';
 		$madatory_css .= '@media (max-width: 991px) {.header-main,.sticky-enabled.offset250 .sticky-header.slidedown .header-main,#logo,.sticky-enabled.sticky-active .sticky-header.short .header-main #logo {line-height:' . $this->config->get('main_header_height_mobile') . 'px;height:' . $this->config->get('main_header_height_mobile') . 'px;}}';
-		$madatory_css .= '.table-cell.menu-cell,.main-menu:not(.vertical) > ul,.main-menu:not(.vertical) > ul > li,.main-menu:not(.vertical) > ul > li > a,.main-menu:not(.vertical) > ul > li.dropdown-wrapper > a .fa-angle-down,.main-menu.vertical .menu-heading {line-height:' . $this->config->get('menu_height_normal') . 'px;height:' . $this->config->get('menu_height_normal') . 'px;}';
-		$madatory_css .= '.sticky-enabled.sticky-active .table-cell.menu-cell:not(.vertical),.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li > a,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li.dropdown-wrapper > a .fa-angle-down {line-height:' . $this->config->get('menu_height_sticky') . 'px;height:' . $this->config->get('menu_height_sticky') . 'px;}';
+		$madatory_css .= '.table-cell.menu-cell,.main-menu:not(.vertical) > ul,.main-menu:not(.vertical) > ul > li,.main-menu:not(.vertical) > ul > li > a,.main-menu:not(.vertical) > ul > li > .menu-parent-button,.main-menu:not(.vertical) > ul > li.dropdown-wrapper > a .fa-angle-down,.main-menu:not(.vertical) > ul > li.dropdown-wrapper > .menu-parent-button .fa-angle-down,.main-menu.vertical .menu-heading {line-height:' . $this->config->get('menu_height_normal') . 'px;height:' . $this->config->get('menu_height_normal') . 'px;}';
+		$madatory_css .= '.sticky-enabled.sticky-active .table-cell.menu-cell:not(.vertical),.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li > a,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li > .menu-parent-button,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li.dropdown-wrapper > a .fa-angle-down,.sticky-enabled.sticky-active .main-menu:not(.vertical) > ul > li.dropdown-wrapper > .menu-parent-button .fa-angle-down {line-height:' . $this->config->get('menu_height_sticky') . 'px;height:' . $this->config->get('menu_height_sticky') . 'px;}';
 		$search_height = round($this->config->get('menu_height_normal') * 0.7);
 		$madatory_css .= '.full-search-wrapper .search-main input,.full-search-wrapper .search-category select {height:' . $search_height . 'px;min-height:' . $search_height . 'px;}';
 		$madatory_css .= '@media (min-width: 992px) {.sticky-enabled.sticky-active .header3 .sticky-header-placeholder,.sticky-enabled.offset250 .header5 .header-main {padding-bottom:' . $this->config->get('menu_height_sticky') . 'px;}}';
 		$madatory_css .= '#logo img {max-width:' . $this->config->get('logo_maxwidth') . 'px;}';
-		$this->cache->set('basel_mandatory_css_store_' . $this->config->get('config_store_id'), $madatory_css);
-		$data['basel_mandatory_css'] = $this->cache->get('basel_mandatory_css_store_' . $this->config->get('config_store_id'));
+		$this->cache->set($mandatory_css_cache_key, $madatory_css);
+		$data['basel_mandatory_css'] = $this->cache->get($mandatory_css_cache_key);
 	}	
 	
 	// Custom colors

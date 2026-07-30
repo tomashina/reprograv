@@ -71,19 +71,27 @@
            <div class="icon-element is_wishlist">
 
                {% if logged %}
-                   <a class="shortcut-wrapper wishlist " title="Moj račun" href="{{ login }}"><i class="icon-user icon"></i></a><a class="shortcut-wrapper wishlist hidden-xs"  title="Odjava" href="{{ logout }}"> Odjava<div class="wishlist-hover"></div>
-               </a>
+                   <a class="shortcut-wrapper account-link" title="Moj račun" href="{{ login }}" aria-label="Moj račun">
+                       <i class="icon-user icon" aria-hidden="true"></i>
+                   </a>
                {% else %}
-                   <a class="shortcut-wrapper wishlist" title="Moj račun" href="{{ login }}">
+                   <a class="shortcut-wrapper account-link" title="Moj račun" href="{{ login }}" aria-label="Moj račun">
                        <div class="wishlist-hover"><i class="icon-user icon"></i></div>
                    </a>
                {% endif %}
            </div>
 
+           {% if logged %}
+           <div class="icon-element session-logout hidden-xs">
+               <a class="shortcut-wrapper logout-link" title="Odjava" href="{{ logout }}">
+                   <i class="fa fa-sign-out" aria-hidden="true"></i><span>Odjava</span>
+               </a>
+           </div>
+           {% endif %}
 
            <div class="icon-element is_wishlist hidden-xs">
-        <a class="shortcut-wrapper wishlist" href="{{ wishlist }}">
-        <div class="wishlist-hover"><i class="icon-heart icon"></i><span class="counter wishlist-counter">{{ wishlist_counter }}</span></div>
+        <a class="shortcut-wrapper wishlist" href="{{ wishlist }}" title="Lista želja" aria-label="Lista želja">
+        <i class="icon-heart icon" aria-hidden="true"></i><span class="counter wishlist-counter">{{ wishlist_counter }}</span>
         </a>
         </div>
         
