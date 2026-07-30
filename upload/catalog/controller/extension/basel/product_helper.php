@@ -23,6 +23,13 @@
 	$data['currency_code'] = $this->session->data['currency'];
 	$data['hover_zoom'] = $this->config->get('basel_hover_zoom');
 	$data['current_href'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
+	$data['share_url'] = html_entity_decode($data['current_href'], ENT_QUOTES, 'UTF-8');
+	$data['share_links'] = array(
+		'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($data['share_url']),
+		'x' => 'https://twitter.com/intent/tweet?url=' . rawurlencode($data['share_url']) . '&text=' . rawurlencode($product_info['name']),
+		'whatsapp' => 'https://wa.me/?text=' . rawurlencode($product_info['name'] . ' ' . $data['share_url']),
+		'email' => 'mailto:?subject=' . rawurlencode($product_info['name']) . '&body=' . rawurlencode($product_info['name'] . "\n\n" . $data['share_url'])
+	);
 	$this->document->addLink($data['thumb'], 'image');
 	$data['basel_share_btn'] = $this->config->get('basel_share_btn');
 	$data['basel_rel_prod_grid'] = $this->config->get('basel_rel_prod_grid');

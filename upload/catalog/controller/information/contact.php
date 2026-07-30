@@ -124,17 +124,23 @@ class ControllerInformationContact extends Controller {
 			$data['email'] = $this->customer->getEmail();
 		}
 
-		if (isset($this->request->post['enquiry'])) {
-			$data['enquiry'] =  $this->request->post['enquiry'];
+		if (isset($this->request->post['telefon'])) {
+			$data['telefon'] = $this->request->post['telefon'];
 		} else {
-
-
-		   	 $data['enquiry'] = '';
-		 
-
+			$data['telefon'] = '';
 		}
 
-		$data['test'] = $_REQUEST['naziv'];
+		if (isset($this->request->post['enquiry'])) {
+			$data['enquiry'] = $this->request->post['enquiry'];
+		} else {
+			$data['enquiry'] = '';
+		}
+
+		if (isset($this->request->get['naziv'])) {
+			$data['test'] = trim($this->request->get['naziv']);
+		} else {
+			$data['test'] = '';
+		}
 
 		// Captcha
 		if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('contact', (array)$this->config->get('config_captcha_page'))) {

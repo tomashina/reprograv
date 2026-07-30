@@ -38,6 +38,33 @@
 	$data['footer_infoline_2'] = html_entity_decode($footer_infoline_2[$lang_id], ENT_QUOTES, 'UTF-8');
 	if (isset($footer_infoline_3[$lang_id])) 
 	$data['footer_infoline_3'] = html_entity_decode($footer_infoline_3[$lang_id], ENT_QUOTES, 'UTF-8');
+
+	// Footer contact blocks are managed as HTML in theme settings. Normalize
+	// phone-only links so both their destination and visible duplicate use the
+	// same valid, crawlable tel: URL.
+	$normalize_telephone_links = function ($html) {
+		return preg_replace_callback(
+			"~href\\s*=\\s*([\"'])(?:tel:)?\\s*(\\+?[\\d\\s()./-]{6,})\\s*\\1~i",
+			function ($matches) {
+				$raw_phone = trim($matches[2]);
+				$digits = preg_replace('/\\D+/', '', $raw_phone);
+
+				if ($digits === '') {
+					return $matches[0];
+				}
+
+				$prefix = strpos(ltrim($raw_phone), '+') === 0 ? '+' : '';
+
+				return 'href=' . $matches[1] . 'tel:' . $prefix . $digits . $matches[1];
+			},
+			$html
+		);
+	};
+
+	foreach (array('footer_block_1', 'footer_block_2', 'footer_infoline_1', 'footer_infoline_2', 'footer_infoline_3') as $footer_infoline_key) {
+		$data[$footer_infoline_key] = $normalize_telephone_links($data[$footer_infoline_key]);
+	}
+
 	if (isset($footer_block_title[$lang_id])) 
 	$data['footer_block_title'] = html_entity_decode($footer_block_title[$lang_id], ENT_QUOTES, 'UTF-8');	
 	if (isset($basel_copyright[$lang_id])) 
@@ -120,8 +147,8 @@
 	$data['basel_cookie_info'] = $this->language->get('basel_cookie_info');
 	$data['basel_cookie_btn_close'] = $this->language->get('basel_cookie_btn_close');
 	$data['basel_cookie_btn_more_info'] = $this->language->get('basel_cookie_btn_more_info');
-	$data['href_more_info'] = $this->config->get('basel_cookie_bar_url');	
+	$data['href_more_info'] = $this->config->get('basel_cookie_bar_url');
 	if ( ($this->config->get('basel_cookie_bar_status')) && (!isset($_COOKIE['basel_cookie'])) ) {
 	$data['view_cookie_bar'] = true;
 	setcookie("basel_cookie", "1", time()+60*60*24*30);
-	}	
+	}

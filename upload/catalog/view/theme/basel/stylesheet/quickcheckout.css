@@ -257,6 +257,25 @@ body.extension-quickcheckout-checkout #content #page-title {
 	color:#3f5b6e;
 }
 
+#quickcheckoutconfirm,
+#quickcheckoutconfirm #quickcheckout-disable,
+#quickcheckoutconfirm .quickcheckoutleft,
+#quickcheckoutconfirm .quickcheckoutright,
+#quickcheckoutconfirm .quickcheckoutmid,
+#quickcheckoutconfirm .quickcheckout-heading,
+#quickcheckoutconfirm .quickcheckout-content,
+#quickcheckoutconfirm .quickcheckout-address-choice,
+#quickcheckoutconfirm #payment-existing,
+#quickcheckoutconfirm #shipping-existing {
+	max-width:100%;
+	min-width:0;
+	box-sizing:border-box;
+}
+
+#quickcheckoutconfirm .quickcheckout-address-choice {
+	padding:0 10px;
+}
+
 #quickcheckoutconfirm .quickcheckout-heading {
 	display:flex;
 	align-items:center;
@@ -362,6 +381,10 @@ body.extension-quickcheckout-checkout #content #page-title {
 }
 
 #quickcheckoutconfirm .form-control {
+	display:block;
+	width:100%;
+	max-width:100%;
+	min-width:0;
 	min-height:46px;
 	padding:10px 13px;
 	border:1px solid #cbd6dc;
@@ -372,6 +395,12 @@ body.extension-quickcheckout-checkout #content #page-title {
 	line-height:24px;
 	box-shadow:none;
 	transition:border-color .2s ease;
+}
+
+#quickcheckoutconfirm select.form-control {
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
 }
 
 #quickcheckoutconfirm textarea.form-control {
@@ -661,6 +690,10 @@ body.extension-quickcheckout-checkout #content *,
 		padding:17px 14px;
 	}
 
+	#quickcheckoutconfirm .quickcheckout-address-choice {
+		padding:0;
+	}
+
 	#quickcheckoutconfirm .col-sm-6 {
 		display:block;
 		width:100% !important;
@@ -829,8 +862,35 @@ body.extension-quickcheckout-checkout #content *,
 		padding:9px;
 	}
 
+	#quickcheckoutconfirm .quickcheckout-content.cart-content {
+		overflow-x:hidden;
+	}
+
 	#quickcheckoutconfirm table.quickcheckout-cart {
-		min-width:460px;
+		width:100%;
+		min-width:0;
+		table-layout:fixed;
+	}
+
+	#quickcheckoutconfirm .quickcheckout-cart td.image,
+	#quickcheckoutconfirm .quickcheckout-cart td.price1 {
+		display:none;
+	}
+
+	#quickcheckoutconfirm .quickcheckout-cart td.name {
+		width:auto;
+		overflow-wrap:anywhere;
+		word-break:normal;
+	}
+
+	#quickcheckoutconfirm .quickcheckout-cart td.quantity {
+		width:82px;
+		min-width:0 !important;
+	}
+
+	#quickcheckoutconfirm .quickcheckout-cart td.total {
+		width:76px;
+		white-space:nowrap;
 	}
 }
 

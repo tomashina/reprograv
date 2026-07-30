@@ -2,270 +2,275 @@
 
 {% if basel_map_lat and basel_map_lon and basel_map_style == "full_width" %}
 <div id="gmap" class="map-full-width">
-    <div class="address-holder col-sm-5 col-md-4 col-lg-3">
-    <h3 class="contrast-heading">{{ store }}</h3>
+  <div class="address-holder col-sm-5 col-md-4 col-lg-3">
+    <h2 class="contrast-heading">{{ store }}</h2>
     <p>{{ address }}</p>
-    <a class="uline_link to_form">{{ heading_title }}</a>
-    </div>
+    <a class="uline_link to_form" href="#contact-form">{{ text_contact }}</a>
+  </div>
 </div>
 {% endif %}
-    
-    <div class="container">
-    
-        <ul class="breadcrumb">
-        {% for breadcrumb in breadcrumbs %}
-        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-        {% endfor %}
-        </ul>
-  
-  <div class="row">{{ column_left }}
-  
+
+<div class="container contact-page">
+  <nav aria-label="Putanja stranice">
+    <ul class="breadcrumb">
+      {% for breadcrumb in breadcrumbs %}
+        {% if loop.last %}
+          <li><span aria-current="page">{{ breadcrumb.text }}</span></li>
+        {% else %}
+          <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <div class="row">
+    {{ column_left }}
+
     {% if basel_map_lat and basel_map_lon and basel_map_style == "inline" %}
-    <div id="gmap" class="col-sm-12 map-inline"></div>
+      <div id="gmap" class="col-sm-12 map-inline"></div>
     {% endif %}
-  
-  
-    
+
     {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
+      {% set class = 'col-sm-6' %}
     {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
+      {% set class = 'col-md-9 col-sm-8' %}
     {% else %}
-    {% set class = 'col-sm-12' %}
+      {% set class = 'col-sm-12' %}
     {% endif %}
-    
+
     <div id="content" class="{{ class }}">
-    {{ content_top }}
-      <h1 id="page-title">{{ heading_title }}</h1>
-      
-      <div class="row">
-        
-      <div class="col-sm-6 left-side">
-      	<h3 class="lined-title lg margin-b35"><span>{{ text_contact }}</span></h3>
-        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-vertical">
+      {{ content_top }}
 
-        <div class="row">
-        
-        <div class="form-group col-sm-12 required">
-        <label for="input-name">{{ entry_name }}</label>
-        <input type="text" name="name" value="{{ name }}" id="input-name" class="form-control" />
-        {% if error_name %}
-        <div class="text-danger">{{ error_name }}</div>
-        {% endif %}
-        </div>
-        
-        <div class="form-group col-sm-12 required">
-        <label for="input-email">{{ entry_email }}</label>
-        <input type="text" name="email" value="{{ email }}" id="input-email" class="form-control" />
-        {% if error_email %}
-        <div class="text-danger">{{ error_email }}</div>
-        {% endif %}
-        </div>
+      <header class="contact-page-intro">
+        <span class="page-eyebrow">Repro-Grav podrška</span>
+        <h1 id="page-title">{{ heading_title }}</h1>
+        <p>Pošaljite nam upit ili nas nazovite. Rado ćemo pomoći pri odabiru stroja, materijala, pečata i pribora.</p>
+      </header>
 
-
-        <div class="form-group col-sm-12 required">
-                <label for="input-email">Phone</label>
-                <input type="text" name="telefon" value="{{ telefon }}" id="input-telefon" class="form-control" />
-                {% if error_telefon %}
-                    <div class="text-danger">{{ error_telefon }}</div>
-                {% endif %}
-        </div>
-        
-        </div>
-
-        
-        <div class="form-group required">
-        <label for="input-enquiry">{{ entry_enquiry }}</label>
-        <textarea name="enquiry" rows="5" id="input-enquiry" class="form-control">{{ test }} {{ enquiry }}</textarea>
-        {% if error_enquiry %}
-        <div class="text-danger">{{ error_enquiry }}</div>
-        {% endif %}
-        </div>
-		
-        {{ captcha }}
-        
-        <div class="form-group margin-b50">
-        <input class="btn btn-contrast" type="submit" value="{{ button_submit }}" />
-        </div>
-        
-
-
-        </form>
-      </div>
-      
-      <div class="col-sm-6 right-side">
-    
-       
-   
-           <div class="grid-holder margin-b20">
-
-             <h3 class="lined-title lg margin-b20"><span>{{ heading_title }}</span></h3>
-
-
-              {% if image %}
-             <div class="item"><img src="{{ image }}" alt="{{ store }}" title="{{ store }}" class="img-thumbnail" /></div>
-            {% endif %}
-           
-           <div class="item">
-           <p class="contact-detail">
-   
-           {{ address }}
-        
-           </p>
-           </div>
-
-            <div class="item">
-           <p class="contact-detail">
-          
-            <a href="tel:{{telephone }}">{{telephone }}</a>
-            {%  if fax %}
-           <br /><a href="tel:{{ fax}}">{{ fax}}</a>
-           {% endif %}
-           </p>
-           </div>
-           
-          
-
-               {% if open %}
-                   <div class="item">
-
-                   
-                
-                       <p class="contact-detail" >
-                    
-                           {{ open }}
-                       </p>
-
-                  
-                   </div>
-               {% endif %}
-
-           
-           </div>
-           
-        {% if comment %}
-        <div class="margin-b45">
-        <h3 class="lined-title lg margin-b20"><span>{{ text_comment }}</span></h3>
-        {{ comment }}
-        </div>
-        {% endif %}        
-        
-        {% if locations %}
-      <h3 class="lined-title lg margin-b15"><span><b>{{ text_store }}</b></span></h3>
-      <div class="panel-group" id="accordion">
-        {% for locations in location %}
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title"><a href="#collapse-location{{ location.location_id }}" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion">{{ location.name }} <i class="fa fa-caret-down"></i></a></h4>
-          </div>
-          <div class="panel-collapse collapse" id="collapse-location{{ location.location_id }}">
-            <div class="panel-body">
-              
-              
-             
-                
-                {% if location.image %}
-                <div class="contact-image margin-b25">
-                <img src="{{ location.image }}" alt="{{ location.name }}" title="{{ location.name }}" />
-                </div>
-                {% endif %}
-                
-                {% if location.comment %}
-                <b>{{ text_comment }}</b><br />
-                {{ location.comment }}<br /><br /><br />
-                {% endif %}
-                
-                <div class="grid-holder margin-b20">
-
-                <div class="item">
-                <p class="contact-detail">
-                <i class="icon-cursor icon"></i>
-                {{ location.name }}<br />
-                {{ location.address }}
-                {% if location.geocode %}
-                <br /><a href="https://maps.google.com/maps?q={{ location.geocode|url_encode }}&hl={{ geocode_hl }}&t=m&z=15" target="_blank" class="btn btn-info"><i class="fa fa-map-marker"></i> {{ button_map }}</a>
-                {% endif %}
-                </p>
-                </div>
-                
-                <div class="item">
-                <p class="contact-detail">
-                <i class="icon-phone icon"></i>
-                {{ location.telephone }}
-                {% if location.fax %}
-                <br />{{ text_fax }}: {{ location.fax }}
-                {% endif %}
-                </p>
-                </div>
-                
-                {% if location.open %}
-                <div class="item">
-                <p class="contact-detail">
-                <i class="icon-clock icon"></i>
-                  {{ location.open }}
-                </p>
-                </div>
-                {% endif %}
-                
-                
-              </div>
-
+      <div class="contact-page-grid">
+        <section class="contact-form-card" id="contact-form" aria-labelledby="contact-form-title">
+          <div class="contact-section-heading">
+            <span class="contact-section-icon icon-envelope" aria-hidden="true"></span>
+            <div>
+              <span class="contact-section-kicker">Javite nam se</span>
+              <h2 id="contact-form-title">{{ text_contact }}</h2>
             </div>
           </div>
-        </div>
-        {% endfor %}
+
+          <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-vertical contact-form">
+            <div class="row">
+              <div class="form-group col-sm-12 required">
+                <label for="input-name">{{ entry_name }}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value="{{ name }}"
+                  id="input-name"
+                  class="form-control"
+                  autocomplete="name"
+                  required
+                  {% if error_name %}aria-invalid="true" aria-describedby="error-name"{% endif %}
+                />
+                {% if error_name %}
+                  <div class="text-danger" id="error-name">{{ error_name }}</div>
+                {% endif %}
+              </div>
+
+              <div class="form-group col-sm-12 required">
+                <label for="input-email">{{ entry_email }}</label>
+                <input
+                  type="email"
+                  name="email"
+                  value="{{ email }}"
+                  id="input-email"
+                  class="form-control"
+                  autocomplete="email"
+                  required
+                  {% if error_email %}aria-invalid="true" aria-describedby="error-email"{% endif %}
+                />
+                {% if error_email %}
+                  <div class="text-danger" id="error-email">{{ error_email }}</div>
+                {% endif %}
+              </div>
+
+              <div class="form-group col-sm-12">
+                <label for="input-telefon">Telefon</label>
+                <input
+                  type="tel"
+                  name="telefon"
+                  value="{{ telefon }}"
+                  id="input-telefon"
+                  class="form-control"
+                  autocomplete="tel"
+                />
+              </div>
+            </div>
+
+            <div class="form-group required">
+              <label for="input-enquiry">{{ entry_enquiry }}</label>
+              <textarea
+                name="enquiry"
+                rows="6"
+                id="input-enquiry"
+                class="form-control"
+                required
+                {% if error_enquiry %}aria-invalid="true" aria-describedby="error-enquiry"{% endif %}
+              >{{ test }}{{ test and enquiry ? ' ' : '' }}{{ enquiry }}</textarea>
+              {% if error_enquiry %}
+                <div class="text-danger" id="error-enquiry">{{ error_enquiry }}</div>
+              {% endif %}
+            </div>
+
+            {{ captcha }}
+
+            <div class="contact-form-footer">
+              <span class="contact-required-note"><span aria-hidden="true">*</span> Obavezna polja</span>
+              <button class="btn btn-primary contact-submit" type="submit">
+                {{ button_submit }}
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="contact-details-card" aria-labelledby="contact-details-title">
+          <div class="contact-section-heading">
+            <span class="contact-section-icon icon-location-pin" aria-hidden="true"></span>
+            <div>
+              <span class="contact-section-kicker">Kontakt podaci</span>
+              <h2 id="contact-details-title">{{ store }}</h2>
+            </div>
+          </div>
+
+          {% if image %}
+            <div class="contact-image">
+              <img src="{{ image }}" alt="{{ store }}" title="{{ store }}" />
+            </div>
+          {% endif %}
+
+          <div class="contact-detail-list">
+            <div class="contact-detail-row">
+              <span class="contact-detail-icon icon-location-pin" aria-hidden="true"></span>
+              <div>
+                <h3>Adresa</h3>
+                <div class="contact-detail-copy">{{ address }}</div>
+              </div>
+            </div>
+
+            <div class="contact-detail-row">
+              <span class="contact-detail-icon icon-phone" aria-hidden="true"></span>
+              <div>
+                <h3>Telefon</h3>
+                <p><a href="tel:{{ telephone|replace({' ': '', '/': '', '(': '', ')': ''}) }}">{{ telephone }}</a></p>
+                {% if fax %}
+                  <p><a href="tel:{{ fax|replace({' ': '', '/': '', '(': '', ')': ''}) }}">{{ fax }}</a></p>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if open %}
+              <div class="contact-detail-row">
+                <span class="contact-detail-icon icon-clock" aria-hidden="true"></span>
+                <div>
+                  <h3>{{ text_open }}</h3>
+                  <div class="contact-detail-copy">{{ open }}</div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if comment %}
+            <div class="contact-company-info">
+              <h3>{{ text_comment }}</h3>
+              <div>{{ comment }}</div>
+            </div>
+          {% endif %}
+        </aside>
       </div>
+
+      {% if locations %}
+        <section class="contact-locations" aria-labelledby="contact-locations-title">
+          <h2 id="contact-locations-title">{{ text_store }}</h2>
+          <div class="panel-group" id="accordion">
+            {% for location in locations %}
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a href="#collapse-location{{ location.location_id }}" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion">
+                      {{ location.name }}
+                      <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </a>
+                  </h3>
+                </div>
+                <div class="panel-collapse collapse" id="collapse-location{{ location.location_id }}">
+                  <div class="panel-body">
+                    {% if location.image %}
+                      <div class="contact-image">
+                        <img src="{{ location.image }}" alt="{{ location.name }}" title="{{ location.name }}" />
+                      </div>
+                    {% endif %}
+
+                    {% if location.comment %}
+                      <p><strong>{{ text_comment }}</strong></p>
+                      <div>{{ location.comment }}</div>
+                    {% endif %}
+
+                    <div class="contact-location-grid">
+                      <div>
+                        <strong>{{ location.name }}</strong><br />
+                        {{ location.address }}
+                        {% if location.geocode %}
+                          <br />
+                          <a href="https://maps.google.com/maps?q={{ location.geocode|url_encode }}&hl={{ geocode_hl }}&t=m&z=15" target="_blank" rel="noopener" class="btn btn-info">
+                            <i class="fa fa-map-marker" aria-hidden="true"></i>
+                            {{ button_map }}
+                          </a>
+                        {% endif %}
+                      </div>
+                      <div>
+                        {{ location.telephone }}
+                        {% if location.fax %}<br />{{ text_fax }}: {{ location.fax }}{% endif %}
+                      </div>
+                      {% if location.open %}<div>{{ location.open }}</div>{% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
       {% endif %}
-      
-      
-       
-       
-      </div> <!-- .col-sm-6 ends -->
-      
-      </div> <!-- .row ends -->
-      
-      
-      
-      
-      
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+
+      {{ content_bottom }}
+    </div>
+
+    {{ column_right }}
+  </div>
 </div>
 
 {% if basel_map_style %}
 <script>
-	$(document).ready(function() {
-		new Maplace({
-			locations: [
-				{
-					lat: {{ basel_map_lat }},
-					lon: {{ basel_map_lon }},
-				}
-			],
-			controls_on_map: true,
-			start: 1,
-			map_options: {
-				zoom: 15,
-				scrollwheel: false}
-		}).Load();
-		
-		{% if basel_map_lat and basel_map_lon and basel_map_style == "full_width" %}
-		$('body').addClass('full-width-map');
-		{% endif %}
-		 
-	});
+  $(document).ready(function() {
+    new Maplace({
+      locations: [
+        {
+          lat: {{ basel_map_lat }},
+          lon: {{ basel_map_lon }}
+        }
+      ],
+      controls_on_map: true,
+      start: 1,
+      map_options: {
+        zoom: 15,
+        scrollwheel: false
+      }
+    }).Load();
+
+    {% if basel_map_lat and basel_map_lon and basel_map_style == "full_width" %}
+      $('body').addClass('full-width-map');
+    {% endif %}
+  });
 </script>
 {% endif %}
-
-
-<script>
-	$(document).ready(function() {
-$(".to_form").click(function() {
-    $('html, body').animate({
-        scrollTop: ($(".form-vertical").offset().top - 200)
-    }, 1000);
-});
-});
-</script>
 
 {{ footer }}

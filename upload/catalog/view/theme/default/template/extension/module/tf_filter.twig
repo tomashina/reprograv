@@ -22,9 +22,9 @@
             <span class="tf-filter-group-title">{{ text_price }}</span>
             {% if reset_group %}
               {% if filter['selected']['min'] != filter['min_price'] or filter['selected']['max'] != filter['max_price'] %}
-                <a data-tf-reset="price" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="price" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% else %}
-                <a data-tf-reset="price" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset hide"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="price" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset hide"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% endif %}
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
@@ -47,7 +47,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for sub_category in filter['values'] %}{% if sub_category['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class=" tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -107,7 +107,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for manufacturer in filter['values'] %}{% if manufacturer['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class=" tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -154,9 +154,9 @@
             <span  class="tf-filter-group-title">{{ text_search }}</span>
             {% if reset_group %}
               {% if filter['keyword'] %}
-                <a data-tf-reset="text" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="text" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% else %}
-                <a data-tf-reset="text" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset hide"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="text" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset hide"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% endif %}
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
@@ -173,9 +173,9 @@
             <span class="tf-filter-group-title">{{ text_availability }}</span>
             {% if reset_group %}
               {% if filter['values']['in_stock']['selected'] or filter['values']['out_of_stock']['selected'] %}
-                <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class=" tf-filter-reset"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% else %}
-                <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class=" tf-filter-reset hide"><i class="fa fa-times"></i></a>
+                <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset hide"><i class="fa fa-times" aria-hidden="true"></i></button>
               {% endif %}
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
@@ -228,7 +228,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for stock_status in filter.values %}{% if stock_status.selected %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -265,7 +265,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for rating in filter['values'] %}{% if rating['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -310,7 +310,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for discount in filter['values'] %}{% if discount['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -346,7 +346,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for value in filter['values'] %}{% if value['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class=" tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -388,7 +388,7 @@
             {% if reset_group %}
               {% set total_selected = 0 %}
               {% for value in filter['values'] %}{% if value['selected'] %}{% set total_selected = total_selected + 1 %}{% endif %}{% endfor %}
-              <a data-tf-reset="check" data-toggle="tooltip" title="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times"></i></a>
+              <button type="button" data-tf-reset="check" data-reset-label="{{ text_reset }}" data-toggle="tooltip" title="{{ text_reset }}" aria-label="{{ text_reset }}" class="tf-filter-reset{{ not total_selected?' hide' }}"><i class="fa fa-times" aria-hidden="true"></i></button>
             {% endif %}
             <i class="fa fa-caret-up toggle-icon"></i>
           </div>
@@ -607,9 +607,7 @@
         .addClass('active')
         .attr({
           'aria-controls': 'tf-filter-{{ module_class_id }}',
-          'aria-expanded': 'false',
-          'role': 'button',
-          'tabindex': '0'
+          'aria-expanded': 'false'
         })
         .html('<i class="fa fa-sliders" aria-hidden="true"></i><span>{{ heading_title }}</span>')
         .off('click.tfFilter{{ module_class_id }} keydown.tfFilter{{ module_class_id }}')
@@ -852,4 +850,4 @@
     });
   });
 </script>
-<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.10" rel="stylesheet" media="screen" />
+<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.11" rel="stylesheet" media="screen" />

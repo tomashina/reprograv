@@ -125,7 +125,7 @@ $(document).ready(function() {
 
 	var mobileMenuToggleSelector = [
 		'li.dropdown-wrapper > a > .fa-angle-down',
-		'li.dropdown-wrapper > .menu-parent-button > .fa-angle-down',
+		'li.dropdown-wrapper > .menu-parent-button',
 		'li.has-sub > a > .fa-angle-right'
 	].join(',');
 
@@ -143,13 +143,18 @@ $(document).ready(function() {
 			'id': submenuId,
 			'aria-hidden': 'true'
 		});
-		$toggle.attr({
-			'role': 'button',
-			'tabindex': '0',
+		var toggleAttributes = {
 			'aria-controls': submenuId,
-			'aria-expanded': 'false',
-			'aria-label': 'Otvori podizbornik'
-		});
+			'aria-expanded': 'false'
+		};
+
+		if (!$toggle.is('button')) {
+			toggleAttributes.role = 'button';
+			toggleAttributes.tabindex = '0';
+			toggleAttributes['aria-label'] = 'Otvori podizbornik';
+		}
+
+		$toggle.attr(toggleAttributes);
 	});
 
 	function toggleMobileSubmenu($toggle) {
@@ -164,7 +169,11 @@ $(document).ready(function() {
 
 		$item.siblings().each(function() {
 			var $sibling = $(this);
-			$sibling.children('a, .menu-parent-button').removeClass('open')
+			var $siblingControl = $sibling.children('a, .menu-parent-button');
+
+			$siblingControl
+				.removeClass('open')
+				.attr('aria-expanded', 'false')
 				.find('.fa-angle-down, .fa-angle-right')
 				.attr({
 					'aria-expanded': 'false',
@@ -177,10 +186,11 @@ $(document).ready(function() {
 		});
 
 		$parentControl.toggleClass('open', isOpening);
-		$toggle.attr({
-			'aria-expanded': isOpening ? 'true' : 'false',
-			'aria-label': isOpening ? 'Zatvori podizbornik' : 'Otvori podizbornik'
-		});
+		$toggle.attr('aria-expanded', isOpening ? 'true' : 'false');
+
+		if (!$toggle.is('button')) {
+			$toggle.attr('aria-label', isOpening ? 'Zatvori podizbornik' : 'Otvori podizbornik');
+		}
 		$submenu.attr('aria-hidden', isOpening ? 'false' : 'true')
 			.stop(true, true)
 			.slideToggle(240);
@@ -774,3 +784,75 @@ var contact_form_send = function(form_id) {
 		});
 	}
 })(window.jQuery);
+
+(function() {
+	function fallbackCopy(text) {
+		var input = document.createElement('textarea');
+
+		input.value = text;
+		input.setAttribute('readonly', '');
+		input.style.position = 'fixed';
+		input.style.opacity = '0';
+		document.body.appendChild(input);
+		input.select();
+
+		var copied = false;
+
+		try {
+			copied = document.execCommand('copy');
+		} catch (error) {
+			copied = false;
+		}
+
+		document.body.removeChild(input);
+
+		return copied;
+	}
+
+	function showCopyResult(button, copied) {
+		var share = button.closest('.custom-share');
+		var status = share ? share.querySelector('.custom-share__status') : null;
+
+		button.classList.toggle('is-copied', copied);
+		button.setAttribute('aria-label', copied ? 'Poveznica je kopirana' : 'Kopiranje nije uspjelo');
+
+		if (status) {
+			status.textContent = copied ? 'Poveznica je kopirana.' : 'Kopiranje nije uspjelo.';
+		}
+
+		window.clearTimeout(button.shareCopyTimer);
+		button.shareCopyTimer = window.setTimeout(function() {
+			button.classList.remove('is-copied');
+			button.setAttribute('aria-label', 'Kopirajte poveznicu');
+
+			if (status) {
+				status.textContent = '';
+			}
+		}, 2200);
+	}
+
+	document.addEventListener('click', function(event) {
+		var button = event.target.closest ? event.target.closest('.custom-share__button--copy') : null;
+
+		if (!button) {
+			return;
+		}
+
+		var shareUrl = button.getAttribute('data-share-copy');
+
+		if (!shareUrl) {
+			showCopyResult(button, false);
+			return;
+		}
+
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(shareUrl).then(function() {
+				showCopyResult(button, true);
+			}, function() {
+				showCopyResult(button, fallbackCopy(shareUrl));
+			});
+		} else {
+			showCopyResult(button, fallbackCopy(shareUrl));
+		}
+	});
+})();

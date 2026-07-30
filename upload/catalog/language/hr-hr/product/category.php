@@ -29,4 +29,6 @@ $_['text_mobile_one_column'] = 'Jedan proizvod u redu';
 $_['text_mobile_two_columns'] = 'Dva proizvoda u redu';
 $_['text_category_navigation'] = 'Kategorija';
 $_['text_back_to_category'] = 'Sve iz kategorije %s';
+$_['text_breadcrumb_label'] = 'Putanja stranice';
+$_['text_breadcrumb_home'] = 'Početna';
 $_['text_pagination_limit']       = 'Ukupno %d ';

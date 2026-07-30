@@ -1,94 +1,93 @@
 {{ header }}
-<div class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
+
+<div class="container blog-index-page">
+  <nav aria-label="Putanja stranice">
+    <ul class="breadcrumb">
+      {% for breadcrumb in breadcrumbs %}
+        {% if loop.last %}
+          <li><span aria-current="page">{{ breadcrumb.text }}</span></li>
+        {% else %}
+          <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <div class="row">
+    {{ column_left }}
+
     {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
+      {% set class = 'col-sm-6' %}
     {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
+      {% set class = 'col-md-9 col-sm-8' %}
     {% else %}
-    {% set class = 'col-sm-12' %}
+      {% set class = 'col-sm-12' %}
     {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <div class="blog">
-      
-      <h1 id="page-title">{{ heading_title }}</h1>
-      
-      {% if description %}
-      <div class="main_description">
-      {{ description }}
-      </div>
-      {% endif %}
-  	
-    {% if blogs %}
-		<div class="grid-holder grid{{ list_columns }}">
-			
+
+    <main id="content" class="{{ class }}">
+      {{ content_top }}
+
+      <div class="blog blog-index">
+        <header class="blog-page-intro">
+          <span class="page-eyebrow">Znanje iz prakse</span>
+          <h1 id="page-title">{{ heading_title }}</h1>
+
+          {% if description %}
+            <div class="main_description">{{ description }}</div>
+          {% endif %}
+        </header>
+
+        {% if blogs %}
+          <div class="blog-editorial-list" role="list">
             {% for blog in blogs %}
-				<div class="item row single-blog cm_content">
-     
-                
-                 {% if blog.image %}
-                 <div class="col-md-6">
-                        <div class="banner_wrap hover-zoom hover-darken">
-        			           	<img class="zoom_image" src="{{ blog.image }}" alt="{{ blog.title }}" title="{{ blog.title }}" />
-                        <a href="{{ blog.href }}" class="effect-holder"></a>
-                        {% if date_added_status %}
-                        <div class="date_added">
-                        <span class="day">{{ blog.date_added_day }}</span>
-                        <b class="month">{{ blog.date_added_month }}</b>
-                        </div>
-                        {% endif %}
-                        {% if blog.tags %}
-                        <div class="tags-wrapper">
-                        <div class="tags primary-bg-color">
-                        {% for tag in blog.tags|slice(0,2) %}
-                        <a href="index.php?route=extension/blog/home&tag={{ tag|trim }}">{{ tag|trim }}</a>
-                        {% endfor %}
-                        </div>
-                        </div>
-                        {% endif %}
+              <article class="blog-editorial-item" role="listitem">
+                {% if blog.image %}
+                  <a class="blog-editorial-media" href="{{ blog.href }}" aria-label="{{ blog.title }}">
+                    <img src="{{ blog.image }}" alt="{{ blog.title }}" loading="lazy" decoding="async" />
+                  </a>
+                {% endif %}
 
-                        </div>
-                        </div>
-        				{% endif %}
+                <div class="blog-editorial-content">
+                  <time class="blog-editorial-date" datetime="{{ blog.date_added_iso }}">
+                    <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                    {{ blog.date_added_day }}. {{ blog.date_added_month }} {{ blog.date_added_year }}.
+                  </time>
 
+                  <h2 class="blog-title"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
 
-          
-   <div class="col-md-6">
-                
-                            <div class="summary vertical-middle">
-                            <h2 class="blog-title"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
-                            
-                            <div class="blog_stats">
-                      
-                            </div>
-                            {% if blog.short_description %}
-                            <div class="short-description">{{ blog.short_description }}</div>
-                            {% endif %}
+                  {% if blog.short_description %}
+                    <p class="short-description">{{ blog.short_description }}</p>
+                  {% endif %}
 
-                                 <a class="btn btn-outline mt-15" href="{{ blog.href }}"> {{ text_read_more }}</a>
-                            </div>
-
-
-                             </div>
-                 </div>
+                  <a class="btn btn-outline blog-editorial-button" href="{{ blog.href }}">
+                    {{ text_read_more }}
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </article>
             {% endfor %}
           </div>
-		<div class="row pagination-holder" style="display:none">
-        <div class="col-sm-6 xs-text-center">
-		{{pagination|replace({'&gt;|': "&gt;&gt", "|&lt;" : "&lt;&lt"})}}
-		</div>
-        <div class="col-sm-6 text-right xs-text-center"><span class="pagination-text">{{ results }}</span></div>
+
+          {% if pagination %}
+            <div class="row pagination-holder blog-pagination">
+              <div class="col-sm-6 xs-text-center">
+                {{ pagination|replace({'&gt;|': "&gt;&gt", "|&lt;" : "&lt;&lt"}) }}
+              </div>
+              <div class="col-sm-6 text-right xs-text-center">
+                <span class="pagination-text">{{ results }}</span>
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="blog-empty-state">{{ text_no_blog_posts }}</div>
+        {% endif %}
       </div>
-	{% else %}
-		<div>{{ text_no_blog_posts }}</div>
-	{% endif %}
-    </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+
+      {{ content_bottom }}
+    </main>
+
+    {{ column_right }}
+  </div>
 </div>
-{{ footer }} 
+
+{{ footer }}

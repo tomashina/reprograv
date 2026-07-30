@@ -1,6 +1,6 @@
 {% if use_custom_links %}
 {% for basel_link in basel_links %}
-<li class="static-link"><a class="anim-underline" aria-label="External link" href="{{ basel_link.target }}">{{ basel_link.text }}</a></li>
+<li class="static-link"><a class="anim-underline" aria-label="{{ basel_link.text|striptags|trim }}" href="{{ basel_link.target }}">{{ basel_link.text }}</a></li>
 {% endfor %}
 {% else %}
 <li class="static-link"><a class="anim-underline"  href="{{ account }}" title="{{ text_account }}">{{ text_account }}</a></li>

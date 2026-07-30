@@ -18,9 +18,9 @@
 <link href="catalog/view/javascript/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js"></script>
 <script src="catalog/view/theme/basel/js/slick.min.js"></script>
-<script src="catalog/view/theme/basel/js/basel_common.js"></script>
+<script src="catalog/view/theme/basel/js/basel_common.js?v=20260730.5"></script>
 <!-- Main stylesheet -->
-<link href="catalog/view/theme/basel/stylesheet/stylesheet.css?v=2.215" rel="stylesheet">
+<link href="catalog/view/theme/basel/stylesheet/stylesheet.css?v=2.227" rel="stylesheet">
 <!-- Mandatory Theme Settings CSS -->
 <style id="basel-mandatory-css"><?php echo $basel_mandatory_css; ?></style>
 <!-- Plugin Stylesheet(s) -->

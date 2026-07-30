@@ -92,10 +92,12 @@ class ControllerExtensionBlogHome extends Controller {
 			'blog_id' 			=> $result['blog_id'],
 			'tags' 				=> $tags,
 			'title'     		=> $result['title'],
-			'short_description' => html_entity_decode($result['short_description'], ENT_QUOTES, 'UTF-8'),
-			'date_added_day' 	=> date("d",strtotime($result['date_added'])),
-			'date_added_month' 	=> $date_added_month,
-			'author' 			=> $result['author'],
+			'short_description' => $this->cleanSeoText($result['short_description'], 280),
+				'date_added_day' 	=> date("d",strtotime($result['date_added'])),
+				'date_added_month' 	=> $date_added_month,
+				'date_added_year' 	=> date("Y", strtotime($result['date_added'])),
+				'date_added_iso' 	=> date(DATE_ATOM, strtotime($result['date_added'])),
+				'author' 			=> $result['author'],
 			'image'   			=> $this->model_tool_image->resize($result['image'], $img_width, $img_height),
 			'href' 				=> $this->url->link('extension/blog/blog', 'blog_id=' . $result['blog_id'])
 			);

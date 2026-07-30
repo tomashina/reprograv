@@ -84,7 +84,8 @@ class ControllerExtensionBlogBlog extends Controller {
 			'href' => $this->url->link('extension/blog/blog', $url . '&blog_id=' . $this->request->get['blog_id'])
 			);
 			
-			$data['new_read_counter_value'] = $blog_info['count_read']+1;
+				$data['new_read_counter_value'] = $blog_info['count_read']+1;
+				$data['count_read'] = $data['new_read_counter_value'];
 			$this->model_extension_blog_blog->updateBlogReadCounter($this->request->get['blog_id'], $data['new_read_counter_value']);
 			$data['comment_total'] = $this->model_extension_blog_blog->getTotalCommentsByBlogId($this->request->get['blog_id']);
 
@@ -356,6 +357,13 @@ class ControllerExtensionBlogBlog extends Controller {
 			$data['author'] = $blog_info['author'];
 
 			$canonical_url = html_entity_decode($canonical, ENT_QUOTES, 'UTF-8');
+			$data['share_url'] = $canonical_url;
+			$data['share_links'] = array(
+				'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($canonical_url),
+				'x' => 'https://twitter.com/intent/tweet?url=' . rawurlencode($canonical_url) . '&text=' . rawurlencode($blog_info['title']),
+				'whatsapp' => 'https://wa.me/?text=' . rawurlencode($blog_info['title'] . ' ' . $canonical_url),
+				'email' => 'mailto:?subject=' . rawurlencode($blog_info['title']) . '&body=' . rawurlencode($blog_info['title'] . "\n\n" . $canonical_url)
+			);
 			$publisher_id = rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/#organization';
 			$article_schema = array(
 				'@context'         => 'https://schema.org',

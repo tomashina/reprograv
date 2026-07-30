@@ -466,10 +466,9 @@
                                 <p class="info tags"><b>{{ text_tags }}</b> &nbsp;<span>{% for tag in tags %}<a class="hover_uline" href="{{ tag.href }}">{{ tag.tag }}</a> {% endfor %}</span></p>
                             {% endif %}
 
-                            <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=61a636a5d0a9e10012e4df2d&product=sop' async='async'></script>
-                            <!-- ShareThis BEGIN -->
-                            <div class="sharethis-inline-share-buttons"></div>
-                            <!-- ShareThis END -->
+                            {% set share_label = 'Podijelite proizvod' %}
+                            {% set share_context = 'product' %}
+                            {% include 'basel/template/common/share_buttons.twig' %}
                         </div> <!-- .info-holder ends -->
 
                     </div> <!-- .inner ends -->
@@ -693,9 +692,9 @@
         {% if products %}
             <div class="widget widget-related">
 
-                <div class="widget-title">
-                    <h2 class="main-title"><span>{{ text_related }}</span></h2>
-                    <p class="widget-title-separator"><i class="icon-line-cross"></i></p>
+                <div class="article-section-heading product-related-heading">
+                    <span class="page-eyebrow">Istražite ponudu</span>
+                    <h2>{{ text_related }}</h2>
                 </div>
 
                 <div class="grid grid-holder related carousel product-card-grid grid{{ basel_rel_prod_grid }}">
@@ -1015,19 +1014,6 @@
             }, 1000);
         });
 
-// Sharing buttons
-        {% if basel_share_btn %}
-        var share_url = encodeURIComponent(window.location.href);
-        var page_title = '{{ heading_title }}';
-        {% if thumb %}
-        var thumb = '{{ thumb }}';
-        {% endif %}
-        $('.fb_share').attr("href", 'https://www.facebook.com/sharer/sharer.php?u=' + share_url + '');
-        $('.twitter_share').attr("href", 'https://twitter.com/intent/tweet?source=' + share_url + '&text=' + page_title + ': ' + share_url + '');
-        $('.google_share').attr("href", 'https://plus.google.com/share?url=' + share_url + '');
-        $('.pinterest_share').attr("href", 'http://pinterest.com/pin/create/button/?url=' + share_url + '&media=' + thumb + '&description=' + page_title + '');
-        $('.vk_share').attr("href", 'http://vkontakte.ru/share.php?url=' + share_url + '');
-        {% endif %}
     });
     //--></script>
 

@@ -20,7 +20,7 @@ class ControllerExtensionQuickCheckoutCheckout extends Equotix {
 			$this->document->addScript('catalog/view/javascript/jquery/quickcheckout/quickcheckout.countdown.js');
 		}
 				
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout.css?v=20260730.8');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout.css?v=20260730.9');
 		
 		$data['column_layout'] = $this->config->get('quickcheckout_layout');
 		

@@ -19,7 +19,7 @@
 {% endif %}
 
 {% if row.submenu is iterable and row.submenu %}
-{% set caret = "<i class='fa fa-angle-down'></i>" %}
+{% set caret = "<i class='fa fa-angle-down' aria-hidden='true'></i>" %}
   {% if row.submenu_width == 'full' %}
 	{% set class = class~' has-sub dropdown-wrapper has-full-width' %}
 	{% set is_full_width = true %}
@@ -44,9 +44,15 @@ background-position:{{ row.position }};
 
 <!-- Top level items -->
 <li class="{{ class }}">
-<a {% if row.link %} href="{{ row.link }}" {% endif %} class="{{ class_link }} {{ target }}">
-{{ icon_font }}<span class="top">{{ row.name[lang_id] }}</span>{{ row.description }}{{ caret }}
+{% if row.link %}
+<a href="{{ row.link }}" class="{{ class_link }} {{ target }}">
+	{{ icon_font }}<span class="top">{{ row.name[lang_id] }}</span>{{ row.description }}{{ caret }}
 </a>
+{% else %}
+<button type="button" class="menu-parent-button {{ class_link }}">
+	{{ icon_font }}<span class="top">{{ row.name[lang_id] }}</span>{{ row.description }}{{ caret }}
+</button>
+{% endif %}
 {% if row.submenu is iterable and row.submenu %}
 <!-- Sub Menu items -->
 <!-- if full width -->

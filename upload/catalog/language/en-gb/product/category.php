@@ -28,6 +28,8 @@ $_['text_mobile_one_column'] = 'One product per row';
 $_['text_mobile_two_columns'] = 'Two products per row';
 $_['text_category_navigation'] = 'Category';
 $_['text_back_to_category'] = 'All in %s';
+$_['text_breadcrumb_label'] = 'Breadcrumb';
+$_['text_breadcrumb_home'] = 'Home';
 /*
 Translated with
 Массовый автоматический перевод текстов, товаров, категорий, статей и тд с Google translate API

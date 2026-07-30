@@ -96,6 +96,10 @@ html[dir="rtl"] .tf-filter-group-header .toggle-icon{
 
 .tf-filter-reset {
     display: inline-block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
     line-height: 0;
     cursor: pointer;
     font-size: .85em;

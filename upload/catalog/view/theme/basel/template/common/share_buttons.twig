@@ -1,0 +1,61 @@
+<div class="custom-share custom-share--{{ share_context }}" aria-label="{{ share_label }}">
+  <span class="custom-share__label">{{ share_label }}</span>
+
+  <div class="custom-share__actions">
+    <a
+      class="custom-share__button custom-share__button--facebook"
+      href="{{ share_links.facebook }}"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      aria-label="Podijelite na Facebooku"
+      title="Facebook"
+    >
+      <i class="fa fa-facebook" aria-hidden="true"></i>
+    </a>
+
+    <a
+      class="custom-share__button custom-share__button--x"
+      href="{{ share_links.x }}"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      aria-label="Podijelite na X-u"
+      title="X"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"></path>
+      </svg>
+    </a>
+
+    <a
+      class="custom-share__button custom-share__button--whatsapp"
+      href="{{ share_links.whatsapp }}"
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      aria-label="Podijelite putem WhatsAppa"
+      title="WhatsApp"
+    >
+      <i class="fa fa-whatsapp" aria-hidden="true"></i>
+    </a>
+
+    <a
+      class="custom-share__button custom-share__button--email"
+      href="{{ share_links.email }}"
+      aria-label="Podijelite emailom"
+      title="Email"
+    >
+      <i class="fa fa-envelope-o" aria-hidden="true"></i>
+    </a>
+
+    <button
+      class="custom-share__button custom-share__button--copy"
+      type="button"
+      data-share-copy="{{ share_url }}"
+      aria-label="Kopirajte poveznicu"
+      title="Kopiraj link"
+    >
+      <i class="fa fa-link" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <span class="custom-share__status" role="status" aria-live="polite"></span>
+</div>

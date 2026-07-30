@@ -33,11 +33,19 @@
 {{ header }}
 <div class="container category-catalogue-page">
 
-    <ul class="breadcrumb">
-        {% for breadcrumb in breadcrumbs %}
-            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-        {% endfor %}
-    </ul>
+    <nav aria-label="{{ text_breadcrumb_label }}">
+        <ul class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+                {% if loop.last %}
+                    <li><span aria-current="page">{{ breadcrumb.text }}</span></li>
+                {% else %}
+                    <li>
+                        <a href="{{ breadcrumb.href }}"{% if loop.first %} aria-label="{{ text_breadcrumb_home }}"{% endif %}>{{ breadcrumb.text }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
 
     {% if short_description %}
 
@@ -107,12 +115,12 @@
 
 
             {% if categories and category_subs_status %}
-                <h3 class="lined-title category-refine-title hidden-xs"><span>{{ text_refine }}</span></h3>
+                <h2 class="lined-title category-refine-title hidden-xs"><span>{{ text_refine }}</span></h2>
                 <div class="grid-holder categories carousel grid-holder grid6 prod_module0 carousel mb-3">
                     {% for category in categories %}
                         <div class="item single-product">
                             <a class="category-refine-card" href="{{ category.href }}">
-                                <span class="category-refine-media"><img src="{{ category.thumb }}" alt="{{ category.name }}" title="{{ category.name }}" /></span>
+                                <span class="category-refine-media"><img src="{{ category.thumb }}" alt="" aria-hidden="true" /></span>
                                 <span class="category-refine-name">{{ category.name }}<i class="fa fa-angle-right" aria-hidden="true"></i></span>
                             </a>
                         </div>
@@ -149,7 +157,9 @@
 
                     <div class="table filter category-toolbar">
 
-                        <div class="table-cell nowrap hidden-sm hidden-md hidden-lg"><a class="filter-trigger-btn"></a></div>
+                        <div class="table-cell nowrap hidden-sm hidden-md hidden-lg">
+                            <button type="button" class="filter-trigger-btn"></button>
+                        </div>
 
 
                         <div class="table-cell w100">
@@ -318,27 +328,19 @@
                     .addClass('active')
                     .attr({
                         'aria-controls': 'category-navigation',
-                        'aria-expanded': 'false',
-                        'role': 'button',
-                        'tabindex': '0'
+                        'aria-expanded': 'false'
                     })
                     .html('<i class="fa fa-sliders" aria-hidden="true"></i><span>{{ text_category_navigation }}</span>');
             }
 
             $categoryDrawerTrigger
-                .off('click.rgCategoryDrawer keydown.rgCategoryDrawer')
+                .off('click.rgCategoryDrawer')
                 .on('click.rgCategoryDrawer', function(e) {
                     e.preventDefault();
                     $('html').addClass('no-scroll side-filter-open');
                     $('.body-cover').addClass('active');
                     $categoryDrawer.find('.tf-filter').attr('aria-hidden', 'false');
                     $categoryDrawerTrigger.attr('aria-expanded', 'true');
-                })
-                .on('keydown.rgCategoryDrawer', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        $(this).trigger('click');
-                    }
                 });
         }
 

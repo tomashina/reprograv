@@ -128,6 +128,8 @@ class ControllerProductCategory extends Controller {
 			$data['text_mobile_grid_label'] = $this->language->get('text_mobile_grid_label');
 			$data['text_category_navigation'] = $this->language->get('text_category_navigation');
 			$data['text_back_to_category'] = $this->language->get('text_back_to_category');
+			$data['text_breadcrumb_label'] = $this->language->get('text_breadcrumb_label');
+			$data['text_breadcrumb_home'] = $this->language->get('text_breadcrumb_home');
 
 			// Set the last category breadcrumb
 			$data['breadcrumbs'][] = array(

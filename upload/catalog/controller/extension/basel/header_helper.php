@@ -44,6 +44,28 @@
 	$data['promo_message2'] = '';
 	if (isset($promo_message2[$lang_id]))
 	$data['promo_message2'] = html_entity_decode($promo_message2[$lang_id], ENT_QUOTES, 'UTF-8');
+
+	$normalize_header_telephone_links = function ($html) {
+		return preg_replace_callback(
+			"~href\\s*=\\s*([\"'])(?:tel:)?\\s*(\\+?[\\d\\s()./-]{6,})\\s*\\1~i",
+			function ($matches) {
+				$raw_phone = trim($matches[2]);
+				$digits = preg_replace('/\\D+/', '', $raw_phone);
+
+				if ($digits === '') {
+					return $matches[0];
+				}
+
+				$prefix = strpos(ltrim($raw_phone), '+') === 0 ? '+' : '';
+
+				return 'href=' . $matches[1] . 'tel:' . $prefix . $digits . $matches[1];
+			},
+			$html
+		);
+	};
+
+	$data['promo_message'] = $normalize_header_telephone_links($data['promo_message']);
+	$data['promo_message2'] = $normalize_header_telephone_links($data['promo_message2']);
 	$data['top_line_style'] = $this->config->get('top_line_style');
 	$data['top_line_width'] = $this->config->get('top_line_width');
 	$data['main_header_width'] = $this->config->get('main_header_width');

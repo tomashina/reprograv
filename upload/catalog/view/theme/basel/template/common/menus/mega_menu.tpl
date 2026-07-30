@@ -3,7 +3,7 @@ if(!empty($row['icon_font'])) $icon_font .= "<i class='icon ".$row['icon_font'].
 if($row['description'] != '') $class_link .= ' description';
 if($row['class_menu']) $class .= $row['class_menu'];
 if(is_array($row['submenu']) && !empty($row['submenu'])) {
-$caret = "<i class='fa fa-angle-down'></i>";
+$caret = "<i class='fa fa-angle-down' aria-hidden='true'></i>";
   if($row['submenu_width'] == 'full') {
 	$class .= ' has-sub dropdown-wrapper has-full-width';
     $is_full_width = true;
@@ -18,9 +18,15 @@ if ($row['icon'] && (strpos($row['icon'], 'no_image') === false)) $submenu_bg_im
 ?>
 <!-- Top level items -->
 <li class="<?php echo $class; ?>">
-<a <?php if ($row['link']) { ?>href="<?php echo $row['link']; ?>"<?php } ?> class="<?php echo $class_link; ?> <?php echo $target; ?>">
-<?php echo $icon_font . '<span class="top">' . $row['name'][$lang_id] . '</span>' . $row['description'] ?><?php echo $caret; ?>
+<?php if ($row['link']) { ?>
+<a href="<?php echo $row['link']; ?>" class="<?php echo $class_link; ?> <?php echo $target; ?>">
+	<?php echo $icon_font . '<span class="top">' . $row['name'][$lang_id] . '</span>' . $row['description'] ?><?php echo $caret; ?>
 </a>
+<?php } else { ?>
+<button type="button" class="menu-parent-button <?php echo $class_link; ?>">
+	<?php echo $icon_font . '<span class="top">' . $row['name'][$lang_id] . '</span>' . $row['description'] ?><?php echo $caret; ?>
+</button>
+<?php } ?>
 <?php if(is_array($row['submenu']) && !empty($row['submenu'])) { ?>
 <!-- Sub Menu items -->
 <!-- if full width -->
