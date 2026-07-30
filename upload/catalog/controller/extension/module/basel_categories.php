@@ -40,6 +40,7 @@ class ControllerExtensionModuleBaselCategories extends Controller {
 		$data['use_margin'] = $setting['use_margin'];
 		$data['margin'] = $setting['margin'];
 		$data['img_width'] = $setting['image_width'];
+		$data['img_height'] = $setting['image_height'];
 		$data['view_subs'] = $setting['subs'];
 		$data['count'] = $setting['count'];
 	
@@ -76,8 +77,8 @@ class ControllerExtensionModuleBaselCategories extends Controller {
 			$data['categories'][] = array(
 				'category_id' => $category_info['category_id'],
 				'sort_order' => $category_info['sort_order'],
-				'alt' => $category_info['image_alt'],
-				'title' => $category_info['image_title'],
+				'alt' => !empty($category_info['image_alt']) ? $category_info['image_alt'] : $category_info['name'],
+				'title' => !empty($category_info['image_title']) ? $category_info['image_title'] : $category_info['name'],
 				'thumb'       => $image,
 				'name'        => $category_info['name'] . ($setting['count'] && $setting['subs'] ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data_top) . ')' : ''),
 				'products'    => $this->model_catalog_product->getTotalProducts($filter_data_top) . $this->language->get('basel_text_products'),

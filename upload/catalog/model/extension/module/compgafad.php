@@ -111,7 +111,7 @@ class ModelExtensionModulecompgafad extends Model {
 	}
 	public function addtocart() {
 		$json['script'] = false;
-		if ($this->status && isset($this->request->post['product_id']) && isset($this->request->post['quantity'])) {
+		if ($this->status && $this->canExposeCommercialData() && isset($this->request->post['product_id']) && isset($this->request->post['quantity'])) {
 			$pid = (int)$this->request->post['product_id'];
 			$quantity = (int)$this->request->post['quantity'];
 			
@@ -198,7 +198,7 @@ class ModelExtensionModulecompgafad extends Model {
 	}
 	public function addtowishlist() {
 		$json['script'] = false;
-		if($this->status && isset($this->request->post['product_id']) && isset($this->request->post['quantity'])) {	
+		if($this->status && $this->canExposeCommercialData() && isset($this->request->post['product_id']) && isset($this->request->post['quantity'])) {
 			$pid = (int)$this->request->post['product_id'];
 			$quantity = (int)$this->request->post['quantity'];	
 			
@@ -227,7 +227,7 @@ class ModelExtensionModulecompgafad extends Model {
 		$this->response->setOutput(json_encode($json));
 	}
 	public function viewcont() {
-		if($this->status && isset($this->request->get['product_id'])) { 
+		if($this->status && $this->canExposeCommercialData() && isset($this->request->get['product_id'])) {
    			$this->load->model('catalog/product');
 			
 			$pinfo = $this->model_catalog_product->getProduct($this->request->get['product_id']);
@@ -244,7 +244,7 @@ class ModelExtensionModulecompgafad extends Model {
 		}
 	}
 	public function viewcategory() {
-		if($this->status && !empty($this->request->get['path'])) {			
+		if($this->status && $this->canExposeCommercialData() && !empty($this->request->get['path'])) {
 			$this->load->model('catalog/product');
 			
 			$path = '';
@@ -276,7 +276,7 @@ class ModelExtensionModulecompgafad extends Model {
 		}
 	}
 	public function search() {
-		if($this->status && !empty($this->request->get['search'])) {
+		if($this->status && $this->canExposeCommercialData() && !empty($this->request->get['search'])) {
 			$srchstr = $this->request->get['search'];
 			$this->load->model('catalog/product');
 			
@@ -304,7 +304,7 @@ class ModelExtensionModulecompgafad extends Model {
 		}
 	}
 	public function remove_from_cart() {
-		if (isset($this->request->post['key']) || isset($this->request->get['remove'])) {
+		if ($this->canExposeCommercialData() && (isset($this->request->post['key']) || isset($this->request->get['remove']))) {
 			foreach($this->cart->getProducts() as $cartprod) {
 				if((isset($cartprod['key']) && $cartprod['key'] == $this->request->get['remove']) || 
 					(isset($cartprod['key']) && $cartprod['key'] == $this->request->post['key']) || 
@@ -319,7 +319,7 @@ class ModelExtensionModulecompgafad extends Model {
 		}
 	}
 	public function viewcart() {
-		if($this->status && $this->cart->hasProducts()) {
+		if($this->status && $this->canExposeCommercialData() && $this->cart->hasProducts()) {
 			$g_pdata = $this->cart->getProducts();
 			$g_value = $this->cart->getTotal();
 			
@@ -334,7 +334,7 @@ class ModelExtensionModulecompgafad extends Model {
 		}
 	}
 	public function beginchk() {
-		if($this->status && $this->cart->hasProducts()) {
+		if($this->status && $this->canExposeCommercialData() && $this->cart->hasProducts()) {
 			$g_pdata = $this->cart->getProducts();
 			$g_value = $this->cart->getTotal();
 			
@@ -375,6 +375,10 @@ class ModelExtensionModulecompgafad extends Model {
 	}
 	
 	// Helpers
+	private function canExposeCommercialData() {
+		return !$this->config->get('config_customer_price') || $this->customer->isLogged();
+	}
+
 	public function getSetting() {		
 		$storeid = $this->config->get('config_store_id');
 		

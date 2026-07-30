@@ -64,7 +64,11 @@
                         ]
                     });
                     $('.product-style2 .single-product .icon').attr('data-placement', 'top');
-                    $('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+                    $(window).on('load', function() {
+                        if ($.fn.tooltip) {
+                            $('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+                        }
+                    });
                 </script>
 
 

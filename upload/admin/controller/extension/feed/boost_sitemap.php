@@ -194,15 +194,15 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			$data['feed_boost_sitemap_item'] = [];
 		}
 		
-		$data['items'] = [
-			'product' => 'Product Sitemaps',
-			'category' => 'Category Sitemaps',
-			'category_product' => 'Category To Product Sitemaps',
-			'manufacturer' => 'Manufacturer Sitemaps',
-			'manufacturer_product' => 'Manufacturer To Product Sitemaps',
-			'information' => 'Information Sitemaps',
-			'custom_link' => 'Custom Link Sitemaps'
-		];
+			$data['items'] = [
+				'product' => 'Product Sitemaps',
+				'category' => 'Category Sitemaps',
+				'manufacturer' => 'Manufacturer Sitemaps',
+				'manufacturer_product' => 'Manufacturer To Product Sitemaps',
+				'information' => 'Information Sitemaps',
+				'blog' => 'Blog Sitemaps',
+				'custom_link' => 'Custom Link Sitemaps'
+			];
 		
 		/* New Journal3 Blog*/
 		if(defined('JOURNAL3_INSTALLED')){
@@ -354,7 +354,14 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			
 			$this->model_setting_setting->editSetting('feed_boost_sitemap', $this->request->post);
 			
-			$items = isset($this->request->post['feed_boost_sitemap_item']) ? $this->request->post['feed_boost_sitemap_item'] : [];
+				$items = isset($this->request->post['feed_boost_sitemap_item']) ? $this->request->post['feed_boost_sitemap_item'] : [];
+				$items = array_values(array_diff($items, ['category_product']));
+
+				foreach (glob($this->directory . 'sitemap_*_category_product*.xml') ?: [] as $legacy_file) {
+					if (is_file($legacy_file)) {
+						unlink($legacy_file);
+					}
+				}
 			
 			/* Journal3 Blog */
 			if(defined('JOURNAL3_INSTALLED')){
@@ -383,9 +390,13 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 				$this->generateCategoryToProductSitemap((int)$this->request->post['feed_boost_sitemap_item_limit']);
 			}
 			
-			if (in_array('information', $items)) {
-				$this->generateInformationSitemap((int)$this->request->post['feed_boost_sitemap_item_limit']);
-			}
+				if (in_array('information', $items)) {
+					$this->generateInformationSitemap((int)$this->request->post['feed_boost_sitemap_item_limit']);
+				}
+
+				if (in_array('blog', $items)) {
+					$this->generateBlogSitemap((int)$this->request->post['feed_boost_sitemap_item_limit']);
+				}
 			
 			if (in_array('manufacturer', $items)) {
 				$this->generateManufacturerSitemap((int)$this->request->post['feed_boost_sitemap_item_limit']);
@@ -673,6 +684,73 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							
 						$this->files[] = 'sitemaps/' . $file_name;	
 					}	
+				}
+			}
+		}
+	}
+
+	/**
+	 * Generate the native Basel/OpenCart blog sitemap.
+	 */
+	protected function generateBlogSitemap($limit = null) {
+		$this->load->model('extension/feed/boost_sitemap');
+
+		foreach ($this->stores as $store) {
+			foreach ($this->languages as $language) {
+				$total = $this->model_extension_feed_boost_sitemap->getTotalBlogs([
+					'store_id' => $store['store_id'],
+					'language_id' => $language['language_id']
+				]);
+
+				if (!$total || !$limit) {
+					continue;
+				}
+
+				$total_pages = (int)ceil($total / $limit);
+
+				for ($page = 1; $page <= $total_pages; $page++) {
+					$output = '<?xml version="1.0" encoding="UTF-8"?>';
+					$output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+
+					$blogs = $this->model_extension_feed_boost_sitemap->getBlogs([
+						'store_id' => $store['store_id'],
+						'language_id' => $language['language_id'],
+						'start' => ($page - 1) * $limit,
+						'limit' => $limit
+					]);
+
+					foreach ($blogs as $blog) {
+						$location = $this->link(
+							$store['url'],
+							'extension/blog/blog',
+							'blog_id=' . $blog['blog_id'],
+							$store['store_id'],
+							$language['language_id']
+						);
+
+						$output .= '<url>';
+						$output .= '<loc>' . htmlspecialchars($location, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc>';
+						$output .= '<lastmod>' . date('c', strtotime($blog['date_added'])) . '</lastmod>';
+						$output .= '<changefreq>monthly</changefreq>';
+						$output .= '<priority>0.6</priority>';
+
+						if ($blog['image']) {
+							$image = $this->model_extension_feed_boost_sitemap->resizeImage($blog['image'], 1200, 630, $store['url']);
+							$output .= '<image:image>';
+							$output .= '<image:loc>' . htmlspecialchars($image, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
+							$output .= '<image:title>' . htmlspecialchars($blog['title'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
+							$output .= '</image:image>';
+						}
+
+						$output .= '</url>';
+					}
+
+					$output .= '</urlset>';
+					$file_name = 'sitemap_' . $store['store_id'] . '_' . $language['language_id'] . '_blog' . ($total_pages > 1 ? '_' . $page : '') . '.xml';
+					$xml_file = fopen($this->directory . $file_name, 'w') or die('Unable to open file!');
+					fwrite($xml_file, $output);
+					fclose($xml_file);
+					$this->files[] = 'sitemaps/' . $file_name;
 				}
 			}
 		}
@@ -979,25 +1057,32 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							'language_id' => $language['language_id'],
 							'start' => ($i - 1) * $limit,
 							'limit' => $limit
-						];
-							
-						$products = $this->model_extension_feed_boost_sitemap->getProducts($params);
-					
-						foreach ($products as $product) {
-							if ($product['image']) {
+							];
+
+							$products = $this->model_extension_feed_boost_sitemap->getProducts($params);
+
+							foreach ($products as $product) {
+								$location = $this->link($store['url'], 'product/product', 'product_id=' . $product['product_id'], $store['store_id'], $language['language_id']);
+								$modified = strtotime($product['date_modified']);
+								if (!$modified || $modified < strtotime('2000-01-01')) {
+									$modified = strtotime($product['date_added']);
+								}
 								$output .= '<url>';
-								$output .= '  <loc>' . $this->link($store['url'], 'product/product', 'product_id=' . $product['product_id'], $store['store_id'], $language['language_id']) . '</loc>';
+								$output .= '  <loc>' . htmlspecialchars($location, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc>';
 								$output .= '  <changefreq>weekly</changefreq>';
-								$output .= '  <lastmod>' . date('c', strtotime($product['date_modified'])) . '</lastmod>';
+								$output .= '  <lastmod>' . date('c', $modified) . '</lastmod>';
 								$output .= '  <priority>1.0</priority>';
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $product['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $product['name'] . '</image:title>';
-								$output .= '  </image:image>';
+
+								if ($product['image']) {
+									$output .= '  <image:image>';
+									$output .= '  <image:loc>' . htmlspecialchars($this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']), ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
+									$output .= '  <image:caption>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:caption>';
+									$output .= '  <image:title>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
+									$output .= '  </image:image>';
+								}
+
 								$output .= '</url>';
 							}
-						}
 					
 						$output .= '</urlset>';
 						
@@ -1221,6 +1306,15 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 
 		parse_str($url_info['query'], $data);
 
+		if (isset($data['route']) && ($data['route'] == 'extension/blog/home' || $data['route'] == 'extension/blog/blog')) {
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = 'extension/blog/home' AND store_id = '" . (int)$store_id . "' AND language_id = '" . (int)$language_id . "'");
+
+			if ($query->num_rows && $query->row['keyword']) {
+				$url .= '/' . $query->row['keyword'];
+				unset($data['route']);
+			}
+		}
+
 		foreach ($data as $key => $value) {
 			if (isset($data['route'])) {
 				if (($data['route'] == 'product/product' && $key == 'product_id') || (($data['route'] == 'product/manufacturer/info' || $data['route'] == 'product/product') && $key == 'manufacturer_id') || ($data['route'] == 'information/information' && $key == 'information_id')) {
@@ -1271,6 +1365,13 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 				} elseif ($data['route'] == 'extension/feed/boost_sitemap') {
 					$url = '/sitemap-index.xml';
 					
+					unset($data[$key]);
+				}
+			} elseif ($key == 'blog_id') {
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = 'blog_id=" . (int)$value . "' AND store_id = '" . (int)$store_id . "' AND language_id = '" . (int)$language_id . "'");
+
+				if ($query->num_rows && $query->row['keyword']) {
+					$url .= '/' . $query->row['keyword'];
 					unset($data[$key]);
 				}
 			}

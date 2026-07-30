@@ -22,7 +22,7 @@
                 <div class="item single-blog">
                   {% if blog.image and thumb %}
                     <div class="banner_wrap notbck hover-zoom hover-darken"{% if columns == 'list' %} style="width:{{img_width}}px"{% endif %}>
-                    <img class="zoom_image" src="{{ blog.image }}" loading="lazy" alt="{{ blog.title }}" title="{{ blog.title }}" />
+                    <img class="zoom_image" src="{{ blog.image }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" alt="{{ blog.title }}" title="{{ blog.title }}" />
                     <a href="{{ blog.href }}" class="effect-holder"  title="{{ blog.title }}"></a>
                     {% if date_added_status %}
                  
@@ -63,8 +63,8 @@
 $('.grid-holder.blog.module{{ module }}').slick({
     accessibility: false,
 {% if carousel_a %}
-prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
+prevArrow: "<a href=\"#\" class=\"arrow-left icon-arrow-left\" aria-label=\"Prethodno\"></a>",
+nextArrow: "<a href=\"#\" class=\"arrow-right icon-arrow-right\" aria-label=\"Sljedeće\"></a>",
 {% else %}
 arrows: false,
 {% endif %}
@@ -88,7 +88,11 @@ adaptiveHeight:true,slidesToShow:1,slidesToScroll:1,responsive:[
 {breakpoint:420,settings:{slidesToShow:1,slidesToScroll:1}}
 ]
 });
-$("[data-toggle='tooltip").tooltip();
+$(window).on('load', function() {
+	if ($.fn.tooltip) {
+		$("[data-toggle='tooltip']").tooltip();
+	}
+});
 {% if carousel_a and rows > 1 %}
 $(document).ready(function() {
 var c_o = $('.module{{ module }}').offset().top;

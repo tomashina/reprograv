@@ -85,7 +85,7 @@
                                     <span class="badge new_badge"><i>{{ basel_text_new }}</i></span>
                                 {% endif %}
 
-                                {% if ((qty < 1) and (stock_badge_status)) %}
+                                {% if commercial_data_visible and ((qty < 1) and (stock_badge_status)) %}
                                     <span class="badge out_of_stock_badge"><i>{{ basel_text_out_of_stock}}</i></span>
                                 {% endif %}
 
@@ -408,7 +408,7 @@
                                         <button type="button"  class="plus"> <i class="fa fa-plus-circle" aria-hidden="true"></i> </button>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
 
-                                        {% if ((qty < 1) and (stock_badge_status)) %}
+                                        {% if commercial_data_visible and ((qty < 1) and (stock_badge_status)) %}
 
                                             <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary cd-btn-add"><span> <i class="global-cart icon"></i> {{ button_cart }}</span></button>
                                         {% else %}
@@ -740,8 +740,8 @@
 {% if products %}
     <script><!--
         $('.grid-holder.related').slick({
-            prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-            nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
+            prevArrow: "<a href=\"#\" class=\"arrow-left icon-arrow-left\" aria-label=\"Prethodno\"></a>",
+            nextArrow: "<a href=\"#\" class=\"arrow-right icon-arrow-right\" aria-label=\"Sljedeće\"></a>",
             dots:true,
             {% if direction == 'rtl' %}
             rtl: true,
@@ -762,7 +762,11 @@
         ]
         });
         $('.product-style2 .single-product .icon').attr('data-placement', 'top');
-        $('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+        $(window).on('load', function() {
+            if ($.fn.tooltip) {
+                $('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+            }
+        });
         //--></script>
 {% endif %}
 
@@ -1246,4 +1250,3 @@ jQuery(function($) {
     });
 
 </script>
-

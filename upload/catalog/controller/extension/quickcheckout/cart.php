@@ -1,6 +1,11 @@
 <?php 
 class ControllerExtensionQuickCheckoutCart extends Controller {
 	public function index() {
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			http_response_code(403);
+			return;
+		}
+
 		$data = $this->load->language('checkout/checkout');
 		$data = array_merge($data, $this->load->language('extension/quickcheckout/checkout'));
 		

@@ -36,7 +36,7 @@
     {% if column.data2 %}
     <!-- Banner type -->
     <div class="banner_wrap   {% if bg_img %} notbck {% endif %}">
-    <div class="zoom_image_wrap  "><img class="zoom_image" src="{{ column.data2 }}" alt="" /></div>
+    <div class="zoom_image_wrap"><img class="zoom_image" src="{{ column.data2 }}" alt="Repro-Grav ponuda"{% if column.data2_width %} width="{{ column.data2_width }}" height="{{ column.data2_height }}"{% endif %} /></div>
     <div class="effect-holder"></div>
     <div class="banner_overlay">
         <div class="cm_item_wrapper {% if column.data5 %}pointer" onclick="location.href='{{ column.data5 }}';{% endif %}">
@@ -49,7 +49,7 @@
     {% endif %}
     {% if column.data4 %}
     <div class="banner_wrap notbck">
-    <div class="zoom_image_wrap"><img class="zoom_image" src="{{ column.data4 }}" alt="" /></div>
+    <div class="zoom_image_wrap"><img class="zoom_image" src="{{ column.data4 }}" alt="Repro-Grav ponuda"{% if column.data4_width %} width="{{ column.data4_width }}" height="{{ column.data4_height }}"{% endif %} /></div>
     <div class="effect-holder"></div>
     <div class="banner_overlay">
         <div class="cm_item_wrapper {% if column.data6 %}pointer" onclick="location.href='{{ column.data6 }}';{% endif %}">
@@ -119,6 +119,7 @@ isBackground: false
 {% for column in columns %}
 {% if column.type == "tm" %}
 <script><!--
+$(function() {
 $('.grid-holder.tm_module').slick({
 adaptiveHeight:true,
 dots:true,
@@ -135,6 +136,7 @@ slidesToShow:2,slidesToScroll:2,responsive:[{breakpoint:960,settings:{slidesToSh
 slidesToShow:1,slidesToScroll:1,responsive:[]
 {% endif %}
 }).parents('.cm_block_wrapper').addClass('has-testimonials');
+});
 //--></script>
 {% endif %}
 {% endfor %}

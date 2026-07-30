@@ -55,6 +55,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 		$data['use_margin'] = $setting['use_margin'];
 		$data['margin'] = $setting['margin'];
 		$data['img_width'] = $setting['image_width'];
+		$data['img_height'] = $setting['image_height'];
 		$data['use_button'] = $setting['use_button'];
 		$data['link_href'] = $setting['link_href'];
 		$data['countdown_status'] = $setting['countdown'];	
@@ -114,7 +115,9 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					$images = false;
 					}
 					
-					if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
+						$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+
+						if ($commercial_data_visible) {
 						$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 						if($this->session->data['currency']=='HRK'){
@@ -129,7 +132,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						$priceeur  ='';
 					}
 							
-					if ((float)$result['special']) {
+						if ($commercial_data_visible && (float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 						if($this->session->data['currency']=='HRK'){
@@ -146,7 +149,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						$date_end = false;
 					}
 					
-					if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
+						if ($commercial_data_visible && (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
 						if ($this->config->get('salebadge_status') == '2') {
 							$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 						} else {
@@ -168,7 +171,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					} else {
 						$is_new = false;
 					}
-					if ($this->config->get('config_tax')) {
+						if ($commercial_data_visible && $this->config->get('config_tax')) {
 					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
 					} else {
 						$tax = false;
@@ -187,7 +190,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],
-						'quantity'  => $result['quantity'],
+							'commercial_data_visible' => $commercial_data_visible,
+							'quantity'  => $commercial_data_visible ? $result['quantity'] : null,
 						'thumb'   	 => $image,
 						'thumb2' 	 => $this->model_tool_image->resize($image2, $setting['image_width'], $setting['image_height']),
 						'sale_end_date' => $date_end['date_end'] ?? '',

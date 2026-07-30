@@ -5,6 +5,7 @@ class ControllerExtensionModuleBaselLayerslider extends Controller {
 		
 		// Add required sources
 		$this->document->addScript('catalog/view/theme/basel/js/masterslider.js');
+		$this->load->model('tool/image');
 		
 		if ($this->request->server['HTTPS']) {
 			$server = $this->config->get('config_ssl');
@@ -15,13 +16,17 @@ class ControllerExtensionModuleBaselLayerslider extends Controller {
 		}
 
 		// Load Google Fonts		
-		if (isset($setting['g_fonts'])) {  
+		if (isset($setting['g_fonts'])) {
 			$data['g_fonts'] = array();
 			$import = '';
 			foreach ($setting['g_fonts'] as $g_font) {
-				$import .= $g_font['import'] . '%7C';
+				if (!empty($g_font['import'])) {
+					$import .= $g_font['import'] . '%7C';
+				}
 			}
-			$this->document->addStyle('//fonts.googleapis.com/css?family=' . $import);
+			if ($import !== '') {
+				$this->document->addStyle('//fonts.googleapis.com/css?family=' . rtrim($import, '%7C'));
+			}
 		}
 		
 		// General Settings
@@ -154,14 +159,35 @@ class ControllerExtensionModuleBaselLayerslider extends Controller {
 	                //$section_row++;
 									
 					//$data['sections'][$section['sort_order']] = array(
+					$has_background = !empty($section['thumb_image']);
+					$source_width = 0;
+					$source_height = 0;
+
+					if ($has_background) {
+						$image_info = @getimagesize(DIR_IMAGE . $section['thumb_image']);
+
+						if ($image_info) {
+							$source_width = (int)$image_info[0];
+							$source_height = (int)$image_info[1];
+						}
+					}
+
+					$height_for_width = function($target_width) use ($source_width, $source_height) {
+						return $source_width > 0 && $source_height > 0
+							? max(1, (int)round($target_width * $source_height / $source_width))
+							: max(1, (int)round($target_width * 0.5));
+					};
+
 					$data['sections'][] = array(
 						'link'   => $section['link'],
 						'link_new_window'   => $section['link_new_window'],
 						'duration'   => $section['duration'],
 						'slide_kenburn'   => $section['slide_kenburn'],
 						'bg_color' => $section['bg_color'],
-						'is_bg' => $section['thumb_image'],
-						'thumb_image'   => $base_url . 'image/' . $section['thumb_image'],
+						'is_bg' => $has_background,
+						'thumb_image_small' => $has_background ? $this->model_tool_image->resize($section['thumb_image'], 768, $height_for_width(768)) : '',
+						'thumb_image' => $has_background ? $this->model_tool_image->resize($section['thumb_image'], 1280, $height_for_width(1280)) : '',
+						'thumb_image_large' => $has_background ? $this->model_tool_image->resize($section['thumb_image'], 1920, $height_for_width(1920)) : '',
 						'sort_order'   => $section['sort_order'],
 						'groups'  => $groups
 					);
@@ -169,7 +195,12 @@ class ControllerExtensionModuleBaselLayerslider extends Controller {
 	    
 			
 			usort($data['sections'], function ($a, $b) { return $a['sort_order'] - $b['sort_order']; });
-				
+
+			foreach ($data['sections'] as $section_index => &$sorted_section) {
+				$sorted_section['is_first'] = $section_index === 0;
+			}
+			unset($sorted_section);
+
 			//ksort($data['sections']);
 			
 			$data['module'] = $module++;

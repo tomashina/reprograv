@@ -14,8 +14,15 @@ class ControllerExtensionBaselQuickview extends Controller {
 		
 		
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
-		if ($product_info) {
+			$product_info = $this->model_catalog_product->getProduct($product_id);
+			if ($product_info) {
+				$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+				$data['commercial_data_visible'] = $commercial_data_visible;
+				$data['attention'] = $commercial_data_visible ? '' : sprintf(
+					$this->language->get('text_login'),
+					$this->url->link('account/login', '', true),
+					$this->url->link('account/register', '', true)
+				);
 
 			$data['heading_title'] = $product_info['name'];
 			
@@ -48,7 +55,7 @@ class ControllerExtensionBaselQuickview extends Controller {
 			$data['basel_share_btn'] = $this->config->get('basel_share_btn');
 			$data['basel_price_update'] = $this->config->get('basel_price_update');		
 			
-			$data['qty'] = $product_info['quantity'];
+				$data['qty'] = $commercial_data_visible ? $product_info['quantity'] : null;
 			$data['stock_badge_status'] = $this->config->get('stock_badge_status');
 			$data['basel_text_out_of_stock'] = $this->language->get('basel_text_out_of_stock');
 			
@@ -70,10 +77,12 @@ class ControllerExtensionBaselQuickview extends Controller {
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
 
-			if ($product_info['quantity'] <= 0) {
-				$data['stock'] = $product_info['stock_status'];
-			} elseif ($this->config->get('config_stock_display')) {
-				$data['stock'] = $product_info['quantity'];
+				if (!$commercial_data_visible) {
+					$data['stock'] = false;
+				} elseif ($product_info['quantity'] <= 0) {
+					$data['stock'] = $product_info['stock_status'];
+				} elseif ($this->config->get('config_stock_display')) {
+					$data['stock'] = $product_info['quantity'];
 			} else {
 				$data['stock'] = $this->language->get('text_instock');
 			}
@@ -96,26 +105,26 @@ class ControllerExtensionBaselQuickview extends Controller {
 				);
 			}
 
-			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+				if ($commercial_data_visible) {
 				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 			} else {
 				$data['price'] = false;
 			}
 
-			if ((float)$product_info['special']) {
+				if ($commercial_data_visible && (float)$product_info['special']) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 			} else {
 				$data['special'] = false;
 			}
 
-			if ($this->config->get('config_tax')) {
+				if ($commercial_data_visible && $this->config->get('config_tax')) {
 				$data['tax'] = $this->currency->format((float)$product_info['special'] ? $product_info['special'] : $product_info['price'], $this->session->data['currency']);
 			} else {
 				$data['tax'] = false;
 			}
 			
 			
-			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
+				$discounts = $commercial_data_visible ? $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']) : array();
 
 			$data['discounts'] = array();
 
@@ -134,7 +143,7 @@ class ControllerExtensionBaselQuickview extends Controller {
 				$product_option_value_data = array();
 
 				foreach ($option['product_option_value'] as $option_value) {
-					if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
+					if (!$commercial_data_visible || !$option_value['subtract'] || ($option_value['quantity'] > 0)) {
 						if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
 							$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
 						} else {

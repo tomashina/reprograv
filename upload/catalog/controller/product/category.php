@@ -9,6 +9,7 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+		$can_view_commercial_data = !$this->config->get('config_customer_price') || $this->customer->isLogged();
 
 		
 		if (isset($this->request->get['filter'])) {
@@ -92,13 +93,29 @@ class ControllerProductCategory extends Controller {
 		$category_info = $this->model_catalog_category->getCategory($category_id);
 
 		if ($category_info) {
-			$this->document->setTitle($category_info['meta_title']);
-			$this->document->setDescription($category_info['meta_description']);
+			$seo_title = $this->cleanSeoText($category_info['meta_title'], 65);
+			if (!$seo_title) {
+				$seo_title = $this->cleanSeoText($category_info['name'] . ' – oprema i materijali | ' . $this->config->get('config_name'), 65);
+			}
+
+			$seo_description = $this->cleanSeoText($category_info['meta_description'], 160);
+			if (!$seo_description) {
+				$seo_description = $this->cleanSeoText($category_info['description'], 160);
+			}
+			if (!$seo_description) {
+				$seo_description = $this->cleanSeoText(
+					'Pregledajte ' . $category_info['name'] . ' za profesionalne pečatare i gravere. Tehnički podaci, primjene i podrška Repro-Grava.',
+					160
+				);
+			}
+
+			$this->document->setTitle($seo_title);
+			$this->document->setDescription($seo_description);
 			$this->document->setKeywords($category_info['meta_keyword']);
 
 			$data['heading_title'] = $category_info['name'];
 
-			if (isset($page) and ($page >= 2)){
+			if ($page >= 2 || $filter || isset($this->request->get['sort']) || isset($this->request->get['order']) || isset($this->request->get['limit'])){
 					$this->document->setRobots('noindex,follow');
 			}
 
@@ -181,7 +198,7 @@ class ControllerProductCategory extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+				if ($can_view_commercial_data) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					if($this->session->data['currency']=='HRK'){
@@ -196,7 +213,7 @@ class ControllerProductCategory extends Controller {
 					 $priceeur  ='';
 				}
 
-				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+				if ($can_view_commercial_data && !is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					 if($this->session->data['currency']=='HRK'){
                         $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
@@ -212,7 +229,7 @@ class ControllerProductCategory extends Controller {
 					$tax_price = (float)$result['price'];
 				}
 	
-				if ($this->config->get('config_tax')) {
+				if ($can_view_commercial_data && $this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;
@@ -233,6 +250,7 @@ class ControllerProductCategory extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'commercial_data_visible' => $can_view_commercial_data,
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'price'       => $price,
@@ -241,7 +259,7 @@ class ControllerProductCategory extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
+					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}
 
@@ -451,5 +469,17 @@ class ControllerProductCategory extends Controller {
 
 			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
+	}
+
+	private function cleanSeoText($value, $max_length) {
+		$value = html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = trim(preg_replace('/\s+/u', ' ', $value));
+
+		if (utf8_strlen($value) > $max_length) {
+			$value = rtrim(utf8_substr($value, 0, $max_length - 1), " \t\n\r\0\x0B,.;:-") . '…';
+		}
+
+		return $value;
 	}
 }

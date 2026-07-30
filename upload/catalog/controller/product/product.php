@@ -179,7 +179,10 @@ class ControllerProductProduct extends Controller {
 		}
 
 
-        if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+		$can_view_commercial_data = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+		$data['commercial_data_visible'] = $can_view_commercial_data;
+
+        if (!$can_view_commercial_data) {
             $data['attention'] = sprintf($this->language->get('text_login_price'), $this->url->link('account/login'), $this->url->link('account/register'));
         } else {
             $data['attention'] = '';
@@ -242,8 +245,19 @@ class ControllerProductProduct extends Controller {
 				'href' => $this->url->link('product/product', $url . '&product_id=' . $this->request->get['product_id'])
 			);
 
-			$this->document->setTitle($product_info['meta_title']);
-			$this->document->setDescription($product_info['meta_description']);
+			$seo_title = $this->cleanSeoText($product_info['meta_title'], 65);
+			if (!$seo_title) {
+				$seo_title = $this->cleanSeoText($product_info['name'] . ' | ' . $this->config->get('config_name'), 65);
+			}
+
+			$seo_description = $this->cleanSeoText($product_info['meta_description'], 160);
+			if (!$seo_description) {
+				$seo_description = $this->cleanSeoText($product_info['description'], 125);
+				$seo_description = trim($seo_description . ' Prijavite se za cijenu i dostupnost.');
+			}
+
+			$this->document->setTitle($seo_title);
+			$this->document->setDescription($seo_description);
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
 			$this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
@@ -279,15 +293,18 @@ class ControllerProductProduct extends Controller {
 			}*/
 
 
-            if(isset($product_info['stock_status']) ) {
-              $data['stock'] = $product_info['stock_status'];
-            } else {
-				$data['stock'] = $this->language->get('text_instock');
+			if ($can_view_commercial_data) {
+				if (isset($product_info['stock_status'])) {
+					$data['stock'] = $product_info['stock_status'];
+				} else {
+					$data['stock'] = $this->language->get('text_instock');
+				}
+
+				$data['quantity'] = $product_info['quantity'];
+			} else {
+				$data['stock'] = false;
+				$data['quantity'] = false;
 			}
-
-
-
-			$data['quantity'] = $product_info['quantity'];
 			$this->load->model('tool/image');
 
 			if ($product_info['image']) {
@@ -314,7 +331,7 @@ class ControllerProductProduct extends Controller {
 				);
 			}
 
-			if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+			if ($can_view_commercial_data) {
 				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 			
@@ -324,7 +341,7 @@ class ControllerProductProduct extends Controller {
 				  $data['priceeur'] ='';
 			}
 
-			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
+			if ($can_view_commercial_data && !is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 
@@ -336,7 +353,7 @@ class ControllerProductProduct extends Controller {
 				$tax_price = (float)$product_info['price'];
 			}
 
-            $final_price = isset($product_info['special']) ? $product_info['special'] : $product_info['price'];
+            $final_price = $can_view_commercial_data ? (isset($product_info['special']) ? $product_info['special'] : $product_info['price']) : 0;
 
 		
 
@@ -357,7 +374,7 @@ class ControllerProductProduct extends Controller {
 			           	$data['twelve_rateseur'] = '';
 	           }
 
-            if(isset($product_info['special'])){
+            if($can_view_commercial_data && isset($product_info['special'])){
                 $data['stedis'] = $product_info['price'] - $product_info['special'];
 
                 $data['stedis'] = $this->currency->format($this->tax->calculate($data['stedis'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -380,13 +397,13 @@ class ControllerProductProduct extends Controller {
 
 
 
-            if ($this->config->get('config_tax')) {
+            if ($can_view_commercial_data && $this->config->get('config_tax')) {
 				$data['tax'] = $this->currency->format($tax_price, $this->session->data['currency']);
 			} else {
 				$data['tax'] = false;
 			}
 
-			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
+			$discounts = $can_view_commercial_data ? $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']) : array();
 
 			$data['discounts'] = array();
 
@@ -403,7 +420,7 @@ class ControllerProductProduct extends Controller {
 				$product_option_value_data = array();
 
 				foreach ($option['product_option_value'] as $option_value) {
-					if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
+					if (!$can_view_commercial_data || !$option_value['subtract'] || ($option_value['quantity'] > 0)) {
 						if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
 							$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false), $this->session->data['currency']);
 						} else {
@@ -478,7 +495,7 @@ class ControllerProductProduct extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+				if ($can_view_commercial_data) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					if($this->session->data['currency']=='HRK'){
@@ -494,7 +511,7 @@ class ControllerProductProduct extends Controller {
 					   $priceeur  ='';
 				}
 
-				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+				if ($can_view_commercial_data && !is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					if($this->session->data['currency']=='HRK'){
@@ -512,7 +529,7 @@ class ControllerProductProduct extends Controller {
 					 $specialeur  ='';
 				}
 	
-				if ($this->config->get('config_tax')) {
+				if ($can_view_commercial_data && $this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;
@@ -733,6 +750,19 @@ class ControllerProductProduct extends Controller {
 		$this->load->language('product/product');
 		$this->load->model('catalog/product');
 
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 403 Forbidden');
+			$this->response->setOutput(json_encode(array(
+				'error' => sprintf(
+					$this->language->get('text_login'),
+					$this->url->link('account/login', '', true),
+					$this->url->link('account/register', '', true)
+				)
+			)));
+			return;
+		}
+
 		if (isset($this->request->post['product_id'])) {
 			$product_id = $this->request->post['product_id'];
 		} else {
@@ -788,5 +818,17 @@ class ControllerProductProduct extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
+	}
+
+	private function cleanSeoText($value, $max_length) {
+		$value = html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = trim(preg_replace('/\s+/u', ' ', $value));
+
+		if (utf8_strlen($value) > $max_length) {
+			$value = rtrim(utf8_substr($value, 0, $max_length - 1), " \t\n\r\0\x0B,.;:-") . '…';
+		}
+
+		return $value;
 	}
 }

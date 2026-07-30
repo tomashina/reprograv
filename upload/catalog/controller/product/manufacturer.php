@@ -151,6 +151,8 @@ class ControllerProductManufacturer extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
+			$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -158,7 +160,7 @@ class ControllerProductManufacturer extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+				if ($commercial_data_visible) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					 if($this->session->data['currency']=='HRK'){
@@ -173,7 +175,7 @@ class ControllerProductManufacturer extends Controller {
 					   $priceeur  ='';
 				}
 
-				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+				if ($commercial_data_visible && !is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					 if($this->session->data['currency']=='HRK'){
@@ -190,7 +192,7 @@ class ControllerProductManufacturer extends Controller {
 					$tax_price = (float)$result['price'];
 				}
 	
-				if ($this->config->get('config_tax')) {
+				if ($commercial_data_visible && $this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;
@@ -342,6 +344,7 @@ class ControllerProductManufacturer extends Controller {
 			if ($page == 1) {
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id']), 'canonical');
 			} else {
+				$this->document->setRobots('noindex,follow');
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&page=' . $page), 'canonical');
 			}
 			

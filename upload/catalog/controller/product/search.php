@@ -2,6 +2,7 @@
 class ControllerProductSearch extends Controller {
 	public function index() {
 		$this->load->language('product/search');
+		$this->document->setRobots('noindex,follow');
 
 		$this->load->model('catalog/category');
 
@@ -195,6 +196,8 @@ class ControllerProductSearch extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
+			$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -202,7 +205,7 @@ class ControllerProductSearch extends Controller {
 					$image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
 				}
 
-				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+				if ($commercial_data_visible) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					if($this->session->data['currency']=='HRK'){
@@ -218,7 +221,7 @@ class ControllerProductSearch extends Controller {
 					   $priceeur  ='';
 				}
 
-				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+				if ($commercial_data_visible && !is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 					if($this->session->data['currency']=='HRK'){
@@ -235,7 +238,7 @@ class ControllerProductSearch extends Controller {
 					$tax_price = (float)$result['price'];
 				}
 	
-				if ($this->config->get('config_tax')) {
+				if ($commercial_data_visible && $this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
 					$tax = false;

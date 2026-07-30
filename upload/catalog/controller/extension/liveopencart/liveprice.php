@@ -19,6 +19,8 @@ class ControllerExtensionLiveopencartLivePrice extends Controller {
 	public function price() {
 		
 		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			http_response_code(403);
+			$this->response->addHeader('Content-Type: application/json');
 			$this->response->setOutput(json_encode([]));
 			return;
 		}

@@ -130,6 +130,16 @@ class ModelExtensionLiveopencartRelatedOptions extends Model {
 	
 	public function getProductControllerData($data, $return_all_scripts = false, $basic_data = []) {
 		$this->load->language('extension/liveopencart/related_options');
+
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$data['ro_installed'] = false;
+			$data['ro_data'] = [];
+			$data['ro_scripts'] = [];
+			$data['ro_product_page_script'] = '';
+			$data['ro_product_page_script_init'] = '';
+
+			return $data;
+		}
 		
 		$data['ro_installed'] = $this->installed();
 		

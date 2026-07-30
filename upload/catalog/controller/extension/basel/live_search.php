@@ -2,6 +2,7 @@
 class ControllerExtensionBaselLiveSearch extends Controller {
 	public function index() {
 		$json = array();
+		$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
 		if (isset($this->request->get['filter_name'])) {
 			$search = $this->request->get['filter_name'];
 		} else {
@@ -54,7 +55,7 @@ class ControllerExtensionBaselLiveSearch extends Controller {
 						$image = $this->model_tool_image->resize('placeholder.png', $image_width, $image_height);
 					}
 
-					if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
+					if ($commercial_data_visible) {
 						$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $currency_code);
 
 						if($this->session->data['currency']=='HRK'){
@@ -69,7 +70,7 @@ class ControllerExtensionBaselLiveSearch extends Controller {
 						  $priceeur  ='';
 					}
 
-					if ((float)$result['special']) {
+					if ($commercial_data_visible && (float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $currency_code);
 
 						if($this->session->data['currency']=='HRK'){

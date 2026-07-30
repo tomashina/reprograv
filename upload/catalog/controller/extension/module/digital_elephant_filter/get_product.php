@@ -26,6 +26,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
     public function index()
     {
+        $commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
         $data_url = $this->helperUrl->getUrlData();
 
         $this->loadModel();
@@ -45,7 +46,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 		if ($this->language->get('direction') == 'rtl') { $data['tooltip_align'] = 'right'; } else { $data['tooltip_align'] = 'left'; }
 		$data['basel_list_style'] = $this->config->get('basel_list_style');
 		$data['salebadge_status'] = $this->config->get('salebadge_status');
-		$data['stock_badge_status'] = $this->config->get('stock_badge_status');
+		$data['stock_badge_status'] = $commercial_data_visible ? $this->config->get('stock_badge_status') : false;
 		$data['countdown_status'] = $this->config->get('countdown_status');
 		$data['compare'] = $this->url->link('product/compare');
 		$data['basel_prod_grid'] = $this->config->get('basel_prod_grid');
@@ -115,7 +116,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
             'manufacturers'      => $data_url['manufacturers'],
             'options'            => $data_url['option'],
             'attributes'         => $data_url['attribute'],
-            'price'              => $data_url['price'],
+            'price'              => ($this->customer->isLogged() || !$this->config->get('config_customer_price')) ? $data_url['price'] : array(),
             'sort'               => $data_url['sort'],
             'order'              => $data_url['order'],
             'start'              => ($data_url['page'] - 1) * $data_url['limit'],
@@ -130,6 +131,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
         $results = $this->model_extension_module_digitalElephantFilter->getProducts($data_filter);
 
         $products = array();
+        $commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
 
         foreach ($results as $result) {
 
@@ -154,7 +156,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 			$images = false;
 			}
 
-            if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+            if ($commercial_data_visible) {
                 $price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
                  if($this->session->data['currency']=='HRK'){
@@ -169,7 +171,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                  $priceeur  ='';
             }
 
-            if ((float)$result['special']) {
+            if ($commercial_data_visible && (float)$result['special']) {
                 $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
                   if($this->session->data['currency']=='HRK'){
@@ -191,7 +193,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				$image2 = false;
 			}
 			
-			if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
+			if ($commercial_data_visible && (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
 			if ($this->config->get('salebadge_status') == '2') {
 				$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 			} else {
@@ -207,13 +209,13 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				$is_new = false;
 			}
 			
-			if ((float)$result['special']) {
+			if ($commercial_data_visible && (float)$result['special']) {
 				$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
 			} else {
 				$date_end = false;
 			}
 
-            if ($this->config->get('config_tax')) {
+            if ($commercial_data_visible && $this->config->get('config_tax')) {
                 $tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
             } else {
                 $tax = false;
@@ -237,7 +239,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'thumb2' 	 => $this->model_tool_image->resize($image2, $image_width, $image_height),
 				'sale_end_date' => $date_end['date_end'] ?? '',
                 'name'        => $result['name'],
-				'quantity'  => $result['quantity'],
+				'commercial_data_visible' => $commercial_data_visible,
+				'quantity'  => $commercial_data_visible ? $result['quantity'] : null,
                 'description' => $description,
                 'price'       => $price,
                    'priceeur'       => $priceeur,

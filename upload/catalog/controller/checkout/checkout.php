@@ -1,6 +1,11 @@
 <?php
 class ControllerCheckoutCheckout extends Controller {
 	public function index() {
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->redirect($this->url->link('account/login', '', true));
+			return;
+		}
+
 		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 			$this->response->redirect($this->url->link('checkout/cart'));

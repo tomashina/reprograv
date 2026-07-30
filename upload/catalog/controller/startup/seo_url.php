@@ -6,6 +6,31 @@ class ControllerStartupSeoUrl extends Controller {
 			$this->url->addRewrite($this);
 		}
 
+		// Keep common legacy/mistyped public URLs out of the 404 index.
+		if (isset($this->request->get['_route_'])) {
+			$route = trim($this->request->get['_route_'], '/');
+			$redirects = array(
+				'laserski-strojevi-trotech' => 'laserski-strojevi-trotec'
+			);
+
+			if (isset($redirects[$route])) {
+				$base_url = $this->config->get('config_ssl') ?: $this->config->get('config_url');
+				$query = $this->request->get;
+
+				unset($query['_route_'], $query['route']);
+
+				$location = rtrim($base_url, '/') . '/' . $redirects[$route];
+
+				if ($query) {
+					$location .= '?' . http_build_query($query);
+				}
+
+				$this->response->redirect($location, 301);
+
+				return;
+			}
+		}
+
 		// Decode URL
 		if (isset($this->request->get['_route_'])) {
 			$parts = explode('/', $this->request->get['_route_']);
@@ -41,7 +66,11 @@ class ControllerStartupSeoUrl extends Controller {
 						$this->request->get['information_id'] = $url[1];
 					}
 
-					if ($query->row['query'] && $url[0] != 'information_id' && $url[0] != 'manufacturer_id' && $url[0] != 'category_id' && $url[0] != 'product_id' && $url[0] != 'bundle_id' && $url[0] != 'bundle_category_id') {
+					if ($url[0] == 'blog_id') {
+						$this->request->get['blog_id'] = $url[1];
+					}
+
+					if ($query->row['query'] && $url[0] != 'information_id' && $url[0] != 'manufacturer_id' && $url[0] != 'category_id' && $url[0] != 'product_id' && $url[0] != 'blog_id' && $url[0] != 'bundle_id' && $url[0] != 'bundle_category_id') {
 						$this->request->get['route'] = $query->row['query'];
 					}
 				} else {
@@ -51,7 +80,9 @@ class ControllerStartupSeoUrl extends Controller {
 				}
 			}
 
-			if (!isset($this->request->get['route'])) {
+			if (isset($this->request->get['blog_id'])) {
+				$this->request->get['route'] = 'extension/blog/blog';
+			} elseif (!isset($this->request->get['route'])) {
 				if (isset($this->request->get['product_id'])) {
 					$this->request->get['route'] = 'product/product';
 				} elseif (isset($this->request->get['path'])) {
@@ -73,6 +104,15 @@ class ControllerStartupSeoUrl extends Controller {
 		$data = array();
 
 		parse_str($url_info['query'], $data);
+
+		if (isset($data['route']) && ($data['route'] == 'extension/blog/home' || $data['route'] == 'extension/blog/blog')) {
+			$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = 'extension/blog/home' AND store_id = '" . (int)$this->config->get('config_store_id') . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+			if ($query->num_rows && $query->row['keyword']) {
+				$url .= '/' . $query->row['keyword'];
+				unset($data['route']);
+			}
+		}
 
 		foreach ($data as $key => $value) {
 			if (isset($data['route'])) {
@@ -103,6 +143,13 @@ class ControllerStartupSeoUrl extends Controller {
 						}
 					}
 
+					unset($data[$key]);
+				}
+			} elseif ($key == 'blog_id') {
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = 'blog_id=" . (int)$value . "' AND store_id = '" . (int)$this->config->get('config_store_id') . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+				if ($query->num_rows && $query->row['keyword']) {
+					$url .= '/' . $query->row['keyword'];
 					unset($data[$key]);
 				}
 			}

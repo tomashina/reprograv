@@ -20,7 +20,7 @@
 <div class="item type-img cm_column eq_height">
     <a class="link" href="{{ banner.image }}">
          <div class="banner_wrap  ">
-    <div class="zoom_image_wrap"> <img  src="{{ banner.image }}" alt="{{ banner.title }}" /></div>
+    <div class="zoom_image_wrap"> <img src="{{ banner.image }}" alt="{{ banner.title }}" width="{{ banner.width }}" height="{{ banner.height }}" loading="lazy" decoding="async" /></div>
     <div class="effect-holder"></div>
     <div class="banner_overlay">
         <div class="cm_item_wrapper pointer" >
@@ -40,9 +40,9 @@
     {% for banner in banners %}
     <div class="item text-center">
     {% if banner.link %}
-        <a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="display-inline-block bw" /></a>
+        <a href="{{ banner.link }}"><img src="{{ banner.image }}" alt="{{ banner.title }}" class="display-inline-block bw" width="{{ banner.width }}" height="{{ banner.height }}" loading="lazy" decoding="async" /></a>
     {% else %}
-        <img src="{{ banner.image }}" alt="{{ banner.title }}" class="display-inline-block bw" />
+        <img src="{{ banner.image }}" alt="{{ banner.title }}" class="display-inline-block bw" width="{{ banner.width }}" height="{{ banner.height }}" loading="lazy" decoding="async" />
     {% endif %}
     </div>
   {% endfor %}
@@ -62,8 +62,8 @@
 <script><!--
 $('.grid-holder.carousel_module.module{{ module }}').slick({
 {% if carousel_a %}
-prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
+prevArrow: "<a href=\"#\" class=\"arrow-left icon-arrow-left\" aria-label=\"Prethodno\"></a>",
+nextArrow: "<a href=\"#\" class=\"arrow-right icon-arrow-right\" aria-label=\"Sljedeće\"></a>",
 {% else %}
 arrows: false,
 {% endif %}
@@ -103,9 +103,6 @@ adaptiveHeight:true,slidesToShow:1,slidesToScroll:1,responsive:[
 ]
 });
 //--></script>
-
-
-
 
 <script>
 $(document).ready(function() {

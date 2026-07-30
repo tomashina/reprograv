@@ -75,8 +75,8 @@ class ControllerExtensionModuleBaselContent extends Controller {
 		$data['block_style'] .= $setting['b_setting']['css'];
 		}
 		
-		if ($setting['b_setting']['block_bgi']) {
-		$data['block_style'] .= "background-image: url(" . $server . 'image/' . $setting['bg_image'] . ");";
+		if ($setting['b_setting']['block_bgi'] && !empty($setting['bg_image'])) {
+			$data['block_style'] .= "background-image: url(" . $server . 'image/' . $setting['bg_image'] . ");";
 		$data['block_style'] .= "background-position:" . $setting['b_setting']['bg_pos'] . ";";
 		$data['block_style'] .= "background-repeat:" . $setting['b_setting']['bg_repeat'] . ";";
 			if ($setting['b_setting']['bg_par']) {
@@ -99,7 +99,7 @@ class ControllerExtensionModuleBaselContent extends Controller {
 		$data['equal_height'] = $setting['c_setting']['eh'];
 		$data['bg_video'] = $setting['b_setting']['block_bgv'];
 		$data['video_id'] = $setting['b_setting']['bg_video'];
-		$data['bg_img'] = $setting['b_setting']['block_bgi'];
+		$data['bg_img'] = $setting['b_setting']['block_bgi'] && !empty($setting['bg_image']);
 		
 		// Columns
 		if (isset($setting['columns'])) {
@@ -162,13 +162,24 @@ class ControllerExtensionModuleBaselContent extends Controller {
 				);
 
 				$data1 = html_entity_decode(str_replace($find,$replace,$column['data1'][$this->config->get('config_language_id')]), ENT_QUOTES, 'UTF-8');
+				$data1 = preg_replace('/<h4(\s+class=["\']xs-red["\'][^>]*)>(.*?)<\/h4>/is', '<p$1>$2</p>', $data1);
 					
                 } else {
                     $data1 = false;
                 }
 				
-				if (isset($column['data2'])){
-					$data2 = $server . 'image/' . $column['data2'];
+				$data2_width = false;
+				$data2_height = false;
+				if (!empty($column['data2'])){
+					$data2_path = DIR_IMAGE . $column['data2'];
+					$data2_info = is_file($data2_path) ? @getimagesize($data2_path) : false;
+					if ($data2_info && !empty($data2_info[0]) && !empty($data2_info[1])) {
+						$data2_width = min(1200, (int)$data2_info[0]);
+						$data2_height = max(1, (int)round($data2_info[1] * ($data2_width / $data2_info[0])));
+						$data2 = $this->model_tool_image->resize($column['data2'], $data2_width, $data2_height);
+					} else {
+						$data2 = $server . 'image/' . $column['data2'];
+					}
                 } else {
                     $data2 = false;
                 }
@@ -179,8 +190,18 @@ class ControllerExtensionModuleBaselContent extends Controller {
                     $data3 = false;
                 }
 				
-				if (isset($column['data4'])){
-					$data4 = $server . 'image/' . $column['data4'];
+				$data4_width = false;
+				$data4_height = false;
+				if (!empty($column['data4'])){
+					$data4_path = DIR_IMAGE . $column['data4'];
+					$data4_info = is_file($data4_path) ? @getimagesize($data4_path) : false;
+					if ($data4_info && !empty($data4_info[0]) && !empty($data4_info[1])) {
+						$data4_width = min(1200, (int)$data4_info[0]);
+						$data4_height = max(1, (int)round($data4_info[1] * ($data4_width / $data4_info[0])));
+						$data4 = $this->model_tool_image->resize($column['data4'], $data4_width, $data4_height);
+					} else {
+						$data4 = $server . 'image/' . $column['data4'];
+					}
                 } else {
                     $data4 = false;
                 }
@@ -214,8 +235,12 @@ class ControllerExtensionModuleBaselContent extends Controller {
 					'type' => $column['type'],
 					'data1' => $data1,
 					'data2' => $data2,
+					'data2_width' => $data2_width,
+					'data2_height' => $data2_height,
 					'data3' => $data3,
 					'data4' => $data4,
+					'data4_width' => $data4_width,
+					'data4_height' => $data4_height,
 					'data5' => $data5,
 					'data6' => $data6,
 					'data7' => $data7,

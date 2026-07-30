@@ -176,39 +176,6 @@ $('.vk_share').attr("href", 'http://vkontakte.ru/share.php?url=' + share_url + '
 </script>
 
 <script type="application/ld+json">
-{
-"@context": "http://schema.org",
-"@type": "NewsArticle",
-"mainEntityOfPage": {
-"@type": "WebPage",
-"@id": "https://google.com/article"
-},
-"headline": "{{ heading_title }}",
-{% if main_thumb %}
-"image": {
-"@type": "ImageObject",
-"url": "{{ main_thumb }}",
-"height": {{ img_height }},
-"width": {{ img_width }}
-},
-{% endif %}
-"datePublished": "{{ date_added_full }}",
-"dateModified": "{{ date_added_full }}",
-"author": {
-"@type": "Person",
-"name": "{{ author }}"
-},
-"publisher": {
-"@type": "Organization",
-"name": "{{ store }}",
-{% if logo %}
-"logo": {
-"@type": "ImageObject",
-"url": "{{ logo }}"
-}
-{% endif %}
-},
-"description": "{{ short_description }}"
-}
+{{ article_json }}
 </script>
-{{ footer }} 
+{{ footer }}

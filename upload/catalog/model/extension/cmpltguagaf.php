@@ -124,6 +124,10 @@ return $code;
 		}
 	}  
 	public function atcw($product_id, $quantity, $flg) {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
 
    		$pinfo = $this->getProduct($product_id);
@@ -175,6 +179,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'add_t
 		}
 	}
 	public function rmc($key) {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
 		
 		if(substr(VERSION,0,3)=='2.0') { 
@@ -228,6 +236,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'remov
 		}
 	}
 	public function viewcont($product_id) {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
 
    		$pinfo = $this->getProduct($product_id);
@@ -341,6 +353,10 @@ return $code;
 		}
 	}
 	public function viewsearch() {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
 		
 		$search_kywrd = '';
@@ -431,6 +447,10 @@ return $code;
 		}
 	}
 	public function viewcart() {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
   			
 		if($rs && $this->cart->hasProducts()) {
@@ -476,6 +496,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'view_
 		}
 	}
 	public function beginchk() {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
   			
 		if($rs && $this->cart->hasProducts()) {
@@ -521,6 +545,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'begin
 		}
 	}
 	public function chkfunnel($stpno) {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
   			
 		if($rs && $this->cart->hasProducts()) {
@@ -590,6 +618,10 @@ return $code;
 		}
 	}
 	public function addpayinfo() {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
   			
 		if($rs && $this->cart->hasProducts() && !empty($this->session->data['payment_method'])) {
@@ -636,6 +668,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'add_p
 		}
 	}
 	public function addshpinfo() {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
   			
 		if($rs && $this->cart->hasProducts() && !empty($this->session->data['shipping_method'])) {
@@ -682,6 +718,10 @@ if($rs['status']) { return "<script type='text/javascript'> gtag('event', 'add_s
 		}
 	}
 	public function purchase($order_id = 0) {
+		if (!$this->canExposeCommercialData()) {
+			return '';
+		}
+
 		$rs = $this->getrsdata();
 		if(!$order_id && isset($this->session->data['order_id'])) { 
 			$order_id = $this->session->data['order_id'];
@@ -743,5 +783,9 @@ $gacode = "<script type='text/javascript'> gtag('event', 'purchase', ".json_enco
 
 return $gacode;
 		}
+	}
+
+	private function canExposeCommercialData() {
+		return !$this->config->get('config_customer_price') || $this->customer->isLogged();
 	}
 }

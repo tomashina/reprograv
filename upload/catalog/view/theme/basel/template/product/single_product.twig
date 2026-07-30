@@ -62,7 +62,7 @@
 
 
 
-            {% if ((product.quantity < 1) and (stock_badge_status)) %}
+            {% if product.commercial_data_visible and ((product.quantity < 1) and (stock_badge_status)) %}
               <a class="btn  {% if basel_list_style == '6' %}btn-contrast{% else %}btn-outline{% endif %}" title="{{ button_cart }}" ><span class="global-cart"></span> {{ button_cart }}</a>
                 {% set button_cart = basel_text_out_of_stock %}
             {% else %}

@@ -44,6 +44,7 @@ class ControllerExtensionModuleBlogLatest extends Controller {
 		$data['use_margin'] = $setting['use_margin'];
 		$data['margin'] = $setting['margin'];
 		$data['img_width'] = $setting['width'];
+		$data['img_height'] = $setting['height'];
 		
 		
 		foreach ($this->model_extension_blog_blog->getLatestBlogs($data) as $result) {

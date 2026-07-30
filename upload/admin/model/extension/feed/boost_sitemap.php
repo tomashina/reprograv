@@ -99,7 +99,7 @@ class ModelExtensionFeedBoostSitemap extends Model {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product p ON (p2s.product_id = p.product_id)";
 		}
 		
-		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1'";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1' AND p.date_available <= NOW()";
 		
 		if (!empty($data['filter_category_id'])) {
 			$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
@@ -144,7 +144,7 @@ class ModelExtensionFeedBoostSitemap extends Model {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product p ON (p2s.product_id = p.product_id)";
 		}
 		
-		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1'";
+			$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1' AND p.date_available <= NOW()";
 		
 		if (!empty($data['filter_category_id'])) {
 			$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
@@ -288,6 +288,39 @@ class ModelExtensionFeedBoostSitemap extends Model {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "information_to_store i2s LEFT JOIN " . DB_PREFIX . "information i ON(i2s.information_id = i.information_id) LEFT JOIN " . DB_PREFIX . "information_description id ON (i.information_id = id.information_id) WHERE i2s.store_id = '" . (int)$data['store_id'] . "' AND id.language_id = '" . (int)$data['language_id'] . "' AND i.status = '1'");
 		
 		return $query->row['total'];
+	}
+
+	public function getBlogs($data = []) {
+		$sql = "SELECT b.blog_id, b.image, b.date_added, bd.title FROM " . DB_PREFIX . "blog b " .
+			"INNER JOIN " . DB_PREFIX . "blog_description bd ON (bd.blog_id = b.blog_id) " .
+			"INNER JOIN " . DB_PREFIX . "blog_to_store b2s ON (b2s.blog_id = b.blog_id) " .
+			"WHERE b.status = '1' AND b.sort_order <> '-1' " .
+			"AND b2s.store_id = '" . (int)$data['store_id'] . "' " .
+			"AND bd.language_id = '" . (int)$data['language_id'] . "' " .
+			"ORDER BY b.date_added DESC";
+
+		if (isset($data['start']) || isset($data['limit'])) {
+			$start = max(0, (int)$data['start']);
+			$limit = max(1, (int)$data['limit']);
+			$sql .= " LIMIT " . $start . "," . $limit;
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
+	public function getTotalBlogs($data = []) {
+		$query = $this->db->query(
+			"SELECT COUNT(*) AS total FROM " . DB_PREFIX . "blog b " .
+			"INNER JOIN " . DB_PREFIX . "blog_description bd ON (bd.blog_id = b.blog_id) " .
+			"INNER JOIN " . DB_PREFIX . "blog_to_store b2s ON (b2s.blog_id = b.blog_id) " .
+			"WHERE b.status = '1' AND b.sort_order <> '-1' " .
+			"AND b2s.store_id = '" . (int)$data['store_id'] . "' " .
+			"AND bd.language_id = '" . (int)$data['language_id'] . "'"
+		);
+
+		return (int)$query->row['total'];
 	}
 	
 	/**

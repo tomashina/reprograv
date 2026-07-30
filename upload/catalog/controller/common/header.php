@@ -46,10 +46,7 @@ class ControllerCommonHeader extends Controller {
 
 		$this->load->language('common/header');
 
-if (!isset($_GET['route']) || (isset($_GET['route']) && $_GET['route'] == 'common/home')) {
-
-
-	//	if(!isset($this->request->get['route'])  || $this->request->get['route'] =='') {
+		if (!isset($this->request->get['route']) || $this->request->get['route'] == 'common/home') {
 			$data['is_home'] = 1;
 		}
 

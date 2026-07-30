@@ -5,6 +5,11 @@ class ControllerExtensionQuickCheckoutCheckout extends Equotix {
 	protected $extension_id = '58';
 	
 	public function index() {
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->redirect($this->url->link('account/login', '', true));
+			return;
+		}
+
 		$this->document->addScript('catalog/view/javascript/jquery/quickcheckout/quickcheckout.js');
 		
 		if ($this->config->get('quickcheckout_load_screen')) {

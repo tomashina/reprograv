@@ -2,6 +2,7 @@
 class ControllerCheckoutCart extends Controller {
 	public function index() {
 		$this->load->language('checkout/cart');
+		$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -18,7 +19,7 @@ class ControllerCheckoutCart extends Controller {
 		);
 
 		if ($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) {
-			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
+			if ($commercial_data_visible && !$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
 				$data['error_warning'] = $this->language->get('error_stock');
 			} elseif (isset($this->session->data['error'])) {
 				$data['error_warning'] = $this->session->data['error'];
@@ -110,7 +111,7 @@ class ControllerCheckoutCart extends Controller {
 
 				$recurring = '';
 
-				if ($product['recurring']) {
+				if ($commercial_data_visible && $product['recurring']) {
 					$frequencies = array(
 						'day'        => $this->language->get('text_day'),
 						'week'       => $this->language->get('text_week'),
@@ -138,7 +139,7 @@ class ControllerCheckoutCart extends Controller {
 					'option'    => $option_data,
 					'recurring' => $recurring,
 					'quantity'  => $product['quantity'],
-					'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
+					'stock'     => $commercial_data_visible ? ($product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) : null,
 					'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price'     => $price,
 					'total'     => $total,
@@ -273,6 +274,16 @@ class ControllerCheckoutCart extends Controller {
 
 		$json = array();
 
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->addHeader('HTTP/1.1 403 Forbidden');
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode(array(
+				'error' => array('warning' => sprintf($this->language->get('text_login'), $this->url->link('account/login', '', true), $this->url->link('account/register', '', true))),
+				'redirect' => str_replace('&amp;', '&', $this->url->link('account/login', '', true))
+			)));
+			return;
+		}
+
 		if (isset($this->request->post['product_id'])) {
 			$product_id = (int)$this->request->post['product_id'];
 		} else {
@@ -395,6 +406,16 @@ class ControllerCheckoutCart extends Controller {
 		$this->load->language('checkout/cart');
 
 		$json = array();
+
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->addHeader('HTTP/1.1 403 Forbidden');
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode(array(
+				'error' => array('warning' => sprintf($this->language->get('text_login'), $this->url->link('account/login', '', true), $this->url->link('account/register', '', true))),
+				'redirect' => str_replace('&amp;', '&', $this->url->link('account/login', '', true))
+			)));
+			return;
+		}
 
 		// Update
 		if (!empty($this->request->post['quantity'])) {

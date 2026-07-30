@@ -32,7 +32,7 @@ class ControllerExtensionBlogHome extends Controller {
       	);	
 		
 		if (isset($this->request->get['page'])) {
-			$page = $this->request->get['page'];
+			$page = max(1, (int)$this->request->get['page']);
 		} else {
 			$page = 1;
 		}
@@ -104,10 +104,11 @@ class ControllerExtensionBlogHome extends Controller {
 		// Home page title
 		$blog_page_title = $this->config->get('blogsetting_home_page_title');
 		if (!empty($blog_page_title[$this->config->get('config_language_id')])) {
-		$this->document->setTitle($blog_page_title[$this->config->get('config_language_id')]);
+		$seo_title = $this->cleanSeoText($blog_page_title[$this->config->get('config_language_id')], 65);
 		} else {
-		$this->document->setTitle($this->language->get('text_blog'));
+		$seo_title = $this->cleanSeoText($this->language->get('text_blog') . ' | ' . $this->config->get('config_name'), 65);
 		}
+		$this->document->setTitle($seo_title);
 		
 		// Home title
 		$blog_title = $this->config->get('blogsetting_home_title');
@@ -130,12 +131,20 @@ class ControllerExtensionBlogHome extends Controller {
 		$data['heading_title'] = $this->language->get('text_filter_by') . $filter_tag;
 		$this->document->setTitle($this->language->get('text_filter_by') . $filter_tag);
 		$data['description'] = false;
+		$this->document->setRobots('noindex,follow');
+		} elseif ($page > 1) {
+		$this->document->setRobots('noindex,follow');
+		} else {
+		$this->document->setRobots('index,follow');
 		}
 					
 		$blog_page_meta_description = $this->config->get('blogsetting_home_meta_description');
 		if (!empty($blog_page_meta_description[$this->config->get('config_language_id')])) {
-		$this->document->setDescription($blog_page_meta_description[$this->config->get('config_language_id')]);
+		$meta_description = $this->cleanSeoText($blog_page_meta_description[$this->config->get('config_language_id')], 160);
+		} else {
+		$meta_description = 'Savjeti, novosti i vodiči za profesionalne pečatare i gravere iz Repro-Grav ponude.';
 		}
+		$this->document->setDescription($meta_description);
 		
 		$blog_page_meta_keyword = $this->config->get('blogsetting_home_meta_keyword');
 		if (!empty($blog_page_meta_keyword[$this->config->get('config_language_id')])) {
@@ -170,6 +179,65 @@ class ControllerExtensionBlogHome extends Controller {
 		$data['pagination'] = $pagination->render();
 		
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($blog_total) ? ($pagefix) + 1 : 0, ((($page - 1) * $limit) > ($blog_total - $limit)) ? $blog_total : (($pagefix) + $limit), $blog_total, ceil($blog_total / $limit));
+
+		$canonical = $this->url->link('extension/blog/home', $page > 1 ? 'page=' . $page : '');
+		$this->document->addLink($canonical, 'canonical');
+
+		if (
+			$page === 1 &&
+			!$filter_tag &&
+			!isset($this->request->get['_route_']) &&
+			isset($this->request->server['REQUEST_URI']) &&
+			strpos($this->request->server['REQUEST_URI'], 'route=extension/blog/home') !== false
+		) {
+			$this->response->redirect($canonical, 301);
+			return;
+		}
+
+		if (method_exists($this->document, 'setOpengraph')) {
+			$this->document->setOpengraph('og:title', $seo_title);
+			$this->document->setOpengraph('og:type', 'website');
+			$this->document->setOpengraph('og:site_name', $this->config->get('config_name'));
+			$this->document->setOpengraph('og:url', html_entity_decode($canonical, ENT_QUOTES, 'UTF-8'));
+			$this->document->setOpengraph('og:description', $meta_description);
+		}
+
+		if (method_exists($this->document, 'setTwittercard')) {
+			$this->document->setTwittercard('twitter:card', 'summary');
+			$this->document->setTwittercard('twitter:title', $seo_title);
+			$this->document->setTwittercard('twitter:description', $meta_description);
+		}
+
+		if (method_exists($this->document, 'setStructureddata')) {
+			$blog_posts = array();
+			foreach ($data['blogs'] as $blog) {
+				$blog_posts[] = array(
+					'@type' => 'BlogPosting',
+					'@id'   => html_entity_decode($blog['href'], ENT_QUOTES, 'UTF-8'),
+					'url'   => html_entity_decode($blog['href'], ENT_QUOTES, 'UTF-8'),
+					'name'  => $this->cleanSeoText($blog['title'], 110)
+				);
+			}
+
+			$blog_schema = array(
+				'@context' => 'https://schema.org',
+				'@type'    => 'Blog',
+				'@id'      => html_entity_decode($this->url->link('extension/blog/home'), ENT_QUOTES, 'UTF-8') . '#blog',
+				'url'      => html_entity_decode($this->url->link('extension/blog/home'), ENT_QUOTES, 'UTF-8'),
+				'name'     => $data['heading_title'],
+				'description' => $meta_description,
+				'publisher' => array('@id' => rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/#organization')
+			);
+			if ($blog_posts) {
+				$blog_schema['blogPost'] = $blog_posts;
+			}
+
+			$this->document->setStructureddata(
+				'<script type="application/ld+json">' .
+				json_encode($blog_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) .
+				'</script>'
+			);
+		}
 			
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -178,6 +246,18 @@ class ControllerExtensionBlogHome extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 		
-		$this->response->setOutput($this->load->view('blog/blog_home', $data));
+			$this->response->setOutput($this->load->view('blog/blog_home', $data));
+		}
+
+	private function cleanSeoText($value, $max_length) {
+		$value = html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = trim(preg_replace('/\s+/u', ' ', $value));
+
+		if (utf8_strlen($value) > $max_length) {
+			$value = rtrim(utf8_substr($value, 0, $max_length - 1), " \t\n\r\0\x0B,.;:-") . '…';
+		}
+
+		return $value;
 	}
 }

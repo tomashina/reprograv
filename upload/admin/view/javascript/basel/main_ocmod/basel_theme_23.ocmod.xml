@@ -115,7 +115,7 @@
 		]]></add>
 		</operation>
 		<operation error="log">
-		<search><![CDATA[if ((float)$result['special']) {]]></search>
+		<search><![CDATA[$data['products'][] = array(]]></search>
 		<add position="before"><![CDATA[
 		$image2 = $this->model_catalog_product->getProductImages($result['product_id']);
 		if(isset($image2[0]['image']) && !empty($image2[0]['image']) && $this->config->get('basel_thumb_swap')){
@@ -127,12 +127,13 @@
 		} else {
 			$image2 = false;
 		}
-		if ((float)$result['special']) {
+			$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+			if ($commercial_data_visible && (float)$result['special']) {
 			$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
 		} else {
 			$date_end = false;
 		}
-		if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
+			if ($commercial_data_visible && (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
 			if ($this->config->get('salebadge_status') == '2') {
 				$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 			} else {
@@ -151,7 +152,8 @@
 		<operation error="log">
 		<search><![CDATA['thumb'       => $image,]]></search>
 		<add position="before"><![CDATA[
-		'quantity'  => $result['quantity'],
+			'commercial_data_visible' => $commercial_data_visible,
+			'quantity'  => $commercial_data_visible ? $result['quantity'] : null,
 		'thumb2'  => $image2,
 		'sale_badge' => $sale_badge,
 		'sale_end_date' => $date_end['date_end'] ?? '',

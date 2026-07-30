@@ -32,7 +32,7 @@ class ControllerExtensionModuleFeatured extends Controller {
 						$price = false;
 					}
 
-					if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
+					if (($this->customer->isLogged() || !$this->config->get('config_customer_price')) && !is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 						$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 						$tax_price = (float)$product_info['special'];
 					} else {
@@ -40,7 +40,7 @@ class ControllerExtensionModuleFeatured extends Controller {
 						$tax_price = (float)$product_info['price'];
 					}
 		
-					if ($this->config->get('config_tax')) {
+					if (($this->customer->isLogged() || !$this->config->get('config_customer_price')) && $this->config->get('config_tax')) {
 						$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 					} else {
 						$tax = false;

@@ -136,15 +136,33 @@ class ControllerExtensionBlogBlog extends Controller {
     		}
 			
 			if ($blog_info['page_title']) {
-			$this->document->setTitle($blog_info['page_title']);
+			$seo_title = $this->cleanSeoText($blog_info['page_title'], 65);
 			} else {
-			$this->document->setTitle($blog_info['title']);
+			$seo_title = $this->cleanSeoText($blog_info['title'] . ' | ' . $this->config->get('config_name'), 65);
 			}
+			$this->document->setTitle($seo_title);
 			
-			$this->document->setDescription($blog_info['meta_description']);
+			$meta_description = $this->cleanSeoText($blog_info['meta_description'], 160);
+			if (!$meta_description) {
+				$meta_description = $this->cleanSeoText(
+					$blog_info['short_description'] ?: $blog_info['description'],
+					160
+				);
+			}
+			$this->document->setDescription($meta_description);
 			$this->document->setKeywords($blog_info['meta_keyword']);
 			
-			$this->document->addLink($this->url->link('extension/blog/blog', 'blog_id=' . $this->request->get['blog_id']), 'canonical');
+			$canonical = $this->url->link('extension/blog/blog', 'blog_id=' . $this->request->get['blog_id']);
+			$this->document->addLink($canonical, 'canonical');
+
+			if (
+				!isset($this->request->get['_route_']) &&
+				isset($this->request->server['REQUEST_URI']) &&
+				strpos($this->request->server['REQUEST_URI'], 'route=extension/blog/blog') !== false
+			) {
+				$this->response->redirect($canonical, 301);
+				return;
+			}
 										
       		$data['heading_title'] = $blog_info['title'];
 			
@@ -163,7 +181,7 @@ class ControllerExtensionBlogBlog extends Controller {
 			}
 	      	
 			if ($blog_info['image']) {
-			$data['main_thumb'] = 'image/'.$blog_info['image'];
+			$data['main_thumb'] = rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/image/' . ltrim($blog_info['image'], '/');
 			$this->document->addLink($data['main_thumb'], 'image');
 			} else {
 			$data['main_thumb'] = false;
@@ -217,24 +235,26 @@ class ControllerExtensionBlogBlog extends Controller {
 				} else {
 					$image2 = false;
 				}
-				if ((float)$result['special']) {
+				$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
+
+				if ($commercial_data_visible && (float)$result['special']) {
 					$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
 				} else {
 					$date_end = false;
 				}
 
-				if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
+				if ($commercial_data_visible) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$price = false;
 				}
 
-				if ((float)$result['special']) {
+				if ($commercial_data_visible && (float)$result['special']) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;
 				}
-				if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
+				if ($commercial_data_visible && (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
 					if ($this->config->get('salebadge_status') == '2') {
 						$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 					} else {
@@ -243,7 +263,7 @@ class ControllerExtensionBlogBlog extends Controller {
 				} else {
 					$sale_badge = false;
 				}
-				if ($this->config->get('config_tax')) {
+				if ($commercial_data_visible && $this->config->get('config_tax')) {
 					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
 				} else {
 					$tax = false;
@@ -262,7 +282,8 @@ class ControllerExtensionBlogBlog extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
-					'quantity'  => $result['quantity'],
+					'commercial_data_visible' => $commercial_data_visible,
+					'quantity'  => $commercial_data_visible ? $result['quantity'] : null,
 					'thumb'       => $image,
 					'thumb2'  => $this->model_tool_image->resize($image2, $this->config->get('theme_default_image_product_width'), $this->config->get('theme_default_image_product_height')),
 					'sale_end_date' => $date_end['date_end'] ?? '',
@@ -314,6 +335,7 @@ class ControllerExtensionBlogBlog extends Controller {
       		$data['button_send'] = $this->language->get('button_send');
 
 			$data['date_added_day'] = date("d",strtotime($blog_info['date_added']));
+			$data['date_added_full'] = date(DATE_ATOM, strtotime($blog_info['date_added']));
 			$m = date("m",strtotime($blog_info['date_added']));
 			$months = array (
 					1 => $this->language->get('text_month_jan'),
@@ -332,6 +354,59 @@ class ControllerExtensionBlogBlog extends Controller {
 			$data['date_added_month'] = $months[(int)$m];
 			
 			$data['author'] = $blog_info['author'];
+
+			$canonical_url = html_entity_decode($canonical, ENT_QUOTES, 'UTF-8');
+			$publisher_id = rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/#organization';
+			$article_schema = array(
+				'@context'         => 'https://schema.org',
+				'@type'            => 'BlogPosting',
+				'@id'              => $canonical_url . '#article',
+				'url'              => $canonical_url,
+				'mainEntityOfPage' => array(
+					'@type' => 'WebPage',
+					'@id'   => $canonical_url
+				),
+				'headline'          => $this->cleanSeoText($blog_info['title'], 110),
+				'description'       => $meta_description,
+				'datePublished'     => date(DATE_ATOM, strtotime($blog_info['date_added'])),
+				'dateModified'      => date(DATE_ATOM, strtotime($blog_info['date_added'])),
+				'author'            => array(
+					'@type' => 'Person',
+					'name'  => $this->cleanSeoText($blog_info['author']) ?: $this->config->get('config_name')
+				),
+				'publisher'         => array('@id' => $publisher_id)
+			);
+
+			if ($data['main_thumb']) {
+				$article_schema['image'] = array(
+					'@type'  => 'ImageObject',
+					'url'    => $data['main_thumb'],
+					'width'  => (int)$data['img_width'],
+					'height' => (int)$data['img_height']
+				);
+			}
+
+			$data['article_json'] = json_encode($article_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+			if (method_exists($this->document, 'setOpengraph')) {
+				$this->document->setOpengraph('og:title', $seo_title);
+				$this->document->setOpengraph('og:type', 'article');
+				$this->document->setOpengraph('og:site_name', $this->config->get('config_name'));
+				$this->document->setOpengraph('og:url', $canonical_url);
+				$this->document->setOpengraph('og:description', $meta_description);
+				if ($data['main_thumb']) {
+					$this->document->setOpengraph('og:image', $data['main_thumb']);
+				}
+			}
+
+			if (method_exists($this->document, 'setTwittercard')) {
+				$this->document->setTwittercard('twitter:card', $data['main_thumb'] ? 'summary_large_image' : 'summary');
+				$this->document->setTwittercard('twitter:title', $seo_title);
+				$this->document->setTwittercard('twitter:description', $meta_description);
+				if ($data['main_thumb']) {
+					$this->document->setTwittercard('twitter:image', $data['main_thumb']);
+				}
+			}
 			
 			$data['allow_comment'] = $blog_info['allow_comment'];
 			
@@ -378,11 +453,23 @@ class ControllerExtensionBlogBlog extends Controller {
 			
 			$this->response->setOutput($this->load->view('error/not_found', $data));
 			
-    	}
+		}
+	}
+
+	private function cleanSeoText($value, $max_length = 255) {
+		$value = html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$value = trim(preg_replace('/\s+/u', ' ', $value));
+
+		if (utf8_strlen($value) > $max_length) {
+			$value = rtrim(utf8_substr($value, 0, $max_length - 1), " \t\n\r\0\x0B,.;:-") . '…';
+		}
+
+		return $value;
 	}
 	
 		
-		public function comment() {
+			public function comment() {
 			
 		$this->load->language('blog/blog');
 

@@ -26,7 +26,7 @@
 
                     <div class="item single-category has-subs">
                         <div class="table">
-                            <div class="table-cell v-top img-cell"><img src="{{ category.thumb }}" alt="{{ category.name }}" /></div>
+                            <div class="table-cell v-top img-cell"><img src="{{ category.thumb }}" alt="{{ category.name }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" /></div>
 
                             <div class="table-cell w100 v-top">
                                 <h5><b><a href="{{ category.href }}">{{ category.name }}</a></b></h5>
@@ -47,7 +47,7 @@
                 {% for category in categories %}
                     <div class="item single-category no-subs">
                         <div class="banner_wrap hover-zoom">
-                            <a href="{{ category.href }}"><img class="zoom_image" src="{{ category.thumb }}" alt="{{ category.alt }}" title="{{ category.title }}" /></a>
+                            <a href="{{ category.href }}"><img class="zoom_image" src="{{ category.thumb }}" alt="{{ category.alt }}" title="{{ category.title }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" /></a>
                             {% if count %}
                                 <div class="overlay">
                                     <a class="table w100 h100" href="{{ category.href }}">
@@ -76,8 +76,8 @@
     <script>
         $('.grid-holder.category.module{{ module }}').slick({
             {% if carousel_a %}
-            prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-            nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
+            prevArrow: "<a href=\"#\" class=\"arrow-left icon-arrow-left\" aria-label=\"Prethodno\"></a>",
+            nextArrow: "<a href=\"#\" class=\"arrow-right icon-arrow-right\" aria-label=\"Sljedeće\"></a>",
             {% else %}
             arrows: false,
             {% endif %}

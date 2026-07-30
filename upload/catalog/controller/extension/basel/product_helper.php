@@ -10,7 +10,10 @@
 	$data['product_page_countdown'] = $this->config->get('product_page_countdown');
 	$data['meta_description'] = $product_info['meta_description'];	
 	$data['product_layout'] = $this->config->get('product_layout');
-	$data['qty'] = $product_info['quantity'];
+	$data['commercial_data_visible'] = isset($data['commercial_data_visible'])
+		? (bool)$data['commercial_data_visible']
+		: (!$this->config->get('config_customer_price') || $this->customer->isLogged());
+	$data['qty'] = $data['commercial_data_visible'] ? $product_info['quantity'] : null;
 	$data['basel_price_update'] = $this->config->get('basel_price_update');
 	$data['basel_sharing_style'] = $this->config->get('basel_sharing_style');
 	$data['review_qty'] = $product_info['reviews'];
@@ -26,9 +29,9 @@
 	$data['items_mobile_fw'] = $this->config->get('items_mobile_fw');
 	if (strtotime($product_info['date_available']) > strtotime('-' . $this->config->get('newlabel_status') . ' day')) $data['is_new'] = true;
 	$data['basel_text_offer_ends'] = $this->language->get('basel_text_offer_ends');
-	$price_snippet = preg_replace("/[^0-9,.]/","", $data['price']);
+	$price_snippet = $data['commercial_data_visible'] ? preg_replace("/[^0-9,.]/","", $data['price']) : '';
 	$data['price_snippet'] = str_replace( ',', '.', $price_snippet);
-	if ((float)$product_info['special']) {
+	if ($data['commercial_data_visible'] && (float)$product_info['special']) {
 	$date_end = $this->model_extension_basel_basel->getSpecialEndDate($product_info['product_id']);
 	$data['sale_end_date'] = $date_end['date_end'] ?? '';
 	$special_snippet = preg_replace("/[^0-9,.]/","", $data['special']);
@@ -36,7 +39,7 @@
 	}
 	if ($this->config->get('product_layout') == 'full-width') $this->document->addScript('catalog/view/theme/basel/js/theia-sticky-sidebar.min.js');
 	
-	if ( (float)$product_info['special'] && ($this->config->get('salebadge_status')) ) {
+	if ($data['commercial_data_visible'] && (float)$product_info['special'] && ($this->config->get('salebadge_status')) ) {
 		if ($this->config->get('salebadge_status') == '2') {
 			$data['sale_badge'] = '-' . number_format(((($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 		} else {

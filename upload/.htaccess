@@ -3,13 +3,23 @@ DirectoryIndex index.php
 Options -Indexes
 php_flag display_errors Off
 <IfModule mod_rewrite.c>
-  RewriteEngine On
+RewriteEngine On
   RewriteBase /
-  
-  # Redirect non-www to www
-  RewriteCond %{HTTP_HOST} !^www\. [NC]
-  RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [L,R=301]
 
+  # Legacy product URLs whose slugs contained public prices. Absolute canonical
+  # targets avoid a second redirect when an old non-HTTPS/non-www URL is used.
+  RewriteRule ^6-4926-stari-rezervni-jastucic-jastuk-u-kutiji-rasprodaja-1eur/?$ https://www.repro-grav.com/6-4926-stari-rezervni-jastucic-jastuk-u-kutiji-rasprodaja [R=301,L,NE]
+  RewriteRule ^gravometall-srebro-mesing-rasprodaja-30eur/?$ https://www.repro-grav.com/gravometall-srebro-mesing-rasprodaja [R=301,L,NE]
+  RewriteRule ^m20-x-posebna-akcijska-cijena-6000-eur/?$ https://www.repro-grav.com/m20-x [R=301,L,NE]
+  
+  # One canonical host and protocol.
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^www\.repro-grav\.com$ [NC]
+  RewriteRule ^ https://www.repro-grav.com%{REQUEST_URI} [L,R=301,NE]
+
+  # Normalize the duplicate query-string homepage.
+  RewriteCond %{THE_REQUEST} \s/+index\.php\?route=common/home(?:[&\s]) [NC]
+  RewriteRule ^index\.php$ https://www.repro-grav.com/? [L,R=301]
 
   
 RewriteRule ^sitemap-index.xml$ index.php?route=extension/feed/boost_sitemap [L]
@@ -39,15 +49,38 @@ RewriteRule ^en/?$ /pecatarstvo-i-pribor [R=301,L]
   RewriteRule ^([^?]*) index.php?_route_=$1 [L,QSA]
 </IfModule>
 
-# Cache statike (opcionalno; ne uzrokuje 500)
+# Cache and compression for static assets.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpg "access plus 1 month"
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType image/gif "access plus 1 month"
   ExpiresByType image/png "access plus 1 month"
-  ExpiresByType text/css "access plus 1 week"
-  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/avif "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:css|js)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(?:jpe?g|png|gif|webp|avif|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(?:woff2?|eot|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
 </IfModule>
 
 # BEGIN cPanel-generated php ini directives, do not edit

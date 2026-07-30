@@ -59,7 +59,9 @@ $this->document->addScript('catalog/view/theme/basel/js/cloudzoom/cloud-zoom.1.0
 				$data['banners'][] = array(
 					'title' => $result['title'],
 					'link'  => $result['link'],
-					'image' => $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height'])
+					'image' => $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']),
+					'width' => (int)$setting['image_width'],
+					'height' => (int)$setting['image_height']
 				);
 			}
 		}

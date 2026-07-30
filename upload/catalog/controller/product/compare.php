@@ -2,6 +2,7 @@
 class ControllerProductCompare extends Controller {
 	public function index() {
 		$this->load->language('product/compare');
+		$this->document->setRobots('noindex,follow');
 
 		$this->load->model('catalog/product');
 
@@ -67,13 +68,15 @@ class ControllerProductCompare extends Controller {
 					$price = false;
 				}
 
-				if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
+				if (($this->customer->isLogged() || !$this->config->get('config_customer_price')) && !is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;
 				}
 
-				if ($product_info['quantity'] <= 0) {
+				if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+					$availability = false;
+				} elseif ($product_info['quantity'] <= 0) {
 					$availability = $product_info['stock_status'];
 				} elseif ($this->config->get('config_stock_display')) {
 					$availability = $product_info['quantity'];

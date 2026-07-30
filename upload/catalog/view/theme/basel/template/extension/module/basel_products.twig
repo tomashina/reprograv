@@ -34,9 +34,9 @@
                   <div class="edge">
             <div class="image"{% if columns == 'list' %} style="width:{{ img_width }}px"{% endif %}>
                 <a href="{{ product.href }}">
-                <img src="{{ product.thumb }}" alt="{{ product.name }}"  title="{{ product.name }}" />
+                <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" />
                 {% if product.thumb2 %}
-                <img class="thumb2" src="{{ product.thumb2 }}" alt="{{ product.name }}" loading="lazy" title="{{ product.name }}" />
+                <img class="thumb2" src="{{ product.thumb2 }}" alt="{{ product.name }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" title="{{ product.name }}" />
                 {% endif %}
                 </a>
             {% if product.price and product.special and product.sale_badge %}
@@ -54,11 +54,11 @@
 				{% set button_cart = default_button_cart %}
 			
           
-            <div class="btn-center catalog_hide"><a class="btn btn-light-outline btn-thin" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">{{ button_cart }}</a></div>
+            <div class="btn-center catalog_hide"><button type="button" class="btn btn-light-outline btn-thin" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">{{ button_cart }}</button></div>
             <div class="icons-wrapper">
            
-       <a class="icon is_wishlist" data-toggle="tooltip" data-placement="{{ tooltip_align }}"  data-title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><span class="icon-heart"></span></a>
-<a class="icon is_compare" onclick="compare.add('{{ product.product_id }}');" data-toggle="tooltip" data-placement="{{ tooltip_align }}" data-title="{{ button_compare }}"><span class="icon-refresh"></span></a>
+       <button type="button" class="icon is_wishlist" aria-label="{{ button_wishlist }}" data-toggle="tooltip" data-placement="{{ tooltip_align }}" data-title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><span class="icon-heart"></span></button>
+<button type="button" class="icon is_compare" aria-label="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');" data-toggle="tooltip" data-placement="{{ tooltip_align }}" data-title="{{ button_compare }}"><span class="icon-refresh"></span></button>
 
             </div> <!-- .icons-wrapper -->
             </div><!-- .image ends -->
@@ -94,7 +94,7 @@
 
 
             
-                {% if ((product.quantity < 1) and (stock_badge_status)) %}
+                {% if product.commercial_data_visible and ((product.quantity < 1) and (stock_badge_status)) %}
                  <a class="btn  {% if basel_list_style == '6' %}btn-contrast{% else %}btn-outline{% endif %}" href="{{ product.href }}" title="{{ button_cart }}"><span class="global-cart"></span> {{ button_cart }}</a>
                     {% set button_cart = basel_text_out_of_stock %}
                 {% else %}
@@ -148,8 +148,8 @@
 $('.grid-holder.prod_module{{ module }}').slick({
     accessibility: false,
 {% if carousel_a %}
-prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
+prevArrow: "<a href=\"#\" class=\"arrow-left icon-arrow-left\" aria-label=\"Prethodno\"></a>",
+nextArrow: "<a href=\"#\" class=\"arrow-right icon-arrow-right\" aria-label=\"Sljedeće\"></a>",
 {% else %}
 arrows: false,
 {% endif %}
@@ -178,7 +178,11 @@ adaptiveHeight:true,slidesToShow:1,slidesToScroll:1,responsive:[
 ]
 });
 $('.product-style2 .single-product .icon').attr('data-placement', 'top');
-$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+$(window).on('load', function() {
+	if ($.fn.tooltip) {
+		$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
+	}
+});
 {% if carousel_a and rows > 1 %}
 $(window).load(function() {
 var p_c_o = $('.prod_module{{ module }}').offset().top;

@@ -1,6 +1,11 @@
 <?php
 class ControllerCheckoutConfirm extends Controller {
 	public function index() {
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			http_response_code(403);
+			return;
+		}
+
 		$redirect = '';
 
 		if ($this->cart->hasShipping()) {

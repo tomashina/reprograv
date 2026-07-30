@@ -6,6 +6,7 @@ class ControllerExtensionModuleDependentOptions extends Equotix {
 	
 	public function index() {
 		$this->load->model('tool/image');
+		$commercial_data_visible = !$this->config->get('config_customer_price') || $this->customer->isLogged();
 		
 		if (isset($this->request->get['parent_id'])) {
 			$product_option_id = (int)$this->request->get['parent_id'];
@@ -66,7 +67,7 @@ class ControllerExtensionModuleDependentOptions extends Equotix {
 					
 					if ($query1->num_rows) {
 						foreach ($query1->rows as $option_value) {
-							if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
+							if (!$commercial_data_visible || !$option_value['subtract'] || ($option_value['quantity'] > 0)) {
 								if (version_compare(VERSION, '2.2.0.0', '<')) {
 									if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
 										$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax')));

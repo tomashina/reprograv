@@ -23,6 +23,16 @@ class ControllerExtensionBaselLiveOptions extends Controller {
 		$options_makeup = $options_makeup_notax = 0;
 		$currency_code = $this->session->data['currency'];
 
+		if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+			$this->response->addHeader('HTTP/1.1 403 Forbidden');
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode(array(
+				'success' => false,
+				'login_required' => true
+			)));
+			return;
+		}
+
 		if (isset($this->request->get['product_id'])) {
 			$product_id = (int)$this->request->get['product_id'];
 		} else {

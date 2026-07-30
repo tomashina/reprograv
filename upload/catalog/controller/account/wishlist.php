@@ -65,7 +65,9 @@ class ControllerAccountWishList extends Controller {
 					$image = false;
 				}
 
-				if ($product_info['quantity'] <= 0) {
+				if ($this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+					$stock = false;
+				} elseif ($product_info['quantity'] <= 0) {
 					$stock = $product_info['stock_status'];
 				} elseif ($this->config->get('config_stock_display')) {
 					$stock = $product_info['quantity'];
@@ -79,7 +81,7 @@ class ControllerAccountWishList extends Controller {
 					$price = false;
 				}
 
-				if ((float)$product_info['special']) {
+				if (($this->customer->isLogged() || !$this->config->get('config_customer_price')) && (float)$product_info['special']) {
 					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;

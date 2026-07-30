@@ -96,12 +96,12 @@ class ControllerExtensionModuleTfFilter extends Controller
         }
 
         // Availability
-        if ($this->info['filter']['availability']['status']) {
+        if ($this->info['filter']['availability']['status'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $data['filters'][] = $this->getAvailabilityFilter();
         }
 
         // Discount
-        if ($this->info['filter']['discount']['status']) {
+        if ($this->info['filter']['discount']['status'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $data['filters'][] = $this->getDiscountFilter();
         }
 
@@ -175,7 +175,7 @@ class ControllerExtensionModuleTfFilter extends Controller
         if ($this->info['filter']['sub_category']['status']) {
             $url .= '&_f_sub_category';
         }
-        if ($this->info['filter']['availability']['status']) {
+        if ($this->info['filter']['availability']['status'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             if ($this->info['filter']['availability']['stock_status']) {
                 $url .= '&_f_stock_status';
             } else {
@@ -185,7 +185,7 @@ class ControllerExtensionModuleTfFilter extends Controller
         if ($this->info['filter']['rating']['status']) {
             $url .= '&_f_rating';
         }
-        if ($this->info['filter']['discount']['status']) {
+        if ($this->info['filter']['discount']['status'] && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $url .= '&_f_discount';
         }
         if ($this->info['filter']['filter']['status']) {
@@ -634,7 +634,7 @@ $data['values'][] = array(
         }
 
         // User selected
-        if (isset($this->request->get['tf_fs'])) {
+        if (isset($this->request->get['tf_fs']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $selected = $this->request->get['tf_fs'];
         } else {
             $selected = null;
@@ -1313,7 +1313,7 @@ $data['values'][] = array(
         // Avaibility
         $data['availability'] = array();
 
-        if (isset($this->request->get['_f_availability'])) {
+        if (isset($this->request->get['_f_availability']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $filter_data = $this->filter_param;
             unset($filter_data['filter_in_stock']);
 
@@ -1324,7 +1324,7 @@ $data['values'][] = array(
         // Stock status
         $data['stock_status'] = array();
 
-        if (isset($this->request->get['_f_stock_status'])) {
+        if (isset($this->request->get['_f_stock_status']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $filter_data = $this->filter_param;
             $filter_data['field_total'] = $count_product;
             // unset($filter_data['filter_stock_status']);
@@ -1385,7 +1385,7 @@ $data['values'][] = array(
         // Discount
         $data['discount'] = array();
 
-        if (isset($this->request->get['_f_discount'])) {
+        if (isset($this->request->get['_f_discount']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $filter_data = $this->filter_param;
             $filter_data['field_total'] = $count_product;
             $filter_data['discount_group'] = array_reverse(range(10, 50, 10));
@@ -1554,7 +1554,7 @@ $data['values'][] = array(
         }
 
         // Filter stock status
-        if (!empty($this->request->get['tf_fss'])) {
+        if (!empty($this->request->get['tf_fss']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $filter_data['filter_stock_status'] = explode('.', $this->request->get['tf_fss']);
         }
 
@@ -1564,7 +1564,7 @@ $data['values'][] = array(
         }
 
         // Filter discount
-        if (!empty($this->request->get['tf_fd'])) {
+        if (!empty($this->request->get['tf_fd']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $filter_data['filter_min_special_perc'] = $this->request->get['tf_fd'];
         }
 
@@ -1637,12 +1637,12 @@ $data['values'][] = array(
         }
 
         // Filter availability
-        if (isset($this->request->get['tf_fs']) && $this->request->get['tf_fs'] !== '') {
+        if (isset($this->request->get['tf_fs']) && $this->request->get['tf_fs'] !== '' && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $url .= '&tf_fs=' . $this->request->get['tf_fs'];
         }
 
         // Filter stock status
-        if (!empty($this->request->get['tf_fss'])) {
+        if (!empty($this->request->get['tf_fss']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $url .= '&tf_fss=' . $this->request->get['tf_fss'];
         }
 
@@ -1652,7 +1652,7 @@ $data['values'][] = array(
         }
 
         // Filter discount
-        if (!empty($this->request->get['tf_fd'])) {
+        if (!empty($this->request->get['tf_fd']) && ($this->customer->isLogged() || !$this->config->get('config_customer_price'))) {
             $url .= '&tf_fd=' . $this->request->get['tf_fd'];
         }
 
