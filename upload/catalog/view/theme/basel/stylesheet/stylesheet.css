@@ -14059,7 +14059,7 @@ body[class*="product-product"] .product-detail-tabs .product-specification-row d
 	justify-content:center;
 	width:fit-content;
 	padding:13px 17px;
-	margin:28px auto 0;
+	margin:28px 0 0 max(0px, calc((100% - 820px) / 2));
 	border:1px solid #dce4e8;
 	border-left:4px solid #e30613;
 	border-radius:0 10px 10px 0;
@@ -14815,6 +14815,139 @@ body[class^="information-"] .cm_content .about-widget .btn {
 	letter-spacing:0;
 }
 
+/* Content-builder modules rendered below an individual blog article. */
+body.extension-blog-blog .cm_content .cm_item {
+	color:var(--rg-type-copy);
+	font-size:17px;
+	font-weight:400;
+	line-height:1.68;
+}
+
+body.extension-blog-blog .cm_content .cm_item h2,
+body.extension-blog-blog .cm_content .cm_item h2.homeb {
+	margin-bottom:14px;
+	color:var(--rg-type-heading) !important;
+	font-size:27px !important;
+	font-weight:700 !important;
+	letter-spacing:-.018em;
+	line-height:1.3;
+}
+
+body.extension-blog-blog .cm_content .cm_item p {
+	color:var(--rg-type-copy);
+	font-size:16px;
+	line-height:1.68;
+}
+
+body.extension-blog-blog .cm_content .cm_item p.homeb {
+	margin-bottom:15px;
+	color:var(--rg-type-copy) !important;
+	font-size:17px !important;
+	font-weight:400 !important;
+	line-height:1.68;
+}
+
+body.extension-blog-blog .cm_content .cm_item strong {
+	color:#29495e;
+	font-weight:650;
+}
+
+body.extension-blog-blog .cm_content .cm_item p.xs-red {
+	margin-bottom:7px;
+	color:var(--rg-type-accent);
+	font-size:12px;
+	font-weight:700;
+	letter-spacing:.11em;
+	line-height:1.5;
+	text-transform:uppercase;
+}
+
+body.extension-blog-blog .cm_content .promo-style-2 h3 {
+	margin-bottom:8px;
+	color:var(--rg-type-heading);
+	font-size:19px;
+	font-weight:700;
+	letter-spacing:-.01em;
+	line-height:1.35;
+}
+
+body.extension-blog-blog .cm_content .promo-style-2 p {
+	margin:0 auto 10px;
+	color:var(--rg-type-copy);
+	font-size:15px;
+	line-height:1.65;
+}
+
+body.extension-blog-blog .cm_content .about-widget .btn {
+	font-size:14px;
+	font-weight:700;
+	letter-spacing:0;
+}
+
+/* Newsletter module follows the same hierarchy wherever it is inserted. */
+.wide-signup:not(.large) {
+	color:var(--rg-type-copy);
+}
+
+.wide-signup:not(.large) > p.faketitle {
+	margin:0 0 9px;
+	color:var(--rg-type-heading) !important;
+	font-size:30px !important;
+	font-weight:700 !important;
+	letter-spacing:-.02em;
+	line-height:1.2 !important;
+	text-transform:none;
+}
+
+.wide-signup:not(.large) > p:not(.faketitle):not(.x-separator):not(.spread) {
+	margin:0 auto 32px;
+	color:var(--rg-type-copy) !important;
+	font-size:20px !important;
+	font-weight:400 !important;
+	line-height:1.6 !important;
+}
+
+.wide-signup:not(.large) .newsletter-wrap {
+	padding-top:0;
+}
+
+.wide-signup:not(.large) .sign-up-field .form-control {
+	height:auto;
+	color:#29495e;
+	font-family:inherit;
+	font-size:18px !important;
+	font-weight:400 !important;
+	line-height:1.5 !important;
+}
+
+.wide-signup:not(.large) .sign-up-field .form-control::placeholder {
+	color:#7b8d98 !important;
+	opacity:1;
+}
+
+.wide-signup:not(.large) .sign-up-field > p {
+	margin:0 0 22px;
+	color:#3f5b6e !important;
+	font-size:17px !important;
+	font-weight:400 !important;
+	line-height:1.55 !important;
+}
+
+.wide-signup:not(.large) .sign-up-field .chk {
+	margin-right:7px;
+	vertical-align:-1px;
+}
+
+.wide-signup:not(.large) .sign-up-field .btn-neutral {
+	min-width:170px;
+	color:#fff !important;
+	font-family:inherit;
+	font-size:16px !important;
+	font-weight:700 !important;
+	letter-spacing:0;
+	line-height:1.4 !important;
+}
+
 /* Information-page long-form typography */
 body[class^="information-information-"] #content.info {
 	padding-bottom:60px;
@@ -15001,6 +15134,10 @@ body[class^="information-information-"] #content.info th {
 		font-size:28px;
 	}
 
+	.wide-signup:not(.large) > p.faketitle {
+		font-size:28px !important;
+	}
+
 	.common-home .cm_content .cm_item h2,
 	.common-home .cm_content .cm_item h2.homeb,
 	body[class^="information-"] .cm_content .cm_item h2,
@@ -15048,27 +15185,55 @@ body[class^="information-information-"] #content.info th {
 	}
 
 	.common-home .cm_content .cm_item,
-	body[class^="information-"] .cm_content .cm_item {
+	body[class^="information-"] .cm_content .cm_item,
+	body.extension-blog-blog .cm_content .cm_item {
 		font-size:16px;
 	}
 
 	.common-home .cm_content .cm_item h2,
 	.common-home .cm_content .cm_item h2.homeb,
 	body[class^="information-"] .cm_content .cm_item h2,
-	body[class^="information-"] .cm_content .cm_item h2.homeb {
+	body[class^="information-"] .cm_content .cm_item h2.homeb,
+	body.extension-blog-blog .cm_content .cm_item h2,
+	body.extension-blog-blog .cm_content .cm_item h2.homeb {
 		font-size:24px !important;
 		line-height:1.32;
 	}
 
 	.common-home .cm_content .cm_item p.homeb,
-	body[class^="information-"] .cm_content .cm_item p.homeb {
+	body[class^="information-"] .cm_content .cm_item p.homeb,
+	body.extension-blog-blog .cm_content .cm_item p.homeb {
 		font-size:16px !important;
 		line-height:1.7;
 	}
 
 	.common-home .cm_content .promo-style-2 h3,
-	body[class^="information-"] .cm_content .promo-style-2 h3 {
+	body[class^="information-"] .cm_content .promo-style-2 h3,
+	body.extension-blog-blog .cm_content .promo-style-2 h3 {
 		font-size:18px;
+	}
+
+	.wide-signup:not(.large) > p.faketitle {
+		font-size:26px !important;
+		line-height:1.22 !important;
+	}
+
+	.wide-signup:not(.large) > p:not(.faketitle):not(.x-separator):not(.spread) {
+		margin-bottom:23px;
+		font-size:16px !important;
+	}
+
+	.wide-signup:not(.large) .sign-up-field .form-control {
+		font-size:16px !important;
+	}
+
+	.wide-signup:not(.large) .sign-up-field > p {
+		font-size:14px !important;
+		line-height:1.55 !important;
+	}
+
+	.wide-signup:not(.large) .sign-up-field .btn-neutral {
+		font-size:15px !important;
 	}
 
 	body[class^="information-information-"] #content.info {
