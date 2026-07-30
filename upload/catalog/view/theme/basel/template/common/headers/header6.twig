@@ -69,16 +69,9 @@
        
        <div class="font-zero">
            <div class="icon-element is_wishlist">
-
-               {% if logged %}
-                   <a class="shortcut-wrapper account-link" title="Moj račun" href="{{ login }}" aria-label="Moj račun">
-                       <i class="icon-user icon" aria-hidden="true"></i>
-                   </a>
-               {% else %}
-                   <a class="shortcut-wrapper account-link" title="Moj račun" href="{{ login }}" aria-label="Moj račun">
-                       <div class="wishlist-hover"><i class="icon-user icon"></i></div>
-                   </a>
-               {% endif %}
+               <a class="shortcut-wrapper account-link" title="Moj račun" href="{{ login }}" aria-label="Moj račun">
+                   <i class="icon-user icon" aria-hidden="true"></i>
+               </a>
            </div>
 
            {% if logged %}
