@@ -22,6 +22,7 @@ $_['text_rating_desc']  = 'Rating (Highest)';
 $_['text_model_asc']    = 'Model (A - Z)';
 $_['text_model_desc']   = 'Model (Z - A)';
 $_['text_limit']        = 'Show:';
+$_['text_category_faq']  = 'Frequently asked questions: %s';
 /*
 Translated with
 Массовый автоматический перевод текстов, товаров, категорий, статей и тд с Google translate API

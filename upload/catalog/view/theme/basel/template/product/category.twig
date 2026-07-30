@@ -161,4 +161,24 @@
 
     </div>
 {% endif %}
+
+{% if category_faqs %}
+    <section class="container category-faq-section" aria-labelledby="category-faq-title">
+        <h2 id="category-faq-title">{{ text_category_faq }}</h2>
+        <div class="category-faq-list">
+            {% for faq in category_faqs %}
+                <details class="category-faq-item">
+                    <summary>{{ faq.question }}</summary>
+                    <div class="category-faq-answer">{{ faq.answer }}</div>
+                </details>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+{% if category_faq_json %}
+<script type="application/ld+json">
+{{ category_faq_json }}
+</script>
+{% endif %}
 {{ footer }}

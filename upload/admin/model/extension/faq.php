@@ -15,6 +15,13 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."faq_2_category` (
   `fcategory_id` int(11) NOT NULL
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
 
+$this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."faq_to_catalog_category` (
+  `faq_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  PRIMARY KEY (`faq_id`,`category_id`),
+  KEY `category_id` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
 $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."faq_description` (
   `faq_id` int(11) NOT NULL AUTO_INCREMENT,
   `language_id` int(11) NOT NULL,
@@ -60,6 +67,7 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 	public function uninstall() {
 	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."faq`");
 	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."faq_2_category`");
+	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."faq_to_catalog_category`");
 	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."faq_description`");
 	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."fcategory`");
 	$this->db->query("DROP TABLE IF EXISTS `".DB_PREFIX."fcategory_description`");
@@ -68,6 +76,7 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 	}
 	
 	public function addfaq($data) {
+		$this->ensureCatalogCategoryTable();
 		
 		$this->db->query("INSERT INTO " . DB_PREFIX . "faq SET sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', date_modified = NOW(), date_added = NOW()");
 
@@ -83,12 +92,18 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 			}
 		}
 
-		
+		if (isset($data['catalog_categories'])) {
+			foreach ($data['catalog_categories'] as $category_id) {
+				$this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "faq_to_catalog_category SET category_id = '" . (int)$category_id . "', faq_id = '" . (int)$faq_id . "'");
+			}
+		}
+
 
 		return $faq_id;
 	}
 
 	public function editfaq($faq_id, $data) {
+		$this->ensureCatalogCategoryTable();
 		
 		
 
@@ -108,6 +123,14 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 				$this->db->query("INSERT INTO ".DB_PREFIX."faq_2_category SET fcategory_id = '".(int)$fcategory_id."',faq_id = '" . (int)$faq_id . "'");
 			}
 		}
+
+		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_to_catalog_category WHERE faq_id = '" . (int)$faq_id . "'");
+
+		if (isset($data['catalog_categories'])) {
+			foreach ($data['catalog_categories'] as $category_id) {
+				$this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "faq_to_catalog_category SET category_id = '" . (int)$category_id . "', faq_id = '" . (int)$faq_id . "'");
+			}
+		}
 		
 		$this->cache->delete('faq');
 
@@ -115,12 +138,15 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 	}
 
 	public function deletefaq($faq_id){
+		$this->ensureCatalogCategoryTable();
 		
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq WHERE faq_id = '" . (int)$faq_id . "'");
 		
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_description WHERE faq_id = '" . (int)$faq_id . "'");
 		
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_2_category WHERE faq_id = '" . (int)$faq_id . "'");
+
+		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_to_catalog_category WHERE faq_id = '" . (int)$faq_id . "'");
 		
 		$this->cache->delete('faq');
 
@@ -216,6 +242,28 @@ $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."fcategory_to_product`
 		}
 
 		return $faq_categories_data;
+	}
+
+	public function getFaqCatalogCategories($faq_id) {
+		$this->ensureCatalogCategoryTable();
+		$category_ids = array();
+
+		$query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "faq_to_catalog_category WHERE faq_id = '" . (int)$faq_id . "' ORDER BY category_id");
+
+		foreach ($query->rows as $result) {
+			$category_ids[] = (int)$result['category_id'];
+		}
+
+		return $category_ids;
+	}
+
+	private function ensureCatalogCategoryTable() {
+		$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "faq_to_catalog_category` (
+		  `faq_id` int(11) NOT NULL,
+		  `category_id` int(11) NOT NULL,
+		  PRIMARY KEY (`faq_id`,`category_id`),
+		  KEY `category_id` (`category_id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 	}
 	
 	public function getTotalCategories($data = array()){

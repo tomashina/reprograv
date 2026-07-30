@@ -39,6 +39,36 @@ class ModelExtensionFaq extends Model {
 		
 		return $this->db->query($sql)->rows;
 	}
+
+	public function getFaqsByCatalogCategory($category_id) {
+		static $has_relation_table = null;
+
+		if ($has_relation_table === null) {
+			$table_name = DB_PREFIX . 'faq_to_catalog_category';
+			$table_query = $this->db->query(
+				"SELECT 1 FROM information_schema.tables " .
+				"WHERE table_schema = DATABASE() " .
+				"AND table_name = '" . $this->db->escape($table_name) . "' LIMIT 1"
+			);
+			$has_relation_table = (bool)$table_query->num_rows;
+		}
+
+		if (!$has_relation_table) {
+			return array();
+		}
+
+		$query = $this->db->query(
+			"SELECT f.faq_id, fd.name, fd.description " .
+			"FROM " . DB_PREFIX . "faq_to_catalog_category f2cc " .
+			"INNER JOIN " . DB_PREFIX . "faq f ON (f.faq_id = f2cc.faq_id AND f.status = 1) " .
+			"INNER JOIN " . DB_PREFIX . "faq_description fd ON (fd.faq_id = f.faq_id) " .
+			"WHERE f2cc.category_id = '" . (int)$category_id . "' " .
+			"AND fd.language_id = '" . (int)$this->config->get('config_language_id') . "' " .
+			"ORDER BY f.sort_order ASC, f.faq_id ASC"
+		);
+
+		return $query->rows;
+	}
 // 06 august 2018 //
 	public function getFaqcategories($data) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "fcategory f LEFT JOIN " . DB_PREFIX . "fcategory_description fd ON (f.fcategory_id = fd.fcategory_id) WHERE fd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND f.fcategory_id<>0");

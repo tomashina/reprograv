@@ -23,35 +23,41 @@ lokalne konfiguracije `upload/config.php`, `upload/admin/config.php` ni
 Datoteka `upload/LocalValetDriver.php` služi samo lokalnom Laravel Herd
 okruženju i nije potrebna na produkcijskom Apache/nginx serveru.
 
-## 3. SQL migracija
+## 3. SQL migracije kroz cPanel/phpMyAdmin
 
-Pokrenuti:
+Terminal/SSH nije potreban:
 
-```bash
-mysql -u KORISNIK -p NAZIV_BAZE < sql/2026-07-29_seo_ai.sql
-```
+1. U cPanelu otvoriti `phpMyAdmin`.
+2. U lijevom stupcu odabrati produkcijsku OpenCart bazu.
+3. Otvoriti karticu `Import`.
+4. Odabrati `sql/2026-07-29_seo_ai.sql` i pokrenuti uvoz.
+5. Ponovno otvoriti `Import`, odabrati
+   `sql/2026-07-30_category_seo.sql` i pokrenuti uvoz.
+6. Na kraju drugog uvoza za trenutačni katalog očekivani rezultat je:
+   `uredjene_kategorije = 67`, `faq_pitanja = 18` i najmanje
+   `faq_veze_s_kategorijama = 152`.
 
-Migracija je idempotentna i smije se ponoviti. Pretpostavlja:
+Obje migracije su idempotentne i smiju se ponoviti. Pretpostavljaju:
 
 - prefiks tablica `oc_`
 - zadani `store_id = 0`
 - hrvatski `language_id = 3`
 
 Ako produkcija koristi druge vrijednosti, prilagoditi ih u SQL datoteci prije
-pokretanja. Sve izmjene baze za ovaj paket nalaze se u toj jednoj SQL datoteci.
+uvoza. Druga SQL datoteka ne prepisuje postojeće ni djelomično ispunjene ručne
+opise. Kratki opis, dugi opis i meta opis dodaje samo kategorijama kojima su sva
+tri polja potpuno prazna te bez dupliciranja povezuje FAQ pitanja s
+kategorijama.
 
-## 4. Osvježavanje OCMOD-a
+## 4. Osvježavanje OCMOD-a bez Terminala
 
-Iz korijena projekta pokrenuti:
-
-```bash
-php tools/refresh_ocmod.php
-```
-
-Isto se može napraviti kroz administraciju:
-`Extensions > Modifications > Refresh`.
+U OpenCart administraciji otvoriti
+`Extensions > Modifications` i kliknuti plavi gumb `Refresh`.
 
 Nakon toga očistiti OpenCart i Basel/theme cache.
+
+Skripte `tools/install_category_seo.php` i `tools/refresh_ocmod.php` ostaju samo
+kao opcija za lokalno okruženje ili hosting koji ima Terminal/SSH.
 
 ## 5. Generiranje sitemapova
 
@@ -90,15 +96,15 @@ Kliknuti `Generiraj sve WebP slike` i pričekati 100 %. Generator:
 Na produkciji PHP mora imati GD WebP podršku, a `upload/image/cache` mora biti
 zapisiv PHP procesu. Generirani cache se ne sprema u Git.
 
-## 7. Automatska provjera
+## 7. Provjera bez Terminala
 
-Nakon produkcijskog puštanja pokrenuti:
+Nakon produkcijskog puštanja u anonimnom prozoru otvoriti `/pecatarstvo` i
+potvrditi da su vidljivi kratki uvod, detaljni opis i blok `Česta pitanja`.
+Zatim otvoriti `/sitemap-index.xml`, `/robots.txt` i `/llms.txt`; sva tri URL-a
+moraju se normalno učitati.
 
-```bash
-php tests/seo_smoke.php https://www.repro-grav.com
-```
-
-Test mora završiti bez grešaka.
+Automatski test `php tests/seo_smoke.php https://www.repro-grav.com` ostaje
+dodatna opcija za računalo ili hosting koji ima Terminal.
 
 ## 8. Cache, WebP i PageSpeed
 

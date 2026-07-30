@@ -139,7 +139,60 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
-			 $data['short_description'] = html_entity_decode($category_info['short_description'], ENT_QUOTES, 'UTF-8');
+			$data['short_description'] = html_entity_decode($category_info['short_description'], ENT_QUOTES, 'UTF-8');
+			$data['category_faqs'] = array();
+			$data['category_faq_json'] = '';
+			$data['text_category_faq'] = sprintf($this->language->get('text_category_faq'), $category_info['name']);
+
+			$is_primary_category_view = $page === 1
+				&& !$filter
+				&& !isset($this->request->get['sort'])
+				&& !isset($this->request->get['order'])
+				&& !isset($this->request->get['limit']);
+
+			if ($is_primary_category_view) {
+				$this->load->model('extension/faq');
+				$faq_schema_entities = array();
+
+				foreach ($this->model_extension_faq->getFaqsByCatalogCategory($category_id) as $faq) {
+					$question = $this->cleanSeoText($faq['name'], 255);
+					$answer_text = $this->cleanSeoText($faq['description'], 2000);
+
+					if (!$question || !$answer_text) {
+						continue;
+					}
+
+					$data['category_faqs'][] = array(
+						'question' => $question,
+						'answer'   => html_entity_decode($faq['description'], ENT_QUOTES, 'UTF-8')
+					);
+
+					$faq_schema_entities[] = array(
+						'@type' => 'Question',
+						'name' => $question,
+						'acceptedAnswer' => array(
+							'@type' => 'Answer',
+							'text' => $answer_text
+						)
+					);
+				}
+
+				if ($faq_schema_entities) {
+					$data['category_faq_json'] = json_encode(
+						array(
+							'@context' => 'https://schema.org',
+							'@type' => 'FAQPage',
+							'mainEntity' => $faq_schema_entities
+						),
+						JSON_UNESCAPED_SLASHES
+						| JSON_UNESCAPED_UNICODE
+						| JSON_HEX_TAG
+						| JSON_HEX_AMP
+						| JSON_HEX_APOS
+						| JSON_HEX_QUOT
+					);
+				}
+			}
 			$data['compare'] = $this->url->link('product/compare');
 
 			$url = '';

@@ -12,6 +12,22 @@ OpenCart 3 projekt za lokalni razvoj u Laravel Herdu.
 Datoteka `upload/LocalValetDriver.php` omogućuje OpenCart SEO URL-ove u Herdu,
 koji inače ne obrađuje Apacheova pravila iz `.htaccess` datoteke.
 
+Početni SEO sadržaj kategorija i veze FAQ pitanja s kategorijama mogu se bez
+Terminala uvesti kroz phpMyAdmin datotekom:
+
+```text
+sql/2026-07-30_category_seo.sql
+```
+
+Uvoz dodaje sadržaj samo potpuno praznim kategorijama. Postojeći i djelomično
+ispunjeni ručni opisi ostaju nepromijenjeni.
+
+Za lokalni razvoj ista se idempotentna instalacija može pokrenuti naredbom:
+
+```bash
+php tools/install_category_seo.php
+```
+
 Primjer Herd naredbe iz korijena projekta:
 
 ```bash

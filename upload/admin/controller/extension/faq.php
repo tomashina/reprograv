@@ -404,6 +404,8 @@ class ControllerExtensionFaq extends Controller {
 		$data['entry_status'] = $this->language->get('entry_status');
 		$data['entry_layout'] = $this->language->get('entry_layout');
 		$data['entry_category'] = $this->language->get('entry_category');
+		$data['entry_catalog_category'] = $this->language->get('entry_catalog_category');
+		$data['help_catalog_category'] = $this->language->get('help_catalog_category');
 
 		$data['help_filter'] = $this->language->get('help_filter');
 		$data['help_keyword'] = $this->language->get('help_keyword');
@@ -519,6 +521,14 @@ class ControllerExtensionFaq extends Controller {
 			$data['categoriess'] = array();
 		}
 
+		if (isset($this->request->post['catalog_categories'])) {
+			$data['catalog_category_ids'] = array_map('intval', $this->request->post['catalog_categories']);
+		} elseif (isset($this->request->get['faq_id'])) {
+			$data['catalog_category_ids'] = $this->model_extension_faq->getFaqCatalogCategories($this->request->get['faq_id']);
+		} else {
+			$data['catalog_category_ids'] = array();
+		}
+
 		if (isset($this->request->post['sort_order'])) {
 			$data['sort_order'] = $this->request->post['sort_order'];
 		} elseif (!empty($faq_info)) {
@@ -537,6 +547,9 @@ class ControllerExtensionFaq extends Controller {
 		
 		$this->load->model('extension/category');
 		$data['categories'] = $this->model_extension_category->getCategories($filter_data=array());
+
+		$this->load->model('catalog/category');
+		$data['catalog_category_options'] = $this->model_catalog_category->getCategories(array());
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

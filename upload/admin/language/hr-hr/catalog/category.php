@@ -17,6 +17,7 @@ $_['column_action']          = 'Akcija';
 
 // Entry
 $_['entry_name']             = 'Naziv kategorije';
+$_['entry_short_description'] = 'Kratki uvodni opis';
 $_['entry_description']      = 'Opis';
 $_['entry_meta_title'] 	     = 'Meta Tag (oznaka) - naziv';
 $_['entry_meta_keyword'] 	 = 'Meta Tag (oznaka) - ključne riječi';
@@ -34,6 +35,7 @@ $_['entry_layout']           = 'Nadređeni izgled (Layout Override)';
 
 // Help
 $_['help_filter']            = '(Autopopuna)';
+$_['help_short_description']  = 'Kratak, koristan uvod koji se prikazuje iznad proizvoda. Preporučeno je približno 50–100 riječi bez nabrajanja ključnih riječi.';
 $_['help_keyword']           = 'Nemojte koristiti razmak. Umjesto razmaka koristite - i budite sigurni da je SEO URL globalno jedinstven za cijelu trgovinu/trgovine.';
 $_['help_top']               = 'Prikaži u gornjem izborniku na vrhu. Radi samo za glavne (osnovne) nadređene kategorije.';
 $_['help_column']            = 'Broj stupaca korištenih pri dnu za 3 kategorije. Radi samo za glavne (osnovne) nadređene kategorije.';

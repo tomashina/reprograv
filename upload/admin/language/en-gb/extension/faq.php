@@ -16,6 +16,7 @@ $_['column_action']          = 'Action';
 
 // Entry
 $_['entry_category']         = 'Category';
+$_['entry_catalog_category'] = 'Catalog Categories';
 $_['entry_name']             = 'Question';
 $_['entry_description']      = 'Answer';
 $_['entry_meta_title'] 	     = 'Meta Tag Title';
@@ -34,6 +35,7 @@ $_['entry_layout']           = 'Layout Override';
 
 // Help
 $_['help_filter']            = '(Autocomplete)';
+$_['help_catalog_category']  = 'Select the product catalog categories on which this question should be displayed. Hold Ctrl/Cmd to select more than one.';
 $_['help_keyword']           = 'Do not use spaces, instead replace spaces with - and make sure the keyword is globally unique.';
 $_['help_top']               = 'Display in the top menu bar. Only works for the top parent FAQ.';
 $_['help_column']            = 'Number of columns to use for the bottom 3 FAQ. Only works for the top parent FAQ.';

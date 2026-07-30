@@ -167,6 +167,28 @@ function hasSingleH1($html) {
     return $document->getElementsByTagName('h1')->length === 1;
 }
 
+function metaDescription($html) {
+    $document = loadHtmlDocument($html);
+    $xpath = new DOMXPath($document);
+    $nodes = $xpath->query('//meta[translate(@name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "description"]');
+
+    return $nodes->length ? trim($nodes->item(0)->getAttribute('content')) : '';
+}
+
+function textLength($value) {
+    return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+}
+
+function classTextLength($html, $class_name) {
+    $document = loadHtmlDocument($html);
+    $xpath = new DOMXPath($document);
+    $text = $xpath->evaluate(
+        'string(//*[contains(concat(" ", normalize-space(@class), " "), " ' . $class_name . ' ")][1])'
+    );
+
+    return textLength(trim(preg_replace('/\s+/u', ' ', $text)));
+}
+
 function visibleText($html) {
     $document = loadHtmlDocument($html);
 
@@ -200,6 +222,25 @@ assertSchemaType($home_schema, 'WebSite', 'Naslovnica sadrži WebSite schema');
 assertCheck(
     !preg_match('/(?:€\s*\d|\d+(?:[.,]\d+)?\s*(?:€|EUR))/iu', visibleText($home['body'])),
     'Naslovnica gostu ne prikazuje cijenu umetnutu u naziv proizvoda'
+);
+
+$category_path = '/pecatarstvo';
+$category = requestUrl($base_url . $category_path);
+assertCheck($category['status'] === 200, 'Prioritetna kategorija vraća HTTP 200');
+assertCheck(hasSingleH1($category['body']), 'Prioritetna kategorija ima točno jedan H1');
+assertCheck(hasCanonical($category['body'], $base_url . $category_path), 'Prioritetna kategorija ima ispravan canonical');
+assertCheck(textLength(metaDescription($category['body'])) >= 80, 'Prioritetna kategorija ima sadržajan meta description');
+$category_schema = jsonLdBlocks($category['body']);
+assertSchemaType($category_schema, 'ItemList', 'Kategorija sadrži ItemList schema');
+assertSchemaType($category_schema, 'FAQPage', 'Kategorija sadrži FAQPage schema');
+$category_text = visibleText($category['body']);
+assertCheck(
+    classTextLength($category['body'], 'catdesc') >= 150,
+    'Prioritetna kategorija prikazuje detaljni SEO sadržaj'
+);
+assertCheck(
+    strpos($category_text, 'Kako odabrati odgovarajući pečat?') !== false,
+    'Prioritetna kategorija prikazuje povezano FAQ pitanje'
 );
 
 $product_path = '/r242-postanski-datumar';

@@ -429,6 +429,48 @@ img.ikona-black {
 	margin: 0 0 25px 20px;
 }
 
+.category-faq-section {
+	padding-top: 20px;
+	padding-bottom: 45px;
+}
+.category-faq-section h2 {
+	margin-bottom: 20px;
+}
+.category-faq-item {
+	border: 1px solid #d7e1e8;
+	background: #fff;
+	margin-bottom: 12px;
+}
+.category-faq-item summary {
+	position: relative;
+	padding: 16px 48px 16px 18px;
+	color: #00243d;
+	cursor: pointer;
+	font-size: 17px;
+	font-weight: 600;
+	list-style: none;
+}
+.category-faq-item summary::-webkit-details-marker {
+	display: none;
+}
+.category-faq-item summary::after {
+	content: "+";
+	position: absolute;
+	right: 18px;
+	top: 12px;
+	font-size: 24px;
+	font-weight: 400;
+}
+.category-faq-item[open] summary::after {
+	content: "−";
+}
+.category-faq-answer {
+	padding: 0 18px 16px;
+}
+.category-faq-answer > :last-child {
+	margin-bottom: 0;
+}
+
 .btn-orange{
 	background-color: #ff930f!important;
 	border-radius: 10px!important;

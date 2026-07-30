@@ -17,6 +17,7 @@ $_['column_action']          = 'Action';
 
 // Entry
 $_['entry_name']             = 'Category Name';
+$_['entry_short_description'] = 'Short Introductory Description';
 $_['entry_description']      = 'Description';
 $_['entry_meta_title'] 	     = 'Meta Tag Title';
 $_['entry_meta_keyword']     = 'Meta Tag Keywords';
@@ -34,6 +35,7 @@ $_['entry_layout']           = 'Layout Override';
 
 // Help
 $_['help_filter']            = '(Autocomplete)';
+$_['help_short_description']  = 'A short, useful introduction displayed above the products. Aim for roughly 50–100 words without keyword stuffing.';
 $_['help_top']               = 'Display in the top menu bar. Only works for the top parent categories.';
 $_['help_column']            = 'Number of columns to use for the bottom 3 categories. Only works for the top parent categories.';
 
