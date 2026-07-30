@@ -119,7 +119,7 @@
                     {% else %}
                         {% set category_product_grid = basel_prod_grid %}
                     {% endif %}
-                    <div class="grid-holder product-holder grid{{ category_product_grid }}">
+                    <div class="grid-holder product-holder category-product-holder grid{{ category_product_grid }}">
                         {% for product in products %}
                             {% include 'basel/template/product/single_product.twig' %}
                         {% endfor %}
