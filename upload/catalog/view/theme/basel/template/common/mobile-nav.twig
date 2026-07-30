@@ -1,27 +1,18 @@
-<div id="mobile-navigation" class="main-menu-wrapper hidden-md hidden-lg">
-
-
-    <div class="closemenu">
-        <div class="icon-element mnu">
-
-            <a href="#mobile-navigation" class="shortcut-wrapper menu-closer hidden-md hidden-lg" title="Navigacija" aria-label="Zatvori navigaciju">
-                <i class="icon-line-cross icon"></i>
-            </a>
-
+<div id="mobile-navigation" class="main-menu-wrapper hidden-md hidden-lg" role="dialog" aria-modal="true" aria-label="Glavna navigacija" aria-hidden="true">
+    <div class="mobile-nav-header">
+        <div class="mobile-nav-heading">
+            <span class="mobile-nav-mark" aria-hidden="true"></span>
+            <span class="mobile-nav-title">Izbornik</span>
         </div>
+        <a href="#mobile-navigation" class="mobile-nav-close menu-closer hidden-md hidden-lg" title="Zatvori izbornik" aria-label="Zatvori izbornik">
+            <i class="icon-line-cross icon" aria-hidden="true"></i>
+        </a>
     </div>
 
-<ul class="mobile-top lang">
-     <li class="mobile-lang-curr "></li>
-    </ul>
-
-
-<ul class="categories">
-    {% include 'basel/template/common/static_links.twig' %}
-</ul>
-
+    <div class="mobile-nav-scroll">
+        <p class="mobile-nav-section-title">Navigacija</p>
 {% if primary_menu %}
-<ul class="categories">
+<ul class="categories mobile-nav-list">
 {% if primary_menu == 'oc' %}
 <!-- Default menu -->
 {{ default_menu }}
@@ -35,9 +26,8 @@
 {% endif %}
 
 {% if secondary_menu %}
-
-<ul class="categories">
-<li class="toph">Web narudžba</li>
+<p class="mobile-nav-section-title mobile-nav-shop-title">Web narudžba</p>
+<ul class="categories mobile-nav-list mobile-nav-shop">
     {% if secondary_menu == 'oc' %}
         <!-- Default menu -->
         {{ default_menu }}
@@ -50,5 +40,6 @@
 </ul>
 {% endif %}
 
+    </div>
 </div>
-<span class="body-cover menu-closer"></span>
+<span class="body-cover menu-closer" aria-hidden="true"></span>

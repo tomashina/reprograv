@@ -68,46 +68,152 @@ $(document).ready(function() {
 	stickyheader();
 	});
 	
-	// Mobile menu open
-	$(".menu-trigger").click(function(e){
-	e.preventDefault();
-	$('html').addClass('no-scroll mobile-menu-open');
-	$('.body-cover').addClass('active');
-	});
-	
-	// Mobile menu close
-	$(".menu-closer").click(function(e){
-	e.preventDefault();
-	$('.body-cover').removeClass('active');
-	$('html').removeClass('no-scroll mobile-menu-open side-filter-open');
-	});
-	
-	// Mobile menu navigation
-	$('.main-menu-wrapper > li.dropdown-wrapper > a .fa').click(function(e) {
-	if ($(window).width() < 991) {
-	e.preventDefault();
-	$(this).parent().parent().siblings().find('>a').removeClass("open");
-	$(this).parent().toggleClass("open").parent().find('>.dropdown-content').stop(true, true).slideToggle(350)
-	.end().siblings().find('>.dropdown-content').slideUp(350);
+	// Mobile menu
+	var $mobileNavigation = $('#mobile-navigation');
+	var $mobileMenuTriggers = $('.menu-trigger');
+	var $mobileMenuCover = $('.body-cover.menu-closer');
+	var lastMobileMenuFocus = null;
+
+	function openMobileMenu() {
+		lastMobileMenuFocus = document.activeElement;
+		$('html').addClass('no-scroll mobile-menu-open');
+		$mobileNavigation.attr('aria-hidden', 'false');
+		$mobileMenuTriggers.attr('aria-expanded', 'true');
+		$mobileMenuCover.addClass('active');
+
+		window.setTimeout(function() {
+			$mobileNavigation.find('.mobile-nav-close').focus();
+		}, 40);
 	}
+
+	function closeMobileMenu(returnFocus) {
+		$mobileMenuCover.removeClass('active');
+		$('html').removeClass('no-scroll mobile-menu-open side-filter-open');
+		$mobileNavigation.attr('aria-hidden', 'true');
+		$mobileMenuTriggers.attr('aria-expanded', 'false');
+
+		if (returnFocus && lastMobileMenuFocus) {
+			$(lastMobileMenuFocus).focus();
+		}
+	}
+
+	$mobileMenuTriggers.on('click', function(e) {
+		e.preventDefault();
+		openMobileMenu();
 	});
 
-	$('.main-menu-wrapper ul > li.dropdown-wrapper > .menu-parent-button').click(function(e) {
-	if ($(window).width() < 991) {
+	$('.menu-closer').on('click', function(e) {
 		e.preventDefault();
-		$(this).parent().siblings().find('>.menu-parent-button').removeClass("open");
-		$(this).toggleClass("open").parent().find('>.dropdown-content').stop(true, true).slideToggle(350)
-		.end().siblings().find('>.dropdown-content').slideUp(350);
-	}
+		closeMobileMenu(true);
 	});
-	
-	$('.main-menu-wrapper ul > li.has-sub > a .fa').click(function(e) {
-	if ($(window).width() < 991) {
-	e.preventDefault();
-	$(this).parent().parent().siblings().find('>a').removeClass("open");
-	$(this).parent().toggleClass("open").parent().find('>.sub-holder').stop(true, true).slideToggle(350)
-	.end().siblings().find('>.sub-holder').slideUp(350);
+
+	var mobileMenuToggleSelector = [
+		'li.dropdown-wrapper > a > .fa-angle-down',
+		'li.dropdown-wrapper > .menu-parent-button > .fa-angle-down',
+		'li.has-sub > a > .fa-angle-right'
+	].join(',');
+
+	$mobileNavigation.find(mobileMenuToggleSelector).each(function(index) {
+		var $toggle = $(this);
+		var $item = $toggle.closest('li');
+		var $submenu = $item.children('.dropdown-content, .sub-holder').first();
+		var submenuId = 'mobile-submenu-' + index;
+
+		if (!$submenu.length) {
+			return;
+		}
+
+		$submenu.attr({
+			'id': submenuId,
+			'aria-hidden': 'true'
+		});
+		$toggle.attr({
+			'role': 'button',
+			'tabindex': '0',
+			'aria-controls': submenuId,
+			'aria-expanded': 'false',
+			'aria-label': 'Otvori podizbornik'
+		});
+	});
+
+	function toggleMobileSubmenu($toggle) {
+		var $item = $toggle.closest('li');
+		var $parentControl = $toggle.closest('a, .menu-parent-button');
+		var $submenu = $item.children('.dropdown-content, .sub-holder').first();
+		var isOpening = !$parentControl.hasClass('open');
+
+		if (!$submenu.length) {
+			return;
+		}
+
+		$item.siblings().each(function() {
+			var $sibling = $(this);
+			$sibling.children('a, .menu-parent-button').removeClass('open')
+				.find('.fa-angle-down, .fa-angle-right')
+				.attr({
+					'aria-expanded': 'false',
+					'aria-label': 'Otvori podizbornik'
+				});
+			$sibling.children('.dropdown-content, .sub-holder')
+				.attr('aria-hidden', 'true')
+				.stop(true, true)
+				.slideUp(240);
+		});
+
+		$parentControl.toggleClass('open', isOpening);
+		$toggle.attr({
+			'aria-expanded': isOpening ? 'true' : 'false',
+			'aria-label': isOpening ? 'Zatvori podizbornik' : 'Otvori podizbornik'
+		});
+		$submenu.attr('aria-hidden', isOpening ? 'false' : 'true')
+			.stop(true, true)
+			.slideToggle(240);
 	}
+
+	$mobileNavigation.on('click', mobileMenuToggleSelector, function(e) {
+		if ($(window).width() < 992) {
+			e.preventDefault();
+			e.stopPropagation();
+			toggleMobileSubmenu($(this));
+		}
+	});
+
+	$mobileNavigation.on('keydown', mobileMenuToggleSelector, function(e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			toggleMobileSubmenu($(this));
+		}
+	});
+
+	$mobileNavigation.on('keydown', function(e) {
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			closeMobileMenu(true);
+			return;
+		}
+
+		if (e.key !== 'Tab') {
+			return;
+		}
+
+		var $focusable = $mobileNavigation
+			.find('a:visible, button:visible, [tabindex="0"]:visible')
+			.filter(':not([disabled])');
+
+		if (!$focusable.length) {
+			return;
+		}
+
+		var firstFocusable = $focusable.get(0);
+		var lastFocusable = $focusable.get($focusable.length - 1);
+
+		if (e.shiftKey && document.activeElement === firstFocusable) {
+			e.preventDefault();
+			lastFocusable.focus();
+		} else if (!e.shiftKey && document.activeElement === lastFocusable) {
+			e.preventDefault();
+			firstFocusable.focus();
+		}
 	});
 
 	// Click drop down

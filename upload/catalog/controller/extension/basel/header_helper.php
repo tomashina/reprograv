@@ -20,7 +20,7 @@
 	// Basel Search
 	$data['basel_search'] = $this->load->controller('extension/basel/basel_features/basel_search');
 	
-	// Default menu with 3 levels
+	// Default menu with the complete category tree
 	$data['default_menu'] = $this->load->controller('extension/basel/default_menu');
 	
 	// Top Module Position

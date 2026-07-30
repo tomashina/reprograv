@@ -7,21 +7,7 @@
             <div class="dropdown-inner"><div class="menu-item">
 				{% for children in category.children|batch(category.children|length / category.column|round(1, 'ceil')) %}
                   <ul class="default-menu-ul hover-menu">
-                    {% for child in children %}
-                    
-						{% if child.grandchildren %}
-					<li class="default-menu-li has-sub dropdown-wrapper from-bottom"><a href="{{ child.href }}">{{ child.name }}<i class="fa fa-angle-right"></i></a>
-							<ul class="dropdown-content sub-holder dropdown-left">
-								{% for grandchild in child.grandchildren %}
-									<li class="default-menu-li"><a href="{{ grandchild.href }}">{{ grandchild.name }}</a></li>
-								{% endfor %}
-							</ul>
-					</li>
-						{% else %}
-					<li class="default-menu-li"><a href="{{ child.href }}">{{ child.name }}</a></li>
-						{% endif %}
-					
-                    {% endfor %}
+                    {% include 'basel/template/common/menu_items.twig' with {'items': children, 'depth': 0} %}
                   </ul>
                 {% endfor %}
             </div>

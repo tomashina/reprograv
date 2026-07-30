@@ -1,0 +1,13 @@
+{% for item in items %}
+    <li class="default-menu-li{% if item.children %} has-sub dropdown-wrapper from-bottom{% endif %}" style="--mobile-menu-indent: {{ 28 + (depth * 8) }}px;">
+        <a href="{{ item.href }}">
+            {{ item.name }}
+            {% if item.children %}<i class="fa fa-angle-right"></i>{% endif %}
+        </a>
+        {% if item.children %}
+            <ul class="dropdown-content sub-holder dropdown-left">
+                {% include 'basel/template/common/menu_items.twig' with {'items': item.children, 'depth': depth + 1} %}
+            </ul>
+        {% endif %}
+    </li>
+{% endfor %}
