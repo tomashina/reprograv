@@ -49,6 +49,7 @@ $.fn.tf_filter = function(setting){
         requestURL: null,
         searchEl: null,
         ajax: true,
+        manualApply: false,
         search_in_description: true,
         no_result: '', // HTML for empty product result
         countProduct: null,
@@ -436,8 +437,13 @@ $.fn.tf_filter = function(setting){
         }, param);
     };
     
-    // Run task after user change filter
-    tf_filter.on('change', function(){
+    this.usesManualApply = function(){
+        return typeof setting.manualApply === 'function'
+            ? setting.manualApply()
+            : Boolean(setting.manualApply);
+    };
+
+    this.apply = function(immediately){
         // Clear past timeout
         if(tf_filter.timeoutId !== undefined){
             clearTimeout(tf_filter.timeoutId);
@@ -449,15 +455,26 @@ $.fn.tf_filter = function(setting){
         // Delay before to start filter
         tf_filter.timeoutId = setTimeout(function(){
             tf_filter.start(param);
-        }, setting.delay * 1000);
+        }, immediately ? 0 : setting.delay * 1000);
         
         // Update page URL
         history.pushState(null, null, modifyURLQuery(window.location.href, $.extend({}, param, {page: null})));
         
         // Trigger param change event
         setting.onParamChange(param);
-        
-        
+    };
+
+    // Run task after user change filter
+    tf_filter.on('change', function(){
+        if(tf_filter.usesManualApply()){
+            return;
+        }
+
+        tf_filter.apply(false);
+    });
+
+    tf_filter.on('tf-filter:apply', function(){
+        tf_filter.apply(true);
     });
     
     // Input change event

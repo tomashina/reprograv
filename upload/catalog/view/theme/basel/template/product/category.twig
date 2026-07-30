@@ -82,19 +82,6 @@
                         <div class="table-cell nowrap hidden-sm hidden-md hidden-lg"><a class="filter-trigger-btn"></a></div>
 
 
-                        <div class="table-cell nowrap hidden-xs">
-                            <span>{{ text_limit }}</span>
-                            <select id="input-limit" class="form-control input-sm inline" onchange="location = this.value;">
-                                {% for limits in limits %}
-                                    {% if limits.value == limit %}
-                                        <option value="{{ limits.href }}" selected="selected">{{ limits.text }}</option>
-                                    {% else %}
-                                        <option value="{{ limits.href }}">{{ limits.text }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-
                         <div class="table-cell w100">
                             <a href="{{ compare }}" id="compare-total" class="hidden-xs">{{ text_compare }}</a>
                         </div>
@@ -104,7 +91,7 @@
                                 <span class="hidden-xs">{{ text_sort }}</span>
 
 
-                                <select id="input-sort" class="form-control input-sm inline" onchange="location = this.value;">
+                                <select id="input-sort" class="form-control input-sm inline" aria-label="{{ text_sort }}" title="{{ text_sort }}" onchange="location = this.value;">
                                     {% for sorts in sorts %}
                                         {% if sorts.value == '%s-%s'|format(sort, order) %}
                                             <option value="{{ sorts.href }}" selected="selected"> {{ sorts.text }}</option>
@@ -116,11 +103,23 @@
                             </div>
                         </div>
 
-
+                        <div class="table-cell mobile-view-switch hidden-sm hidden-md hidden-lg" role="group" aria-label="{{ text_mobile_grid_label }}">
+                            <button type="button" class="mobile-view-option" data-mobile-columns="1" aria-label="{{ text_mobile_one_column }}" title="{{ text_mobile_one_column }}" aria-pressed="false">
+                                <span class="mobile-grid-icon mobile-grid-icon-one" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="mobile-view-option" data-mobile-columns="2" aria-label="{{ text_mobile_two_columns }}" title="{{ text_mobile_two_columns }}" aria-pressed="true">
+                                <span class="mobile-grid-icon mobile-grid-icon-two" aria-hidden="true"></span>
+                            </button>
+                        </div>
 
                     </div>
 
-                    <div class="grid-holder product-holder grid{{ basel_prod_grid }}">
+                    {% if not column_left and not column_right %}
+                        {% set category_product_grid = 4 %}
+                    {% else %}
+                        {% set category_product_grid = basel_prod_grid %}
+                    {% endif %}
+                    <div class="grid-holder product-holder grid{{ category_product_grid }}">
                         {% for product in products %}
                             {% include 'basel/template/product/single_product.twig' %}
                         {% endfor %}
@@ -131,6 +130,56 @@
                     <div class="col-sm-6 xs-text-center pagination-navigation">{{ pagination }}</div>
                     <div class="col-sm-6 text-right xs-text-center"><span class="pagination-text">{{ results }}</span></div>
                 </div>
+
+                <script>
+                    (function($) {
+                        var storageKey = 'rg_category_mobile_columns';
+
+                        function getSavedColumns() {
+                            try {
+                                return window.localStorage.getItem(storageKey) === '1' ? 1 : 2;
+                            } catch (error) {
+                                return 2;
+                            }
+                        }
+
+                        function applyMobileColumns(columns) {
+                            var value = columns === 1 ? 1 : 2;
+                            var $productView = $('#product-view');
+
+                            $productView
+                                .toggleClass('mobile-grid-columns-1', value === 1)
+                                .toggleClass('mobile-grid-columns-2', value === 2);
+
+                            $productView.find('[data-mobile-columns]').each(function() {
+                                var isActive = Number($(this).data('mobile-columns')) === value;
+                                $(this).toggleClass('active', isActive).attr('aria-pressed', isActive ? 'true' : 'false');
+                            });
+                        }
+
+                        $(function() {
+                            applyMobileColumns(getSavedColumns());
+                        });
+
+                        $(document)
+                            .off('click.rgCategoryColumns', '[data-mobile-columns]')
+                            .on('click.rgCategoryColumns', '[data-mobile-columns]', function() {
+                                var columns = Number($(this).data('mobile-columns')) === 1 ? 1 : 2;
+
+                                try {
+                                    window.localStorage.setItem(storageKey, String(columns));
+                                } catch (error) {
+                                    // The preference remains active for the current page.
+                                }
+
+                                applyMobileColumns(columns);
+                            })
+                            .off('ajaxComplete.rgCategoryColumns')
+                            .on('ajaxComplete.rgCategoryColumns', function() {
+                                applyMobileColumns(getSavedColumns());
+                            });
+                    })(jQuery);
+                </script>
 
             {% endif %}
 

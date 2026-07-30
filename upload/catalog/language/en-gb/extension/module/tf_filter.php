@@ -19,3 +19,5 @@ $_['text_reset']        =   'Clear';
 $_['text_reset_all']    =   'Clear all';
 $_['text_see_more']     =   'See more';
 $_['text_see_less']     =   'See less';
+$_['text_close_filter']  =   'Close filters';
+$_['text_show_products'] =   'Show products';

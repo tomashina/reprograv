@@ -24,4 +24,7 @@ $_['text_model_asc']    = 'Model (A -&gt; Z)';
 $_['text_model_desc']   = 'Model (Z -&gt; A)';
 $_['text_limit']        = 'Prikaži:';
 $_['text_category_faq']  = 'Česta pitanja: %s';
+$_['text_mobile_grid_label'] = 'Broj proizvoda u redu';
+$_['text_mobile_one_column'] = 'Jedan proizvod u redu';
+$_['text_mobile_two_columns'] = 'Dva proizvoda u redu';
 $_['text_pagination_limit']       = 'Ukupno %d ';

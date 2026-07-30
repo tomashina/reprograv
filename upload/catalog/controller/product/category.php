@@ -123,6 +123,9 @@ class ControllerProductCategory extends Controller {
 	
 
 			$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+			$data['text_mobile_one_column'] = $this->language->get('text_mobile_one_column');
+			$data['text_mobile_two_columns'] = $this->language->get('text_mobile_two_columns');
+			$data['text_mobile_grid_label'] = $this->language->get('text_mobile_grid_label');
 
 			// Set the last category breadcrumb
 			$data['breadcrumbs'][] = array(

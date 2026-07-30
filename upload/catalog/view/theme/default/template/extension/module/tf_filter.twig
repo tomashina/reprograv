@@ -5,6 +5,9 @@
       <span data-tf-reset="all" data-toggle="tooltip" title="{{ text_reset_all }}" class="tf-filter-reset hide text-danger"><i class="fa fa-times"></i></span>
     {% endif %}
     <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+    <button type="button" class="tf-filter-close" aria-label="{{ text_close_filter }}" title="{{ text_close_filter }}">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
   <div id="tf-filter-content-{{ module_class_id }}" data-tf-base-z-index="99" class="collapse{{ not collapsed?' in' }} tf-list-filter-group row">
     {% for key,filter in filters %}
@@ -424,16 +427,95 @@
       {% endif %}
     {% endfor %}
   </div>
+  <div class="tf-filter-mobile-footer">
+    <button type="button" class="btn btn-primary tf-filter-show-products">{{ text_show_products }}</button>
+  </div>
 </div>
 
 <script type="text/javascript">
   // Basel
   $(document).ready(function() {
-    $('.filter-trigger-btn').addClass('active').html('<img src="image/filter.svg" class="filter-icon" alt="filter icon"/>{{ heading_title }}');
-    // Basel
-    $(".filter-trigger-btn").click(function(){
-      $('html').addClass('no-scroll side-filter-open');
-      $('.body-cover').addClass('active');
+    var $filter = $('#tf-filter-{{ module_class_id }}');
+    var $filterTrigger = $();
+
+    function closeMobileFilter(restoreFocus) {
+      $('.body-cover').removeClass('active');
+      $('html').removeClass('no-scroll side-filter-open');
+      $filter.attr('aria-hidden', 'true');
+      $filterTrigger.attr('aria-expanded', 'false');
+
+      if (restoreFocus) {
+        $filterTrigger.focus();
+      }
+    }
+
+    function prepareFilterTrigger() {
+      $filterTrigger = $('.filter-trigger-btn');
+
+      $filterTrigger
+        .addClass('active')
+        .attr({
+          'aria-controls': 'tf-filter-{{ module_class_id }}',
+          'aria-expanded': 'false'
+        })
+        .html('<i class="fa fa-sliders" aria-hidden="true"></i><span>{{ heading_title }}</span>')
+        .off('click.tfFilter{{ module_class_id }}')
+        .on('click.tfFilter{{ module_class_id }}', function(e){
+          e.preventDefault();
+          $('html').addClass('no-scroll side-filter-open');
+          $('.body-cover').addClass('active');
+          $filter.attr('aria-hidden', 'false');
+          $filterTrigger.attr('aria-expanded', 'true');
+
+          window.setTimeout(function() {
+            $filter.find('.tf-filter-close').focus();
+          }, 50);
+        });
+
+      $('#product-view').addClass('has-category-filter');
+    }
+
+    function keepFilterGroupsOpen() {
+      $filter
+        .find('> .panel-heading, .tf-filter-group-header')
+        .removeClass('collapsed')
+        .removeAttr('data-toggle href data-target')
+        .attr('aria-expanded', 'true');
+
+      $filter
+        .find('> .tf-list-filter-group, .tf-filter-group > .collapse')
+        .addClass('in')
+        .attr('aria-expanded', 'true')
+        .css('height', 'auto');
+    }
+
+    keepFilterGroupsOpen();
+    prepareFilterTrigger();
+    $(document).on('tf-filter:results-updated.tfFilter{{ module_class_id }}', prepareFilterTrigger);
+
+    $filter.find('.tf-filter-close').on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeMobileFilter(true);
+    });
+
+    $filter.find('.tf-filter-show-products').on('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $filter.trigger('tf-filter:apply');
+      closeMobileFilter(true);
+    });
+
+    $('.body-cover').on('click.tfFilter{{ module_class_id }}', function() {
+      if ($('html').hasClass('side-filter-open')) {
+        closeMobileFilter(true);
+      }
+    });
+
+    $(document).on('keydown.tfFilter{{ module_class_id }}', function(e) {
+      if (e.key === 'Escape' && $('html').hasClass('side-filter-open')) {
+        closeMobileFilter(true);
+      }
     });
   });
 </script>
@@ -456,6 +538,9 @@
       searchEl: $('.tf-filter-group-search input'),
       ajax: {{ ajax?'true':'false' }},
       delay: {{ delay?'true':'false' }},
+      manualApply: function() {
+        return window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+      },
       hideZeroFilter: {{ hide_zero_filter?'true':'false' }},
       search_in_description: {{ search_in_description?'true':'false' }},
       countProduct: {{ count_product?'true':'false' }},
@@ -534,8 +619,11 @@
           $('#list-view.active').click();
           $('#grid-view.active').click();
         } else {
-          $(productContainer).html("<div class='col-xs-12 text-center'>{{ text_no_result }}</div>");
+          $(productContainer).children('.product-holder, .tf-no-result').remove();
+          $(productContainer).append("<div class='tf-no-result col-xs-12 text-center'>{{ text_no_result }}</div>");
         }
+
+        $(document).trigger('tf-filter:results-updated');
 
         // Add pagination to container
         if(pagination){
@@ -588,4 +676,4 @@
     });
   });
 </script>
-<link href="catalog/view/theme/default/stylesheet/tf_filter.css" rel="stylesheet" media="screen" />
+<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.4" rel="stylesheet" media="screen" />

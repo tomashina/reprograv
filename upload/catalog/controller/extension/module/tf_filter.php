@@ -54,7 +54,7 @@ class ControllerExtensionModuleTfFilter extends Controller
         $this->document->addStyle('catalog/view/javascript/maza/jquery-ui-1.12.1/jquery-ui.min.css');
         $this->document->addScript('catalog/view/javascript/maza/jquery-ui-1.12.1/jquery-ui.min.js');
         $this->document->addScript('catalog/view/javascript/maza/jquery-ui-1.12.1/jquery.ui.touch-punch.min.js');
-        $this->document->addScript('catalog/view/javascript/maza/tf_filter.js');
+        $this->document->addScript('catalog/view/javascript/maza/tf_filter.js?v=20260730.1');
 
         $this->loadData(); // Generate Data
 
@@ -119,6 +119,11 @@ class ControllerExtensionModuleTfFilter extends Controller
         if ($this->info['filter']['custom']['status']) {
             $data['filters'] = array_merge($data['filters'], $this->getCustomFilter());
         }
+
+        // Some filter providers return their shell even when the current
+        // category has no values to display. Do not render an empty module,
+        // otherwise the layout still reserves the entire sidebar column.
+        $data['filters'] = array_values(array_filter($data['filters'], array($this, 'isFilterAvailable')));
 
         if (isset($this->request->get['description'])) {
             $data['search_in_description'] = $this->request->get['description'];
@@ -206,13 +211,51 @@ class ControllerExtensionModuleTfFilter extends Controller
 
         $this->dropData(); // Delete data
 
+        if (!$data['filters']) {
+            return;
+        }
+
         array_multisort(array_column($data['filters'], 'sort_order'), SORT_ASC, SORT_NUMERIC, $data['filters']);
 
+        $data['text_close_filter'] = $this->language->get('text_close_filter');
+        $data['text_show_products'] = $this->language->get('text_show_products');
         $data['module_class_id'] = self::$module_class_id++;
 
-        if ($data['filters']) {
-            return $this->load->view('extension/module/tf_filter', $data);
+        return $this->load->view('extension/module/tf_filter', $data);
+    }
+
+    /**
+     * Check whether a generated filter offers a control the customer can use.
+     *
+     * @param array $filter
+     * @return bool
+     */
+    private function isFilterAvailable($filter)
+    {
+        if (empty($filter['type'])) {
+            return false;
         }
+
+        if ($filter['type'] === 'search') {
+            return true;
+        }
+
+        if ($filter['type'] === 'price') {
+            return isset($filter['min_price'], $filter['max_price'])
+                && (float)$filter['max_price'] > (float)$filter['min_price'];
+        }
+
+        if (empty($filter['values']) || !is_array($filter['values'])) {
+            return false;
+        }
+
+        foreach ($filter['values'] as $value) {
+            if (is_array($value) && (!empty($value['status']) || !empty($value['selected']))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

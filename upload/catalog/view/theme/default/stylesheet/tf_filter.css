@@ -17,6 +17,11 @@
     font-weight: 600;
 }
 
+.tf-filter-close,
+.tf-filter-mobile-footer {
+    display: none;
+}
+
 html[dir="ltr"] .tf-filter .panel-heading .fa{
     margin-left: auto;
 }
@@ -90,8 +95,11 @@ html[dir="rtl"] .tf-filter-reset{
 }
 
 .tf-filter-group-content.scroll {
-
+    max-height: 360px;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #aeb8bf transparent;
+    scrollbar-width: thin;
 }
 
 .tf-filter-group-content.more:not(.show) .tf-filter-value:nth-of-type(n+7) {
@@ -181,7 +189,7 @@ html[dir="rtl"] .tf-filter-value img{
 .tf-filter-group-search input {
     width: 100%;
     border: none;
-    border-bottom: 1px solid #bae1e0;
+    border-bottom: 1px solid #c7ced3;
     margin: 0;
     height: auto;
     border-radius: 0;
@@ -195,7 +203,7 @@ html[dir="rtl"] .tf-filter-group-search input{
 
 .tf-filter-group-search input:focus {
     border: none;
-    border-bottom: 1px solid #bdbdbd;
+    border-bottom: 1px solid #aeb8bf;
 }
 
 .tf-loader{
@@ -310,25 +318,22 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     content:'\f192';
 }
 
-/* custom scrollbar */
-/* width */
+/* Compact neutral scrollbar for long desktop filter lists. */
 .tf-filter-group-content::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
 }
 
-/* Track */
 .tf-filter-group-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
 }
 
-/* Handle */
 .tf-filter-group-content::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #aeb8bf;
+    border-radius: 999px;
 }
 
-/* Handle on hover */
 .tf-filter-group-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #8f9ca5;
 }
 
 /* Horizontal layout */
@@ -340,6 +345,21 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     border-top: none;
     left: 0px;
     right: 0px;
+}
+
+/* Category filters stay expanded; long value lists scroll independently. */
+.tf-filter .collapse,
+.tf-filter .collapsing {
+    display: block !important;
+    height: auto !important;
+}
+.tf-filter .panel-heading > .fa-chevron-circle-down,
+.tf-filter-group-header .toggle-icon {
+    display: none;
+}
+.tf-filter .panel-heading,
+.tf-filter-group-header {
+    cursor: default;
 }
 
 @media (min-width: 1200px){
@@ -357,7 +377,7 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
         border: none;
     }
     .col-md-12.tf-filter-group:not(:last-child) {
-        border-bottom: 1px solid #bae1e0;
+        border-bottom: 1px solid #d9dfe3;
     }
 }
 @media (min-width: 768px) and (max-width: 991px){
@@ -370,6 +390,113 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     }
 }
 @media (max-width: 767px){
+    .tf-filter-group-content.scroll {
+        max-height: none;
+        overflow-y: visible;
+        overscroll-behavior: auto;
+    }
+    .tf-filter.panel {
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+    .tf-filter > .panel-heading,
+    .tf-filter > .panel-heading:not(.collapsed) {
+        flex: 0 0 auto;
+        min-height: 64px;
+        padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+        border-bottom: 1px solid #e3e7ea;
+        background: #fff;
+    }
+    .tf-filter > .panel-heading .panel-title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+    .tf-filter > .panel-heading > .fa-chevron-circle-down {
+        display: none;
+    }
+    .tf-filter-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        margin: -4px -6px -4px auto;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: #00243d;
+        font-size: 34px;
+        font-weight: 300;
+        line-height: 1;
+    }
+    .tf-filter-close:hover,
+    .tf-filter-close:focus {
+        background: #f2f4f5;
+        outline: 2px solid transparent;
+    }
+    .tf-filter > .tf-list-filter-group,
+    .tf-filter > .tf-list-filter-group.collapse {
+        display: block !important;
+        flex: 1 1 auto;
+        height: auto !important;
+        min-height: 0;
+        padding: 4px 16px 24px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tf-filter-group {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .tf-filter-group-header {
+        min-height: 52px;
+        padding: 12px 4px;
+        font-size: 16px !important;
+    }
+    .tf-filter-group-content,
+    .tf-filter-group-search {
+        padding-right: 4px;
+        padding-left: 4px;
+    }
+    .tf-filter-value {
+        min-height: 44px;
+        margin-bottom: 0;
+    }
+    .tf-filter-value .form-check-label {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+    .tf-filter-group-content .tf-product-total {
+        padding: .45em .7em;
+    }
+    .tf-filter-value.form-check .checkmark {
+        width: 22px;
+        height: 22px;
+        flex: 0 0 22px;
+        margin-right: 8px;
+    }
+    .tf-filter-mobile-footer {
+        display: block;
+        flex: 0 0 auto;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        border-top: 1px solid #e3e7ea;
+        background: #fff;
+        box-shadow: 0 -8px 24px rgba(0, 36, 61, .08);
+    }
+    .tf-filter-show-products {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+    }
     .col-xs-12>.collapse, .col-xs-12>.collapsing{
         position: relative;
         border: none;

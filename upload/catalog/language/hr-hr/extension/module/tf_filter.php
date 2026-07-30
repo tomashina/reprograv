@@ -19,3 +19,5 @@ $_['text_reset']        =   'Očisti';
 $_['text_reset_all']    =   'Očisti sve';
 $_['text_see_more']     =   'Pogledaj više';
 $_['text_see_less']     =   'Pogledaj manje';
+$_['text_close_filter']  =   'Zatvori filtere';
+$_['text_show_products'] =   'Prikaži proizvode';
