@@ -23,7 +23,13 @@ class ControllerCatalogInformation extends Controller {
     // 1) Spremi osnovne podatke i dohvati ID
     $information_id = $this->model_catalog_information->addInformation($this->request->post);
 
-    // 2) Spremi PDF-ove povezane s ovim information zapisom
+    // 2) Spremi strukturirane sadržajne blokove
+    if (isset($this->request->post['information_blocks_present'])) {
+        $this->load->model('catalog/information_block');
+        $this->model_catalog_information_block->setBlocks($information_id, isset($this->request->post['information_blocks']) ? $this->request->post['information_blocks'] : array());
+    }
+
+    // 3) Spremi PDF-ove povezane s ovim information zapisom
     if (isset($this->request->post['information_pdfs'])) {
         $this->load->model('catalog/information_pdf');
         $this->model_catalog_information_pdf->setPdfs($information_id, $this->request->post['information_pdfs']);
@@ -62,7 +68,13 @@ class ControllerCatalogInformation extends Controller {
     // 1) Ažuriraj osnovne podatke
     $this->model_catalog_information->editInformation($this->request->get['information_id'], $this->request->post);
 
-    // 2) Spremi PDF-ove
+    // 2) Spremi strukturirane sadržajne blokove
+    if (isset($this->request->post['information_blocks_present'])) {
+        $this->load->model('catalog/information_block');
+        $this->model_catalog_information_block->setBlocks((int)$this->request->get['information_id'], isset($this->request->post['information_blocks']) ? $this->request->post['information_blocks'] : array());
+    }
+
+    // 3) Spremi PDF-ove
     if (isset($this->request->post['information_pdfs'])) {
         $this->load->model('catalog/information_pdf');
         $this->model_catalog_information_pdf->setPdfs((int)$this->request->get['information_id'], $this->request->post['information_pdfs']);
@@ -103,6 +115,8 @@ class ControllerCatalogInformation extends Controller {
 
 		if (isset($this->request->post['selected']) && $this->validateDelete()) {
 			foreach ($this->request->post['selected'] as $information_id) {
+				$this->load->model('catalog/information_block');
+				$this->model_catalog_information_block->deleteBlocks($information_id);
 				$this->model_catalog_information->deleteInformation($information_id);
 			}
 
@@ -264,6 +278,9 @@ class ControllerCatalogInformation extends Controller {
 	}
 
 	protected function getForm() {
+		$this->document->addStyle('view/javascript/jquery/jquery-ui/jquery-ui.min.css');
+		$this->document->addScript('view/javascript/jquery/jquery-ui/jquery-ui.min.js');
+
 		$data['text_form'] = !isset($this->request->get['information_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
 
 		if (isset($this->error['warning'])) {
@@ -348,6 +365,45 @@ class ControllerCatalogInformation extends Controller {
 			$data['information_description'] = array();
 		}
 
+		$this->load->model('catalog/information_block');
+
+		if (isset($this->request->post['information_blocks'])) {
+			$data['information_blocks'] = $this->request->post['information_blocks'];
+		} elseif (isset($this->request->get['information_id'])) {
+			$data['information_blocks'] = $this->model_catalog_information_block->getBlocks((int)$this->request->get['information_id']);
+		} else {
+			$data['information_blocks'] = array();
+		}
+
+		$data['information_blocks_installed'] = $this->model_catalog_information_block->tableExists();
+
+		$this->load->model('tool/image');
+		$data['information_block_placeholder'] = $this->model_tool_image->resize('no_image.png', 160, 120);
+		$data['information_blocks'] = array_values($data['information_blocks']);
+
+		foreach ($data['information_blocks'] as &$information_block) {
+			if (!isset($information_block['description']) || !is_array($information_block['description'])) {
+				$information_block['description'] = array();
+			}
+
+			if (!isset($information_block['actions']) || !is_array($information_block['actions'])) {
+				$information_block['actions'] = array();
+			}
+
+			$information_block['actions'] = array_values($information_block['actions']);
+
+			$image = isset($information_block['image']) ? trim((string)$information_block['image']) : '';
+
+			if (preg_match('#^https?://#i', $image)) {
+				$information_block['thumb'] = $image;
+			} elseif ($image && is_file(DIR_IMAGE . $image)) {
+				$information_block['thumb'] = $this->model_tool_image->resize($image, 160, 120);
+			} else {
+				$information_block['thumb'] = $data['information_block_placeholder'];
+			}
+		}
+		unset($information_block);
+
 		$this->load->model('setting/store');
 
 		$data['stores'] = array();
@@ -429,6 +485,8 @@ class ControllerCatalogInformation extends Controller {
 
 		$data['layouts'] = $this->model_design_layout->getLayouts();
 
+		$data['information_blocks_editor'] = $this->load->view('catalog/information_blocks', $data);
+
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -446,7 +504,7 @@ class ControllerCatalogInformation extends Controller {
 				$this->error['title'][$language_id] = $this->language->get('error_title');
 			}
 
-			if (utf8_strlen($value['description']) < 3) {
+			if (utf8_strlen($value['description']) < 3 && empty($this->request->post['information_blocks'])) {
 				$this->error['description'][$language_id] = $this->language->get('error_description');
 			}
 

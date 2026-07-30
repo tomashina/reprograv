@@ -47,6 +47,43 @@ class ControllerInformationInformation extends Controller {
 
 			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
 
+			$this->load->model('catalog/information_block');
+			$data['information_blocks'] = $this->model_catalog_information_block->getBlocks($information_id);
+
+			foreach ($data['information_blocks'] as &$information_block) {
+				$image = trim((string)$information_block['image']);
+
+				if (preg_match('#^https?://#i', $image)) {
+					$information_block['image_src'] = $image;
+				} elseif ($image !== '' && strpos($image, '..') === false) {
+					$information_block['image_src'] = HTTPS_SERVER . 'image/' . ltrim($image, '/');
+				} else {
+					$information_block['image_src'] = '';
+				}
+
+				foreach ($information_block['actions'] as &$information_block_action) {
+					if ($information_block_action['type'] === 'file' && $information_block_action['filename']) {
+						$download_arguments = 'f=' . rawurlencode($information_block_action['filename']);
+
+						if ($information_block_action['mask']) {
+							$download_arguments .= '&m=' . rawurlencode($information_block_action['mask']);
+						}
+
+						$information_block_action['href'] = $this->url->link('information/download', $download_arguments, true);
+					} else {
+						$information_block_action['href'] = $this->normaliseActionUrl($information_block_action['url']);
+					}
+
+					if (!$information_block_action['label']) {
+						$information_block_action['label'] = $information_block_action['type'] === 'file' ? 'Preuzmite datoteku' : 'Saznajte više';
+					}
+				}
+				unset($information_block_action);
+			}
+			unset($information_block);
+
+			$data['information_blocks_html'] = $data['information_blocks'] ? $this->load->view('information/information_blocks', $data) : '';
+
 			$data['continue'] = $this->url->link('common/home');
 
 			$data['column_left'] = $this->load->controller('common/column_left');
@@ -104,5 +141,23 @@ class ControllerInformationInformation extends Controller {
 		$this->response->addHeader('X-Robots-Tag: noindex');
 
 		$this->response->setOutput($output);
+	}
+
+	private function normaliseActionUrl($url) {
+		$url = trim((string)$url);
+
+		if ($url === '') {
+			return '';
+		}
+
+		if (preg_match('#^(https?://|mailto:|tel:|/|\\#)#i', $url)) {
+			return $url;
+		}
+
+		if (strpos($url, ':') === false) {
+			return $url;
+		}
+
+		return '';
 	}
 }

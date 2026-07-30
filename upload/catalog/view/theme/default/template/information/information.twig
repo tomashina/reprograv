@@ -15,7 +15,12 @@
     {% endif %}
     <div id="content" class="{{ class }}">{{ content_top }}
       <h1>{{ heading_title }}</h1>
-      {{ description }}{{ content_bottom }}</div>
+	      {% if information_blocks_html %}
+	        {{ information_blocks_html }}
+	      {% else %}
+	        {{ description }}
+	      {% endif %}
+	      {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>
 {{ footer }}

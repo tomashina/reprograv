@@ -1,0 +1,598 @@
+<div class="tab-pane" id="tab-information-blocks">
+  <input type="hidden" name="information_blocks_present" value="1" />
+
+  {% if not information_blocks_installed %}
+    <div class="alert alert-warning">
+      <i class="fa fa-exclamation-triangle"></i>
+      Tablice za sadržajne blokove još nisu instalirane. Prije spremanja importajte priloženi SQL.
+    </div>
+  {% endif %}
+
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i>
+    Povucite blok za ručicu kako biste promijenili redoslijed. Slika može biti odabrana iz upravitelja slika ili unesena kao puni URL.
+  </div>
+
+  <div id="information-block-list">
+    {% for block in information_blocks %}
+      {% set block_row = loop.index0 %}
+      <div class="panel panel-default information-block-row" data-block-index="{{ block_row }}">
+        <div class="panel-heading information-block-heading">
+          <span class="block-drag-handle" title="Povuci za sortiranje"><i class="fa fa-arrows-v"></i></span>
+          <strong class="information-block-summary">
+            {% set first_language = languages|first %}
+            {{ (block.description[first_language.language_id].title ?: 'Novi blok')|e }}
+          </strong>
+          <div class="pull-right">
+            <button type="button" class="btn btn-xs btn-default btn-duplicate-information-block" title="Dupliciraj blok"><i class="fa fa-copy"></i> Dupliciraj</button>
+            <button type="button" class="btn btn-xs btn-danger btn-remove-information-block" title="Obriši blok"><i class="fa fa-trash"></i></button>
+            <button type="button" class="btn btn-xs btn-info" data-toggle="collapse" data-target="#information-block-body-{{ block_row }}" title="Otvori / zatvori"><i class="fa fa-chevron-down"></i></button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+
+        <div class="panel-collapse collapse in" id="information-block-body-{{ block_row }}">
+          <div class="panel-body">
+            <input type="hidden" class="information-block-sort-order" name="information_blocks[{{ block_row }}][sort_order]" value="{{ block.sort_order }}" />
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Raspored</label>
+                  <div class="col-sm-8">
+                    <select name="information_blocks[{{ block_row }}][layout]" class="form-control">
+                      <option value="image_right"{% if block.layout == 'image_right' %} selected="selected"{% endif %}>Tekst lijevo / slika desno</option>
+                      <option value="image_left"{% if block.layout == 'image_left' %} selected="selected"{% endif %}>Slika lijevo / tekst desno</option>
+                      <option value="full"{% if block.layout == 'full' %} selected="selected"{% endif %}>Puna širina</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-sm-4 control-label">Status</label>
+                  <div class="col-sm-8">
+                    <select name="information_blocks[{{ block_row }}][status]" class="form-control">
+                      <option value="1"{% if block.status %} selected="selected"{% endif %}>Omogućeno</option>
+                      <option value="0"{% if not block.status %} selected="selected"{% endif %}>Onemogućeno</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Slika</label>
+              <div class="col-sm-10">
+                <div class="information-block-image-field">
+                  <a href="" id="thumb-information-block-{{ block_row }}" data-toggle="image" class="img-thumbnail">
+                    <img src="{{ block.thumb|e }}" alt="" title="" data-placeholder="{{ information_block_placeholder|e }}" />
+                  </a>
+                  <input type="text" name="information_blocks[{{ block_row }}][image]" value="{{ block.image|e }}" id="input-information-block-{{ block_row }}" class="form-control information-block-image-input" placeholder="catalog/slika.jpg ili https://..." />
+                </div>
+              </div>
+            </div>
+
+            <ul class="nav nav-tabs block-language-tabs" id="information-block-language-{{ block_row }}">
+              {% for language in languages %}
+                <li{% if loop.first %} class="active"{% endif %}>
+                  <a href="#information-block-language-{{ block_row }}-{{ language.language_id }}" data-toggle="tab">
+                    <img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name|e }}" /> {{ language.name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+
+            <div class="tab-content">
+              {% for language in languages %}
+                <div class="tab-pane{% if loop.first %} active{% endif %}" id="information-block-language-{{ block_row }}-{{ language.language_id }}">
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Naslov</label>
+                    <div class="col-sm-10">
+                      <input type="text" name="information_blocks[{{ block_row }}][description][{{ language.language_id }}][title]" value="{{ block.description[language.language_id].title|e }}" class="form-control information-block-title" placeholder="Naslov bloka" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">ALT slike</label>
+                    <div class="col-sm-10">
+                      <input type="text" name="information_blocks[{{ block_row }}][description][{{ language.language_id }}][image_alt]" value="{{ block.description[language.language_id].image_alt|e }}" class="form-control" placeholder="Opis slike za tražilice i čitače ekrana" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">Opis</label>
+                    <div class="col-sm-10">
+                      <textarea name="information_blocks[{{ block_row }}][description][{{ language.language_id }}][description]" class="form-control information-block-description" data-block-editor="1" rows="8">{{ block.description[language.language_id].description|e }}</textarea>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <hr />
+            <div class="information-block-actions-heading">
+              <h4><i class="fa fa-mouse-pointer"></i> Gumbi i datoteke</h4>
+              <button type="button" class="btn btn-success btn-sm btn-add-information-block-action" data-block-index="{{ block_row }}"><i class="fa fa-plus"></i> Dodaj gumb / datoteku</button>
+            </div>
+
+            <div class="information-block-actions" data-block-index="{{ block_row }}">
+              {% for action in block.actions %}
+                {% set action_row = loop.index0 %}
+                <div class="well well-sm information-block-action-row" data-action-index="{{ action_row }}">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <label>Vrsta</label>
+                      <select name="information_blocks[{{ block_row }}][actions][{{ action_row }}][type]" class="form-control information-block-action-type">
+                        <option value="link"{% if action.type == 'link' %} selected="selected"{% endif %}>Gumb / poveznica</option>
+                        <option value="file"{% if action.type == 'file' %} selected="selected"{% endif %}>Datoteka</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label>URL</label>
+                      <input type="text" name="information_blocks[{{ block_row }}][actions][{{ action_row }}][url]" value="{{ action.url|e }}" class="form-control" placeholder="https://... (i za vanjsku datoteku)" />
+                    </div>
+
+                    <div class="col-md-4">
+                      <label>Učitana datoteka</label>
+                      <div class="input-group">
+                        <input type="text" name="information_blocks[{{ block_row }}][actions][{{ action_row }}][mask]" value="{{ action.mask|e }}" class="form-control information-block-file-mask" placeholder="Nije učitana" readonly="readonly" />
+                        <input type="hidden" name="information_blocks[{{ block_row }}][actions][{{ action_row }}][filename]" value="{{ action.filename|e }}" class="information-block-file-name" />
+                        <span class="input-group-btn">
+                          <button type="button" class="btn btn-default btn-upload-information-block-file"><i class="fa fa-upload"></i></button>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="col-md-1">
+                      <label>Novi tab</label>
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="information_blocks[{{ block_row }}][actions][{{ action_row }}][new_window]" value="1"{% if action.new_window %} checked="checked"{% endif %} />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-1 text-right">
+                      <label>&nbsp;</label>
+                      <button type="button" class="btn btn-danger btn-block btn-remove-information-block-action"><i class="fa fa-minus-circle"></i></button>
+                    </div>
+                  </div>
+
+                  <div class="row information-block-action-labels">
+                    {% for language in languages %}
+                      <div class="col-md-{{ languages|length > 3 ? 3 : 4 }}">
+                        <label><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name|e }}" /> Tekst gumba</label>
+                        <input type="text" name="information_blocks[{{ block_row }}][actions][{{ action_row }}][description][{{ language.language_id }}][label]" value="{{ action.description[language.language_id].label|e }}" class="form-control" placeholder="npr. Preuzmite katalog" />
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" id="button-add-information-block" class="btn btn-primary" {% if not information_blocks_installed %}disabled="disabled"{% endif %}>
+    <i class="fa fa-plus"></i> Dodaj sadržajni blok
+  </button>
+</div>
+
+<script type="text/template" id="information-block-template">
+  <div class="panel panel-default information-block-row" data-block-index="__BLOCK__">
+    <div class="panel-heading information-block-heading">
+      <span class="block-drag-handle" title="Povuci za sortiranje"><i class="fa fa-arrows-v"></i></span>
+      <strong class="information-block-summary">Novi blok</strong>
+      <div class="pull-right">
+        <button type="button" class="btn btn-xs btn-default btn-duplicate-information-block" title="Dupliciraj blok"><i class="fa fa-copy"></i> Dupliciraj</button>
+        <button type="button" class="btn btn-xs btn-danger btn-remove-information-block" title="Obriši blok"><i class="fa fa-trash"></i></button>
+        <button type="button" class="btn btn-xs btn-info" data-toggle="collapse" data-target="#information-block-body-__BLOCK__" title="Otvori / zatvori"><i class="fa fa-chevron-down"></i></button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+
+    <div class="panel-collapse collapse in" id="information-block-body-__BLOCK__">
+      <div class="panel-body">
+        <input type="hidden" class="information-block-sort-order" name="information_blocks[__BLOCK__][sort_order]" value="0" />
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Raspored</label>
+              <div class="col-sm-8">
+                <select name="information_blocks[__BLOCK__][layout]" class="form-control">
+                  <option value="image_right">Tekst lijevo / slika desno</option>
+                  <option value="image_left">Slika lijevo / tekst desno</option>
+                  <option value="full">Puna širina</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Status</label>
+              <div class="col-sm-8">
+                <select name="information_blocks[__BLOCK__][status]" class="form-control">
+                  <option value="1" selected="selected">Omogućeno</option>
+                  <option value="0">Onemogućeno</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Slika</label>
+          <div class="col-sm-10">
+            <div class="information-block-image-field">
+              <a href="" id="thumb-information-block-__BLOCK__" data-toggle="image" class="img-thumbnail">
+                <img src="{{ information_block_placeholder|e }}" alt="" title="" data-placeholder="{{ information_block_placeholder|e }}" />
+              </a>
+              <input type="text" name="information_blocks[__BLOCK__][image]" value="" id="input-information-block-__BLOCK__" class="form-control information-block-image-input" placeholder="catalog/slika.jpg ili https://..." />
+            </div>
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs block-language-tabs" id="information-block-language-__BLOCK__">
+          {% for language in languages %}
+            <li{% if loop.first %} class="active"{% endif %}>
+              <a href="#information-block-language-__BLOCK__-{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name|e }}" /> {{ language.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+          {% for language in languages %}
+            <div class="tab-pane{% if loop.first %} active{% endif %}" id="information-block-language-__BLOCK__-{{ language.language_id }}">
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Naslov</label>
+                <div class="col-sm-10">
+                  <input type="text" name="information_blocks[__BLOCK__][description][{{ language.language_id }}][title]" value="" class="form-control information-block-title" placeholder="Naslov bloka" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">ALT slike</label>
+                <div class="col-sm-10">
+                  <input type="text" name="information_blocks[__BLOCK__][description][{{ language.language_id }}][image_alt]" value="" class="form-control" placeholder="Opis slike za tražilice i čitače ekrana" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Opis</label>
+                <div class="col-sm-10">
+                  <textarea name="information_blocks[__BLOCK__][description][{{ language.language_id }}][description]" class="form-control information-block-description" data-block-editor="1" rows="8"></textarea>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <hr />
+        <div class="information-block-actions-heading">
+          <h4><i class="fa fa-mouse-pointer"></i> Gumbi i datoteke</h4>
+          <button type="button" class="btn btn-success btn-sm btn-add-information-block-action" data-block-index="__BLOCK__"><i class="fa fa-plus"></i> Dodaj gumb / datoteku</button>
+        </div>
+        <div class="information-block-actions" data-block-index="__BLOCK__"></div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="information-block-action-template">
+  <div class="well well-sm information-block-action-row" data-action-index="__ACTION__">
+    <div class="row">
+      <div class="col-md-2">
+        <label>Vrsta</label>
+        <select name="information_blocks[__BLOCK__][actions][__ACTION__][type]" class="form-control information-block-action-type">
+          <option value="link">Gumb / poveznica</option>
+          <option value="file">Datoteka</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label>URL</label>
+        <input type="text" name="information_blocks[__BLOCK__][actions][__ACTION__][url]" value="" class="form-control" placeholder="https://... (i za vanjsku datoteku)" />
+      </div>
+      <div class="col-md-4">
+        <label>Učitana datoteka</label>
+        <div class="input-group">
+          <input type="text" name="information_blocks[__BLOCK__][actions][__ACTION__][mask]" value="" class="form-control information-block-file-mask" placeholder="Nije učitana" readonly="readonly" />
+          <input type="hidden" name="information_blocks[__BLOCK__][actions][__ACTION__][filename]" value="" class="information-block-file-name" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default btn-upload-information-block-file"><i class="fa fa-upload"></i></button>
+          </span>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <label>Novi tab</label>
+        <div class="checkbox"><label><input type="checkbox" name="information_blocks[__BLOCK__][actions][__ACTION__][new_window]" value="1" /></label></div>
+      </div>
+      <div class="col-md-1 text-right">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-danger btn-block btn-remove-information-block-action"><i class="fa fa-minus-circle"></i></button>
+      </div>
+    </div>
+    <div class="row information-block-action-labels">
+      {% for language in languages %}
+        <div class="col-md-{{ languages|length > 3 ? 3 : 4 }}">
+          <label><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name|e }}" /> Tekst gumba</label>
+          <input type="text" name="information_blocks[__BLOCK__][actions][__ACTION__][description][{{ language.language_id }}][label]" value="" class="form-control" placeholder="npr. Preuzmite katalog" />
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</script>
+
+<style>
+  .information-block-heading { cursor: default; }
+  .block-drag-handle { display:inline-block; margin-right:10px; padding:3px 6px; color:#777; cursor:move; }
+  .information-block-row.ui-sortable-helper { box-shadow:0 8px 24px rgba(0,0,0,.18); }
+  .information-block-placeholder { height:72px; border:2px dashed #1e91cf; background:#f4fbff; margin-bottom:15px; }
+  .information-block-image-field { display:flex; gap:15px; align-items:flex-start; }
+  .information-block-image-field .img-thumbnail { flex:0 0 162px; min-height:122px; display:flex; align-items:center; justify-content:center; }
+  .information-block-image-field .img-thumbnail img { max-width:160px; max-height:120px; }
+  .information-block-image-field .form-control { flex:1 1 auto; }
+  .information-block-actions-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:15px; }
+  .information-block-actions-heading h4 { margin:0; }
+  .information-block-action-row { position:relative; }
+  .information-block-action-labels { margin-top:12px; }
+  .information-block-summary { vertical-align:middle; }
+  @media (max-width:767px) {
+    .information-block-image-field { display:block; }
+    .information-block-image-field .form-control { margin-top:10px; }
+    .information-block-actions-heading { display:block; }
+    .information-block-actions-heading .btn { margin-top:10px; }
+  }
+</style>
+
+<script>
+(function($) {
+  'use strict';
+
+  var nextBlockIndex = {{ information_blocks|length }};
+  var uploadUrl = 'index.php?route=tool/information_block_upload&user_token={{ user_token }}';
+
+  function initialiseEditor($textarea) {
+    if ($textarea.data('block-editor-ready')) {
+      return;
+    }
+
+    $textarea.data('block-editor-ready', true).summernote({
+      height: 220,
+      disableDragAndDrop: true,
+      emptyPara: '',
+      toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'clear']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link']],
+        ['view', ['codeview', 'fullscreen']]
+      ]
+    });
+  }
+
+  function initialiseBlock($block) {
+    $block.find('textarea[data-block-editor="1"]').each(function() {
+      initialiseEditor($(this));
+    });
+
+    $block.find('.block-language-tabs a:first').tab('show');
+  }
+
+  function updateSortOrders() {
+    $('#information-block-list .information-block-row').each(function(index) {
+      $(this).find('> .panel-collapse .information-block-sort-order').val(index * 10);
+    });
+  }
+
+  function updateSummary($block) {
+    var value = $.trim($block.find('.information-block-title').first().val());
+    $block.find('> .information-block-heading .information-block-summary').text(value || 'Novi blok');
+  }
+
+  function addAction($block) {
+    var blockIndex = $block.attr('data-block-index');
+    var $actions = $block.find('.information-block-actions');
+    var actionIndex = parseInt($actions.attr('data-next-action-index') || $actions.find('.information-block-action-row').length, 10);
+    var template = $('#information-block-action-template').html()
+      .replace(/__BLOCK__/g, blockIndex)
+      .replace(/__ACTION__/g, actionIndex);
+
+    $actions.append(template);
+    $actions.attr('data-next-action-index', actionIndex + 1);
+
+    return $actions.find('.information-block-action-row').last();
+  }
+
+  function addBlock() {
+    var blockIndex = nextBlockIndex++;
+    var template = $('#information-block-template').html().replace(/__BLOCK__/g, blockIndex);
+    var $block = $(template);
+
+    $('#information-block-list').append($block);
+    initialiseBlock($block);
+    updateSortOrders();
+
+    return $block;
+  }
+
+  function renumberActions($block) {
+    var blockIndex = $block.attr('data-block-index');
+
+    $block.find('.information-block-action-row').each(function(actionIndex) {
+      var $row = $(this);
+      $row.attr('data-action-index', actionIndex);
+      $row.find('[name]').each(function() {
+        this.name = this.name.replace(/information_blocks\[\d+\]\[actions\]\[\d+\]/, 'information_blocks[' + blockIndex + '][actions][' + actionIndex + ']');
+      });
+    });
+
+    $block.find('.information-block-actions').attr('data-next-action-index', $block.find('.information-block-action-row').length);
+  }
+
+  function duplicateBlock($source) {
+    renumberActions($source);
+
+    var sourceIndex = $source.attr('data-block-index');
+    var values = [];
+
+    $source.find('[name^="information_blocks["]').each(function() {
+      var $field = $(this);
+      var value = $field.val();
+
+      if ($field.is('textarea[data-block-editor="1"]') && $field.data('block-editor-ready')) {
+        value = $field.summernote('code');
+      }
+
+      values.push({
+        name: this.name,
+        value: value,
+        checked: $field.is(':checkbox') ? $field.prop('checked') : null
+      });
+    });
+
+    var $duplicate = addBlock();
+    var duplicateIndex = $duplicate.attr('data-block-index');
+    var actionCount = $source.find('.information-block-action-row').length;
+
+    for (var actionIndex = 0; actionIndex < actionCount; actionIndex++) {
+      addAction($duplicate);
+    }
+
+    values.forEach(function(field) {
+      var targetName = field.name.replace('information_blocks[' + sourceIndex + ']', 'information_blocks[' + duplicateIndex + ']');
+      var $target = $duplicate.find('[name]').filter(function() {
+        return this.name === targetName;
+      });
+
+      if (!$target.length) {
+        return;
+      }
+
+      if (field.checked !== null) {
+        $target.prop('checked', field.checked);
+      } else if ($target.is('textarea[data-block-editor="1"]')) {
+        $target.summernote('code', field.value);
+      } else {
+        $target.val(field.value);
+      }
+    });
+
+    $duplicate.find('.information-block-image-field img').attr('src', $source.find('.information-block-image-field img').attr('src'));
+    updateSummary($duplicate);
+    updateSortOrders();
+  }
+
+  function uploadFile($button) {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.jpg,.jpeg,.png,.webp';
+
+    input.onchange = function() {
+      var file = this.files && this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      var $row = $button.closest('.information-block-action-row');
+      var formData = new FormData();
+      formData.append('file', file);
+      $button.prop('disabled', true).find('i').attr('class', 'fa fa-spinner fa-spin');
+
+      fetch(uploadUrl, {
+        method: 'POST',
+        body: formData
+      })
+      .then(function(response) { return response.json(); })
+      .then(function(json) {
+        if (json.error) {
+          window.alert(json.error);
+          return;
+        }
+
+        $row.find('.information-block-file-name').val(json.filename || '');
+        $row.find('.information-block-file-mask').val(json.mask || '');
+        $row.find('.information-block-action-type').val('file');
+      })
+      .catch(function() {
+        window.alert('Upload datoteke nije uspio.');
+      })
+      .then(function() {
+        $button.prop('disabled', false).find('i').attr('class', 'fa fa-upload');
+      });
+    };
+
+    input.click();
+  }
+
+  $(function() {
+    $('#information-block-list .information-block-row').each(function() {
+      var $block = $(this);
+      var actionCount = $block.find('.information-block-action-row').length;
+      $block.find('.information-block-actions').attr('data-next-action-index', actionCount);
+      initialiseBlock($block);
+      updateSummary($block);
+    });
+
+    $('#information-block-list').sortable({
+      handle: '.block-drag-handle',
+      placeholder: 'information-block-placeholder',
+      forcePlaceholderSize: true,
+      update: updateSortOrders
+    });
+
+    $('#button-add-information-block').on('click', function() {
+      addBlock();
+    });
+
+    $('#information-block-list')
+      .on('input', '.information-block-title', function() {
+        updateSummary($(this).closest('.information-block-row'));
+      })
+      .on('change', '.information-block-image-input', function() {
+        var value = $.trim($(this).val());
+        var $image = $(this).siblings('a').find('img');
+
+        if (/^https?:\/\//i.test(value)) {
+          $image.attr('src', value);
+        }
+      })
+      .on('click', '.btn-add-information-block-action', function() {
+        addAction($(this).closest('.information-block-row'));
+      })
+      .on('click', '.btn-remove-information-block-action', function() {
+        $(this).closest('.information-block-action-row').remove();
+      })
+      .on('click', '.btn-upload-information-block-file', function() {
+        uploadFile($(this));
+      })
+      .on('click', '.btn-duplicate-information-block', function() {
+        duplicateBlock($(this).closest('.information-block-row'));
+      })
+      .on('click', '.btn-remove-information-block', function() {
+        if (window.confirm('Obrisati ovaj sadržajni blok?')) {
+          $(this).closest('.information-block-row').remove();
+          updateSortOrders();
+        }
+      });
+
+    $('#form-information').on('submit', function() {
+      $('#information-block-list textarea[data-block-editor="1"]').each(function() {
+        var $textarea = $(this);
+
+        if ($textarea.data('block-editor-ready')) {
+          $textarea.val($textarea.summernote('code'));
+        }
+      });
+
+      updateSortOrders();
+    });
+
+    updateSortOrders();
+  });
+})(jQuery);
+</script>

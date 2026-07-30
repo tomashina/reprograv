@@ -1,0 +1,60 @@
+<div class="information-blocks">
+  {% for block in information_blocks %}
+    <section class="information-content-block information-content-block--{{ block.layout|e }}">
+      <div class="row">
+        {% if block.layout == 'image_left' and block.image_src %}
+          <div class="col-md-6 information-content-block__media">
+            <img src="{{ block.image_src|e }}" alt="{{ block.image_alt|e }}" class="img-responsive" {% if not loop.first %}loading="lazy"{% endif %} />
+          </div>
+        {% endif %}
+
+        <div class="{% if block.image_src and block.layout != 'full' %}col-md-6{% else %}col-xs-12{% endif %} information-content-block__content">
+          {% if block.title %}
+            <h2>{{ block.title|e }}</h2>
+          {% endif %}
+
+          {% if block.description %}
+            <div class="information-content-block__description">{{ block.description }}</div>
+          {% endif %}
+
+          {% if block.actions %}
+            <div class="information-content-block__actions">
+              {% for action in block.actions %}
+                {% if action.href %}
+                  <a class="btn btn-neutral nowrap" href="{{ action.href|e }}"{% if action.new_window %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                    <i class="fa {% if action.type == 'file' %}fa-file-pdf-o{% else %}fa-link{% endif %}" aria-hidden="true"></i>
+                    {{ action.label|e }}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if block.layout != 'image_left' and block.image_src %}
+          <div class="{% if block.layout == 'full' %}col-xs-12{% else %}col-md-6{% endif %} information-content-block__media">
+            <img src="{{ block.image_src|e }}" alt="{{ block.image_alt|e }}" class="img-responsive" {% if not loop.first %}loading="lazy"{% endif %} />
+          </div>
+        {% endif %}
+      </div>
+    </section>
+  {% endfor %}
+</div>
+
+<style>
+  .information-content-block { padding:0 0 42px; }
+  .information-content-block + .information-content-block { border-top:1px solid #e5e5e5; padding-top:42px; }
+  .information-content-block .row { display:flex; flex-wrap:wrap; align-items:center; }
+  .information-content-block h2 { color:#d10015; margin-top:0; margin-bottom:20px; }
+  .information-content-block__media { text-align:center; }
+  .information-content-block__media img { display:inline-block; max-width:100%; height:auto; }
+  .information-content-block__description > :last-child { margin-bottom:0; }
+  .information-content-block__actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+  .information-content-block__actions .btn { margin:0; }
+  .information-content-block--full .information-content-block__media { margin-top:25px; }
+  @media (max-width:991px) {
+    .information-content-block .row { display:block; }
+    .information-content-block__media { margin-top:25px; }
+    .information-content-block--image_left .information-content-block__media { margin-top:0; margin-bottom:25px; }
+  }
+</style>

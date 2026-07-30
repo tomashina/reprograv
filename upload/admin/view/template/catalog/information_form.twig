@@ -31,6 +31,7 @@
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-information" class="form-horizontal">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li><a href="#tab-information-blocks" data-toggle="tab"><i class="fa fa-th-large"></i> Sadržajni blokovi</a></li>
             <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
             <li><a href="#tab-pdfs" data-toggle="tab">PDFs</a></li>
             <li><a href="#tab-seo" data-toggle="tab">{{ tab_seo }}</a></li>
@@ -96,6 +97,8 @@
                 {% endfor %}
               </div>
             </div>
+
+            {{ information_blocks_editor }}
 
             <!-- DATA -->
             <div class="tab-pane" id="tab-data">
