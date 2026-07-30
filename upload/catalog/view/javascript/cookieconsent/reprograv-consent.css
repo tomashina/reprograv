@@ -36,6 +36,7 @@ body.rg-consent-open {
   left: 50%;
   width: calc(100% - 32px);
   max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
   overflow: hidden auto;
   background: #fff;
   border: 1px solid rgba(0, 36, 61, .18);
@@ -52,6 +53,7 @@ body.rg-consent-open {
   display: flex;
   width: min(700px, calc(100% - 32px));
   height: min(650px, calc(100vh - 32px));
+  height: min(650px, calc(100dvh - 32px));
   flex-direction: column;
 }
 
@@ -331,7 +333,11 @@ body.rg-consent-open {
   left: 28px;
 }
 
-.rg-consent-switch.is-checked > span::after,
+.rg-consent-switch.is-checked > span::after {
+  left: 7px;
+  opacity: 1;
+}
+
 .rg-consent-switch.is-checked.is-locked::before {
   left: 35px;
   opacity: 1;
@@ -433,12 +439,14 @@ body.rg-consent-open {
   .rg-consent-dialog {
     width: calc(100% - 20px);
     max-height: calc(100vh - 20px);
+    max-height: calc(100svh - 20px);
     border-radius: 13px;
   }
 
   .rg-consent-preferences {
     width: calc(100% - 20px);
     height: calc(100vh - 20px);
+    height: calc(100svh - 20px);
   }
 
   .rg-consent-body {
