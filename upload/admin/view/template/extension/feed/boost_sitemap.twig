@@ -158,16 +158,33 @@
             </div>
             
 			<div class="tab-pane" id="tab-setting">
+               <style>
+                 #tab-setting .sitemap-option {
+                   align-items: center;
+                   cursor: pointer;
+                   display: inline-flex;
+                   gap: 8px;
+                   padding: 4px 0;
+                 }
+                 #tab-setting .sitemap-option input[type="checkbox"] {
+                   cursor: pointer;
+                   height: 16px;
+                   margin: 0 !important;
+                   pointer-events: auto;
+                   position: static !important;
+                   width: 16px;
+                 }
+               </style>
                <div class="form-group">
                  <label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{ help_item }}">{{ entry_item }}</span></label>
                  <div class="col-sm-9">
                    {% for key, value in items %}
                      <div class="checkbox">
-                       <label>
+                       <label class="sitemap-option" for="sitemap-item-{{ key }}">
                        {% if key in feed_boost_sitemap_item %}
-                       <input type="checkbox" name="feed_boost_sitemap_item[]" value="{{ key }}" checked="checked" /> {{ value }}
+                       <input id="sitemap-item-{{ key }}" type="checkbox" name="feed_boost_sitemap_item[]" value="{{ key }}" checked="checked" /> <span>{{ value }}</span>
                        {% else %}
-                       <input type="checkbox" name="feed_boost_sitemap_item[]" value="{{ key }}" /> {{ value }}
+                       <input id="sitemap-item-{{ key }}" type="checkbox" name="feed_boost_sitemap_item[]" value="{{ key }}" /> <span>{{ value }}</span>
                        {% endif %}
                        </label>
                      </div>

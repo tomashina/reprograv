@@ -186,12 +186,14 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			}
 		}
 		
-		if (isset($this->request->post['feed_boost_sitemap_item'])) {
+		$default_sitemap_items = ['product', 'category', 'information', 'blog'];
+
+		if (isset($this->request->post['feed_boost_sitemap_item']) && is_array($this->request->post['feed_boost_sitemap_item'])) {
 			$data['feed_boost_sitemap_item'] = $this->request->post['feed_boost_sitemap_item'];
-		} elseif ($this->config->get('feed_boost_sitemap_item')) {
+		} elseif (is_array($this->config->get('feed_boost_sitemap_item')) && $this->config->get('feed_boost_sitemap_item')) {
 			$data['feed_boost_sitemap_item'] = $this->config->get('feed_boost_sitemap_item');
 		} else {
-			$data['feed_boost_sitemap_item'] = [];
+			$data['feed_boost_sitemap_item'] = $default_sitemap_items;
 		}
 		
 			$data['items'] = [
@@ -362,11 +364,18 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			if (isset($this->request->post['selected'])) {
 				unset($this->request->post['selected']);
 			}
-			
+
+			$items = isset($this->request->post['feed_boost_sitemap_item']) && is_array($this->request->post['feed_boost_sitemap_item'])
+				? $this->request->post['feed_boost_sitemap_item']
+				: [];
+			$items = array_values(array_diff($items, ['category_product']));
+
+			if (!$items) {
+				$items = ['product', 'category', 'information', 'blog'];
+			}
+
+			$this->request->post['feed_boost_sitemap_item'] = $items;
 			$this->model_setting_setting->editSetting('feed_boost_sitemap', $this->request->post);
-			
-				$items = isset($this->request->post['feed_boost_sitemap_item']) ? $this->request->post['feed_boost_sitemap_item'] : [];
-				$items = array_values(array_diff($items, ['category_product']));
 
 				foreach (glob($this->directory . 'sitemap_*_category_product*.xml') ?: [] as $legacy_file) {
 					if (is_file($legacy_file)) {
