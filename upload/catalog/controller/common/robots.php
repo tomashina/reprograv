@@ -14,7 +14,7 @@ class ControllerCommonRobots extends Controller {
 	}
 
 	public function llms() {
-		$file = DIR_APPLICATION . '../llms.txt';
+		$file = DIR_APPLICATION . '../../llms.txt';
 
 		if (!is_file($file)) {
 			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');

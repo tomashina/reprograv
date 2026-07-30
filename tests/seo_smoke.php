@@ -283,6 +283,10 @@ assertCheck(strpos($sitemap['body'], 'category_product') === false, 'Sitemap ind
 
 $llms = requestUrl($base_url . '/llms.txt');
 assertCheck($llms['status'] === 200, 'llms.txt vraća HTTP 200');
+assertCheck(
+    stripos($llms['headers'], 'Content-Type: text/plain; charset=UTF-8') !== false,
+    'llms.txt koristi UTF-8 Content-Type'
+);
 assertCheck(strpos($llms['body'], 'Cijene i dostupnost') !== false, 'llms.txt opisuje javno pravilo kataloga');
 
 $robots_route = requestUrl($base_url . '/index.php?route=common/robots');
