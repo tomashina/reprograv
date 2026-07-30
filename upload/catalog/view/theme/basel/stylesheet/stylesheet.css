@@ -4415,7 +4415,8 @@ h4.follow-title {
 }
 .cards-holder {
 	margin-top: 30px;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
+	position: relative;
 }
 #footer p.h5 {
 	color: #fff;
@@ -4523,26 +4524,6 @@ h4.follow-title {
 .scroll-to-top.top img.ikona {
 	height:12px;
 }
-
-.scroll-to-top.email {
-	width: 45px;
-	height: 45px;
-	line-height:42px;
-	text-align: center;
-	color:#ffffff !important;
-	z-index:80;
-	font-size:18px;
-	transform:rotate(0deg);
-	visibility:hidden;
-	opacity:0;
-	border: 1px solid transparent;
-	border-radius: 50%;
-	position: fixed;
-	bottom: 130px;
-	right: 20px;
-	transition:all 400ms;
-}
-
 
 a.scroll-to-top:not(:hover) {
 	color:#000 !important;

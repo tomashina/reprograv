@@ -368,11 +368,11 @@ body.rg-consent-open {
   gap: 8px;
 }
 
-.rg-cookie-fab {
+.rg-cookie-fab,
+.rg-email-fab {
   position: fixed;
   z-index: 990;
   bottom: 22px;
-  left: 22px;
   display: flex;
   width: 54px;
   height: 54px;
@@ -387,6 +387,14 @@ body.rg-consent-open {
   transition: background .18s, box-shadow .18s, transform .18s;
 }
 
+.rg-cookie-fab {
+  left: 22px;
+}
+
+.rg-email-fab {
+  right: 22px;
+}
+
 .rg-cookie-fab svg {
   width: 26px;
   height: 26px;
@@ -397,16 +405,26 @@ body.rg-consent-open {
   stroke-width: 2;
 }
 
+.rg-email-fab img {
+  width: 26px;
+  height: auto;
+  filter: brightness(0) invert(1);
+}
+
 .rg-cookie-fab:hover,
-.rg-cookie-fab:focus {
+.rg-cookie-fab:focus,
+.rg-email-fab:hover,
+.rg-email-fab:focus {
   color: #fff;
   background: var(--rg-consent-red);
   box-shadow: 0 8px 24px rgba(209, 0, 21, .3);
   outline: 0;
+  text-decoration: none;
   transform: translateY(-2px);
 }
 
-.rg-cookie-fab:focus-visible {
+.rg-cookie-fab:focus-visible,
+.rg-email-fab:focus-visible {
   outline: 3px solid rgba(209, 0, 21, .24);
   outline-offset: 3px;
 }
