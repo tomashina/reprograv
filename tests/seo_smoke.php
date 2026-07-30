@@ -175,6 +175,14 @@ function metaDescription($html) {
     return $nodes->length ? trim($nodes->item(0)->getAttribute('content')) : '';
 }
 
+function metaRobots($html) {
+    $document = loadHtmlDocument($html);
+    $xpath = new DOMXPath($document);
+    $nodes = $xpath->query('//meta[translate(@name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "robots"]');
+
+    return $nodes->length ? strtolower(trim($nodes->item(0)->getAttribute('content'))) : '';
+}
+
 function textLength($value) {
     return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
 }
@@ -243,6 +251,28 @@ assertCheck(
     'Prioritetna kategorija prikazuje povezano FAQ pitanje'
 );
 
+$category_page_two = requestUrl($base_url . $category_path . '?page=2');
+assertCheck($category_page_two['status'] === 200, 'Druga stranica kategorije vraća HTTP 200');
+assertCheck(
+    metaRobots($category_page_two['body']) === 'index,follow',
+    'Paginacija kategorije ostaje dostupna indeksiranju'
+);
+assertCheck(
+    hasCanonical($category_page_two['body'], $base_url . $category_path . '?page=2'),
+    'Druga stranica kategorije ima vlastiti canonical'
+);
+
+$category_sorted = requestUrl($base_url . $category_path . '?sort=p.sort_order&order=ASC');
+assertCheck($category_sorted['status'] === 200, 'Sortirana kategorija vraća HTTP 200');
+assertCheck(
+    metaRobots($category_sorted['body']) === 'noindex,follow',
+    'Sortirana kategorija ostaje izvan indeksa'
+);
+assertCheck(
+    hasCanonical($category_sorted['body'], $base_url . $category_path),
+    'Sortirana kategorija canonicalom pokazuje na osnovnu kategoriju'
+);
+
 $product_path = '/r242-postanski-datumar';
 $product = requestUrl($base_url . $product_path);
 assertCheck($product['status'] === 200, 'Javna stranica proizvoda vraća HTTP 200');
@@ -271,6 +301,18 @@ assertCheck(!$has_forbidden_schema, 'Javni Product schema ne sadrži cijenu ni d
 assertCheck(
     !preg_match('/(?:€\s*\d|\d+(?:[.,]\d+)?\s*(?:€|EUR))/iu', visibleText($product['body'])),
     'Javna stranica proizvoda gostu ne prikazuje cijenu'
+);
+
+$new_product_path = '/plocica-za-vrata-215';
+$new_product = requestUrl($base_url . $new_product_path);
+assertCheck($new_product['status'] === 200, 'Novi SEO URL proizvoda vraća HTTP 200');
+assertCheck(
+    hasCanonical($new_product['body'], $base_url . $new_product_path),
+    'Novi SEO URL proizvoda ima ispravan canonical'
+);
+assertCheck(
+    textLength(metaDescription($new_product['body'])) >= 80,
+    'Proizvod s novim SEO URL-om ima sadržajan meta description'
 );
 
 $price_name_product_paths = array(
@@ -321,6 +363,24 @@ assertCheck(stripos($sitemap['headers'], 'X-Robots-Tag: noindex') !== false, 'Si
 assertCheck(strpos($sitemap['body'], '_blog.xml') !== false, 'Sitemap indeks uključuje blog');
 assertCheck(strpos($sitemap['body'], '_product.xml') !== false, 'Sitemap indeks uključuje proizvode');
 assertCheck(strpos($sitemap['body'], 'category_product') === false, 'Sitemap indeks ne uključuje duplikat category_product');
+
+$product_sitemap = requestUrl($base_url . '/sitemaps/sitemap_0_3_product.xml');
+assertCheck($product_sitemap['status'] === 200, 'Sitemap proizvoda vraća HTTP 200');
+assertCheck(
+    strpos($product_sitemap['body'], '<image:loc></image:loc>') === false,
+    'Sitemap proizvoda nema prazan image:loc'
+);
+assertCheck(
+    strpos($product_sitemap['body'], $base_url . $new_product_path) !== false,
+    'Sitemap proizvoda uključuje novi SEO URL'
+);
+
+$category_sitemap = requestUrl($base_url . '/sitemaps/sitemap_0_3_category.xml');
+assertCheck($category_sitemap['status'] === 200, 'Sitemap kategorija vraća HTTP 200');
+assertCheck(
+    strpos($category_sitemap['body'], '<image:loc></image:loc>') === false,
+    'Sitemap kategorija nema prazan image:loc'
+);
 
 $llms = requestUrl($base_url . '/llms.txt');
 assertCheck($llms['status'] === 200, 'llms.txt vraća HTTP 200');

@@ -22,6 +22,15 @@ sql/2026-07-30_category_seo.sql
 Uvoz dodaje sadržaj samo potpuno praznim kategorijama. Postojeći i djelomično
 ispunjeni ručni opisi ostaju nepromijenjeni.
 
+Prazni SEO podaci aktivnih proizvoda dopunjuju se zasebnom idempotentnom
+phpMyAdmin migracijom:
+
+```text
+sql/2026-07-30_product_seo.sql
+```
+
+Migracija ne mijenja postojeće opise, meta podatke ni SEO URL-ove.
+
 Za lokalni razvoj ista se idempotentna instalacija može pokrenuti naredbom:
 
 ```bash

@@ -36,8 +36,12 @@ Terminal/SSH nije potreban:
 6. Na kraju drugog uvoza za trenutačni katalog očekivani rezultat je:
    `uredjene_kategorije = 67`, `faq_pitanja = 18` i najmanje
    `faq_veze_s_kategorijama = 152`.
+7. Ponovno otvoriti `Import`, odabrati
+   `sql/2026-07-30_product_seo.sql` i pokrenuti uvoz.
+8. Na kraju trećeg uvoza sve četiri prikazane vrijednosti trebaju biti `363`:
+   aktivni proizvodi s opisom, meta naslovom, meta opisom i SEO URL-om.
 
-Obje migracije su idempotentne i smiju se ponoviti. Pretpostavljaju:
+Sve migracije su idempotentne i smiju se ponoviti. Pretpostavljaju:
 
 - prefiks tablica `oc_`
 - zadani `store_id = 0`
@@ -47,7 +51,9 @@ Ako produkcija koristi druge vrijednosti, prilagoditi ih u SQL datoteci prije
 uvoza. Druga SQL datoteka ne prepisuje postojeće ni djelomično ispunjene ručne
 opise. Kratki opis, dugi opis i meta opis dodaje samo kategorijama kojima su sva
 tri polja potpuno prazna te bez dupliciranja povezuje FAQ pitanja s
-kategorijama.
+kategorijama. Treća SQL datoteka također čuva postojeće podatke: ručno dopunjava
+šest praznih opisa i generira samo nedostajuće meta podatke i SEO URL-ove
+aktivnih proizvoda.
 
 ## 4. Osvježavanje OCMOD-a bez Terminala
 
@@ -79,7 +85,7 @@ https://www.repro-grav.com/sitemap-index.xml
 ```
 
 Treba sadržavati sitemapove za proizvode, kategorije, informacije i blog, bez
-starog `category_product` sitemap duplikata.
+starog `category_product` sitemap duplikata i bez praznih `<image:loc>` zapisa.
 
 ## 6. WebP generator
 
@@ -100,6 +106,8 @@ zapisiv PHP procesu. Generirani cache se ne sprema u Git.
 
 Nakon produkcijskog puštanja u anonimnom prozoru otvoriti `/pecatarstvo` i
 potvrditi da su vidljivi kratki uvod, detaljni opis i blok `Česta pitanja`.
+Otvoriti `/pecatarstvo?page=2` i potvrditi da stranica radi, zatim provjeriti
+novi URL `/plocica-za-vrata-215`.
 Zatim otvoriti `/sitemap-index.xml`, `/robots.txt` i `/llms.txt`; sva tri URL-a
 moraju se normalno učitati.
 

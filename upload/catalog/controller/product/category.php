@@ -115,11 +115,9 @@ class ControllerProductCategory extends Controller {
 
 			$data['heading_title'] = $category_info['name'];
 
-			if ($page >= 2 || $filter || isset($this->request->get['sort']) || isset($this->request->get['order']) || isset($this->request->get['limit'])){
-					$this->document->setRobots('noindex,follow');
-			}
-
-			else{
+			if ($filter || isset($this->request->get['sort']) || isset($this->request->get['order']) || isset($this->request->get['limit'])) {
+				$this->document->setRobots('noindex,follow');
+			} else {
 				$this->document->setRobots('index,follow');
 			}
 	

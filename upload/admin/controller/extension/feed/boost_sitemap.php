@@ -745,13 +745,16 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 						$output .= '<changefreq>monthly</changefreq>';
 						$output .= '<priority>0.6</priority>';
 
-						if ($blog['image']) {
-							$image = $this->model_extension_feed_boost_sitemap->resizeImage($blog['image'], 1200, 630, $store['url']);
-							$output .= '<image:image>';
-							$output .= '<image:loc>' . htmlspecialchars($image, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
-							$output .= '<image:title>' . htmlspecialchars($blog['title'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
-							$output .= '</image:image>';
-						}
+							if ($blog['image']) {
+								$image = $this->model_extension_feed_boost_sitemap->resizeImage($blog['image'], 1200, 630, $store['url']);
+
+								if ($image) {
+									$output .= '<image:image>';
+									$output .= '<image:loc>' . htmlspecialchars($image, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
+									$output .= '<image:title>' . htmlspecialchars($blog['title'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
+									$output .= '</image:image>';
+								}
+							}
 
 						$output .= '</url>';
 					}
@@ -1085,11 +1088,15 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 								$output .= '  <priority>1.0</priority>';
 
 								if ($product['image']) {
-									$output .= '  <image:image>';
-									$output .= '  <image:loc>' . htmlspecialchars($this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']), ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
-									$output .= '  <image:caption>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:caption>';
-									$output .= '  <image:title>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
-									$output .= '  </image:image>';
+									$image = $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']);
+
+									if ($image) {
+										$output .= '  <image:image>';
+										$output .= '  <image:loc>' . htmlspecialchars($image, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
+										$output .= '  <image:caption>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:caption>';
+										$output .= '  <image:title>' . htmlspecialchars($product['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
+										$output .= '  </image:image>';
+									}
 								}
 
 								$output .= '</url>';
@@ -1165,20 +1172,24 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							
 						$categories = $this->model_extension_feed_boost_sitemap->getCategories($params);
 					
-						foreach ($categories as $category) {
-							$output .= '<url>';
-							$output .= '  <loc>' . $this->link($store['url'], 'product/category', 'path=' . $category['path'], $store['store_id'], $language['language_id']) . '</loc>';
-							$output .= '  <changefreq>weekly</changefreq>';
-							$output .= '  <lastmod>' . date('c', strtotime($category['date_modified'])) . '</lastmod>';
-							$output .= '  <priority>0.5</priority>';
-							
-							if ($category['image']) {
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($category['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $category['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $category['name'] . '</image:title>';
-								$output .= '  </image:image>';
-							}
+							foreach ($categories as $category) {
+								$output .= '<url>';
+								$output .= '  <loc>' . htmlspecialchars($this->link($store['url'], 'product/category', 'path=' . $category['path'], $store['store_id'], $language['language_id']), ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc>';
+								$output .= '  <changefreq>weekly</changefreq>';
+								$output .= '  <lastmod>' . date('c', strtotime($category['date_modified'])) . '</lastmod>';
+								$output .= '  <priority>0.5</priority>';
+
+								if ($category['image']) {
+									$image = $this->model_extension_feed_boost_sitemap->resizeImage($category['image'], $width, $height, $store['url']);
+
+									if ($image) {
+										$output .= '  <image:image>';
+										$output .= '  <image:loc>' . htmlspecialchars($image, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:loc>';
+										$output .= '  <image:caption>' . htmlspecialchars($category['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:caption>';
+										$output .= '  <image:title>' . htmlspecialchars($category['name'], ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</image:title>';
+										$output .= '  </image:image>';
+									}
+								}
 							
 							$output .= '</url>';
 						}
