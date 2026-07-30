@@ -17,8 +17,29 @@
     font-weight: 600;
 }
 
+.tf-filter-heading-copy {
+    min-width: 0;
+}
+
+.tf-filter-active-summary {
+    display: none;
+}
+
 .tf-filter-close,
 .tf-filter-mobile-footer {
+    display: none;
+}
+
+.tf-filter-reset-all {
+    border: 0;
+    background: transparent;
+}
+
+.tf-filter-reset-all .fa {
+    margin: 0 !important;
+}
+
+.tf-filter-reset-all-label {
     display: none;
 }
 
@@ -347,19 +368,20 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     right: 0px;
 }
 
-/* Category filters stay expanded; long value lists scroll independently. */
-.tf-filter .collapse,
-.tf-filter .collapsing {
-    display: block !important;
-    height: auto !important;
-}
-.tf-filter .panel-heading > .fa-chevron-circle-down,
-.tf-filter-group-header .toggle-icon {
-    display: none;
-}
-.tf-filter .panel-heading,
-.tf-filter-group-header {
-    cursor: default;
+/* Desktop filter groups stay expanded; mobile groups become an accordion. */
+@media (min-width: 768px) {
+    .tf-filter .collapse,
+    .tf-filter .collapsing {
+        display: block !important;
+        height: auto !important;
+    }
+    .tf-filter-group-header .toggle-icon {
+        display: none;
+    }
+    .tf-filter .panel-heading,
+    .tf-filter-group-header {
+        cursor: default;
+    }
 }
 
 @media (min-width: 1200px){
@@ -403,16 +425,50 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     .tf-filter > .panel-heading,
     .tf-filter > .panel-heading:not(.collapsed) {
         flex: 0 0 auto;
-        min-height: 64px;
-        padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+        min-height: 68px;
+        padding: max(10px, env(safe-area-inset-top)) 16px 10px;
         border-bottom: 1px solid #e3e7ea;
         background: #fff;
+        box-shadow: 0 2px 12px rgba(0, 36, 61, .05);
+        z-index: 2;
+    }
+    .tf-filter-heading-copy {
+        flex: 1 1 auto;
     }
     .tf-filter > .panel-heading .panel-title {
-        font-size: 20px;
-        line-height: 28px;
+        margin: 0;
+        color: #00243d;
+        font-size: 19px;
+        line-height: 24px;
     }
-    .tf-filter > .panel-heading > .fa-chevron-circle-down {
+    .tf-filter-active-summary {
+        display: block;
+        margin-top: 1px;
+        color: #72808a;
+        font-size: 12px;
+        line-height: 16px;
+    }
+    .tf-filter-reset-all {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 6px 8px;
+        margin-left: 6px;
+        border-radius: 6px;
+        color: #c62828 !important;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 20px;
+    }
+    .tf-filter-reset-all:hover,
+    .tf-filter-reset-all:focus {
+        background: #fff1f1;
+        outline: 2px solid transparent;
+    }
+    .tf-filter-reset-all-label {
+        display: inline;
+    }
+    .tf-filter-reset-all .fa {
         display: none;
     }
     .tf-filter-close {
@@ -422,12 +478,12 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
         width: 44px;
         height: 44px;
         padding: 0;
-        margin: -4px -6px -4px auto;
+        margin: -2px -6px -2px 6px;
         border: 0;
         border-radius: 50%;
-        background: transparent;
+        background: #f3f5f6;
         color: #00243d;
-        font-size: 34px;
+        font-size: 30px;
         font-weight: 300;
         line-height: 1;
     }
@@ -442,50 +498,215 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
         flex: 1 1 auto;
         height: auto !important;
         min-height: 0;
-        padding: 4px 16px 24px;
+        padding: 10px 12px 24px;
+        background: #f4f6f7;
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
     }
     .tf-filter-group {
+        width: 100%;
+        margin: 0 0 10px;
         padding-right: 0;
         padding-left: 0;
+        overflow: hidden;
+        border: 1px solid #e2e7ea;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 36, 61, .03);
     }
     .tf-filter-group-header {
-        min-height: 52px;
-        padding: 12px 4px;
+        min-height: 54px;
+        padding: 13px 14px;
+        color: #00243d;
         font-size: 16px !important;
+        font-weight: 600;
+        line-height: 22px;
+        cursor: pointer;
+    }
+    .tf-filter-group-header:hover,
+    .tf-filter-group-header:focus {
+        background: #f8fafb;
+        outline: 2px solid transparent;
+    }
+    .tf-filter-group-header .toggle-icon {
+        display: inline-block;
+        flex: 0 0 auto;
+        width: 24px;
+        margin-left: auto;
+        color: #65737d;
+        text-align: right;
+    }
+    .tf-filter-group-selection-count {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        margin-left: 8px;
+        border-radius: 999px;
+        background: #e30613;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 22px;
+    }
+    .tf-filter-group-selection-count.is-visible {
+        display: inline-flex;
+    }
+    .tf-filter-group-header .tf-filter-reset {
+        flex: 0 0 auto;
+        padding: 4px 6px;
+        margin: -4px 2px -4px 4px;
+        border-radius: 5px;
+        color: #7b878f !important;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 18px;
+    }
+    .tf-filter-group-header .tf-filter-reset:hover,
+    .tf-filter-group-header .tf-filter-reset:focus {
+        background: #eef2f4;
+        outline: 2px solid transparent;
+    }
+    .tf-filter-group-header .tf-filter-reset .fa {
+        display: none;
+    }
+    .tf-filter-group-header .tf-filter-reset:after {
+        content: attr(data-reset-label);
     }
     .tf-filter-group-content,
     .tf-filter-group-search {
-        padding-right: 4px;
-        padding-left: 4px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+    .tf-filter-group-content {
+        padding-top: 0;
+        padding-bottom: 10px;
+    }
+    .tf-filter-group-search {
+        padding-top: 2px;
+        padding-bottom: 8px;
+    }
+    .tf-filter-group-search .fa {
+        top: 23px;
+        left: 26px;
+        transform: translateY(-50%);
+        font-size: 14px;
+    }
+    .tf-filter-group-search input {
+        height: 42px;
+        padding: 8px 12px 8px 31px !important;
+        border: 1px solid #dce2e6;
+        border-radius: 8px;
+        background: #f7f9fa;
+        color: #00243d;
+        font-size: 15px;
+    }
+    .tf-filter-group-search input:focus {
+        border: 1px solid #8da0ac;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 36, 61, .08);
     }
     .tf-filter-value {
-        min-height: 44px;
+        min-height: 46px;
         margin-bottom: 0;
+        border-bottom: 1px solid #eef1f3;
+        transition: background-color .15s ease;
+    }
+    .tf-filter-value:last-of-type {
+        border-bottom: 0;
+    }
+    .tf-filter-value.is-selected {
+        margin-right: -6px;
+        margin-left: -6px;
+        padding-right: 6px;
+        padding-left: 6px;
+        border-radius: 7px;
+        background: #fff3f3;
     }
     .tf-filter-value .form-check-label {
         display: flex;
+        flex: 1 1 auto;
         align-items: center;
-        min-height: 44px;
+        min-width: 0;
+        min-height: 46px;
+        padding: 7px 0;
         margin-bottom: 0;
+        color: #183b52;
+        font-size: 15px;
+        line-height: 21px;
         cursor: pointer;
     }
     .tf-filter-group-content .tf-product-total {
-        padding: .45em .7em;
+        flex: 0 0 auto;
+        min-width: 32px;
+        padding: .35em .6em;
+        margin-left: 10px;
+        background: #f3f5f6;
+        color: #66747e;
+        font-size: 13px;
+        line-height: 18px;
+        text-align: center;
     }
     .tf-filter-value.form-check .checkmark {
-        width: 22px;
-        height: 22px;
-        flex: 0 0 22px;
+        width: 21px;
+        height: 21px;
+        flex: 0 0 21px;
+        border-color: #cbd3d8;
+        border-radius: 5px;
+    }
+    html[dir="ltr"] .tf-filter-value.form-check .checkmark {
+        margin-right: 10px;
+    }
+    html[dir="rtl"] .tf-filter-value.form-check .checkmark {
+        margin-left: 10px;
+    }
+    .tf-filter-value.form-check input:checked + .checkmark {
+        border: 2px solid #e30613;
+        border-radius: 5px;
+        background: #e30613;
+    }
+    .tf-filter-value.form-check input:checked + .checkmark:before {
+        color: #fff;
+        font-size: 13px;
+        line-height: 17px;
+    }
+    .tf-filter-value.form-check.custom-radio input:checked + .checkmark {
+        border-radius: 50%;
+    }
+    .tf-filter-group.sub_category .checkmark {
+        display: none;
+    }
+    .tf-filter-group.sub_category .form-check-label,
+    .tf-filter-group.sub_category .tf-filter-link {
+        width: 100%;
+    }
+    .tf-filter-group.sub_category .tf-filter-link {
+        display: flex;
+        align-items: center;
+        min-height: 46px;
+        color: #183b52;
+    }
+    .tf-filter-group.sub_category .tf-filter-link:after {
+        content: "\f105";
+        flex: 0 0 auto;
+        margin-left: auto;
         margin-right: 8px;
+        padding-left: 10px;
+        color: #9aa6ae;
+        font-family: FontAwesome;
+        font-size: 16px;
+    }
+    .tf-filter-group.sub_category .tf-filter-link.disabled:after {
+        display: none;
     }
     .tf-filter-mobile-footer {
         display: block;
         flex: 0 0 auto;
-        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
         border-top: 1px solid #e3e7ea;
         background: #fff;
         box-shadow: 0 -8px 24px rgba(0, 36, 61, .08);
@@ -493,7 +714,8 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
     .tf-filter-show-products {
         width: 100%;
         min-height: 48px;
-        border-radius: 6px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(196, 0, 12, .2);
         font-size: 16px;
         font-weight: 600;
     }
@@ -502,6 +724,6 @@ html[dir="rtl"] .tf-filter-value.form-check .checkmark{
         border: none;
     }
     .col-xs-12.tf-filter-group:not(:last-child) {
-        border-bottom: 1px solid #e2e0db
+        border-bottom: 1px solid #e2e7ea;
     }
 }

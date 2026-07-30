@@ -1,10 +1,15 @@
 <div id="tf-filter-{{ module_class_id }}" class="panel tf-filter panel-default filter-container">
-  <div data-toggle="collapse" href="#tf-filter-content-{{ module_class_id }}" class="panel-heading{{ collapsed?' collapsed' }}">
-    <h4 class="panel-title">{{ heading_title }}</h4>
+  <div class="panel-heading">
+    <div class="tf-filter-heading-copy">
+      <h4 class="panel-title">{{ heading_title }}</h4>
+      <span class="tf-filter-active-summary" data-selected-template="{{ text_selected_filters }}" aria-live="polite"></span>
+    </div>
     {% if reset_all %}
-      <span data-tf-reset="all" data-toggle="tooltip" title="{{ text_reset_all }}" class="tf-filter-reset hide text-danger"><i class="fa fa-times"></i></span>
+      <button type="button" data-tf-reset="all" title="{{ text_reset_all }}" class="tf-filter-reset tf-filter-reset-all hide text-danger">
+        <span class="tf-filter-reset-all-label">{{ text_reset_all }}</span>
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </button>
     {% endif %}
-    <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
     <button type="button" class="tf-filter-close" aria-label="{{ text_close_filter }}" title="{{ text_close_filter }}">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -437,6 +442,23 @@
   $(document).ready(function() {
     var $filter = $('#tf-filter-{{ module_class_id }}');
     var $filterTrigger = $();
+    var $groupHeaders = $filter.find('.tf-filter-group-header');
+    var mobileMedia = window.matchMedia('(max-width: 767px)');
+    var isMobileMode = null;
+
+    $groupHeaders.each(function() {
+      var $header = $(this);
+      $header.attr('data-collapse-target', $header.attr('data-target') || $header.attr('href'));
+    });
+
+    $filter.find('.tf-filter-group [data-tf-reset]').each(function() {
+      var $reset = $(this);
+      var resetLabel = $reset.attr('data-original-title') || $reset.attr('title');
+      $reset.attr({
+        'aria-label': resetLabel,
+        'data-reset-label': resetLabel
+      });
+    });
 
     function closeMobileFilter(restoreFocus) {
       $('.body-cover').removeClass('active');
@@ -449,6 +471,114 @@
       }
     }
 
+    function getGroupSelectionCount($group) {
+      var count = $group.find('input[type="checkbox"]:checked,input[type="radio"]:checked').length;
+      var $textInput = $group.find('input[type="text"]');
+      var $minPrice = $group.find('[name="tf_fp[min]"]');
+      var $maxPrice = $group.find('[name="tf_fp[max]"]');
+
+      if ($textInput.length && $.trim($textInput.val())) {
+        count += 1;
+      }
+
+      if (($minPrice.length && $minPrice.val() !== $minPrice.attr('min'))
+          || ($maxPrice.length && $maxPrice.val() !== $maxPrice.attr('max'))) {
+        count += 1;
+      }
+
+      return count;
+    }
+
+    function updateSelectionSummary() {
+      var total = 0;
+      var selectedTemplate = $filter.find('.tf-filter-active-summary').data('selected-template') || '%s';
+
+      $filter.find('.tf-filter-value').each(function() {
+        $(this).toggleClass('is-selected', $(this).find('input:checked').length > 0);
+      });
+
+      $filter.find('.tf-filter-group').each(function() {
+        var $group = $(this);
+        var groupCount = getGroupSelectionCount($group);
+        var $header = $group.children('.tf-filter-group-header');
+        var $badge = $header.find('.tf-filter-group-selection-count');
+
+        total += groupCount;
+
+        if (!$badge.length) {
+          $badge = $('<span class="tf-filter-group-selection-count" aria-hidden="true"></span>');
+          $header.find('.tf-filter-group-title').after($badge);
+        }
+
+        $badge.text(groupCount).toggleClass('is-visible', groupCount > 0);
+      });
+
+      $filter.find('.tf-filter-active-summary').text(selectedTemplate.replace('%s', total));
+      $filter.find('[data-tf-reset="all"]').toggleClass('hide', total === 0);
+    }
+
+    function syncGroupHeader($panel) {
+      var isOpen = $panel.hasClass('in');
+      var panelId = $panel.attr('id');
+      var $header = $filter.find('.tf-filter-group-header[data-collapse-target="#' + panelId + '"]');
+
+      $header.toggleClass('collapsed', !isOpen).attr('aria-expanded', isOpen ? 'true' : 'false');
+      $panel.attr('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    function configureFilterGroups() {
+      var shouldUseMobile = mobileMedia.matches;
+
+      if (shouldUseMobile === isMobileMode) {
+        return;
+      }
+
+      isMobileMode = shouldUseMobile;
+
+      if (shouldUseMobile) {
+        $filter.attr('aria-hidden', $('html').hasClass('side-filter-open') ? 'false' : 'true');
+
+        $groupHeaders.each(function() {
+          var $header = $(this);
+          $header
+            .attr({
+              'data-toggle': 'collapse',
+              'data-target': $header.attr('data-collapse-target'),
+              'role': 'button',
+              'tabindex': '0'
+            })
+            .removeAttr('href');
+        });
+
+        var $panels = $filter.find('.tf-filter-group > .collapse');
+        $panels.removeClass('in').css('height', '').attr('aria-expanded', 'false');
+        $groupHeaders.addClass('collapsed').attr('aria-expanded', 'false');
+
+        var $activeGroup = $filter.find('.tf-filter-group').filter(function() {
+          return getGroupSelectionCount($(this)) > 0;
+        }).first();
+
+        if ($activeGroup.length) {
+          var $activePanel = $activeGroup.children('.collapse');
+          $activePanel.addClass('in').attr('aria-expanded', 'true');
+          syncGroupHeader($activePanel);
+        }
+      } else {
+        $filter.removeAttr('aria-hidden');
+
+        $groupHeaders
+          .removeClass('collapsed')
+          .removeAttr('data-toggle data-target href role tabindex')
+          .attr('aria-expanded', 'true');
+
+        $filter
+          .find('.tf-filter-group > .collapse')
+          .addClass('in')
+          .attr('aria-expanded', 'true')
+          .css('height', 'auto');
+      }
+    }
+
     function prepareFilterTrigger() {
       $filterTrigger = $('.filter-trigger-btn');
 
@@ -456,10 +586,12 @@
         .addClass('active')
         .attr({
           'aria-controls': 'tf-filter-{{ module_class_id }}',
-          'aria-expanded': 'false'
+          'aria-expanded': 'false',
+          'role': 'button',
+          'tabindex': '0'
         })
         .html('<i class="fa fa-sliders" aria-hidden="true"></i><span>{{ heading_title }}</span>')
-        .off('click.tfFilter{{ module_class_id }}')
+        .off('click.tfFilter{{ module_class_id }} keydown.tfFilter{{ module_class_id }}')
         .on('click.tfFilter{{ module_class_id }}', function(e){
           e.preventDefault();
           $('html').addClass('no-scroll side-filter-open');
@@ -470,28 +602,47 @@
           window.setTimeout(function() {
             $filter.find('.tf-filter-close').focus();
           }, 50);
+        })
+        .on('keydown.tfFilter{{ module_class_id }}', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            $(this).trigger('click');
+          }
         });
 
       $('#product-view').addClass('has-category-filter');
     }
 
-    function keepFilterGroupsOpen() {
-      $filter
-        .find('> .panel-heading, .tf-filter-group-header')
-        .removeClass('collapsed')
-        .removeAttr('data-toggle href data-target')
-        .attr('aria-expanded', 'true');
-
-      $filter
-        .find('> .tf-list-filter-group, .tf-filter-group > .collapse')
-        .addClass('in')
-        .attr('aria-expanded', 'true')
-        .css('height', 'auto');
-    }
-
-    keepFilterGroupsOpen();
+    configureFilterGroups();
+    updateSelectionSummary();
     prepareFilterTrigger();
     $(document).on('tf-filter:results-updated.tfFilter{{ module_class_id }}', prepareFilterTrigger);
+    $filter.on('change.tfFilterSummary{{ module_class_id }}', updateSelectionSummary);
+
+    $filter.on('show.bs.collapse', '.tf-filter-group > .collapse', function() {
+      if (!mobileMedia.matches) {
+        return;
+      }
+
+      $filter.find('.tf-filter-group > .collapse.in').not(this).collapse('hide');
+    });
+
+    $filter.on('shown.bs.collapse hidden.bs.collapse', '.tf-filter-group > .collapse', function() {
+      syncGroupHeader($(this));
+    });
+
+    $groupHeaders.on('keydown.tfFilter{{ module_class_id }}', function(e) {
+      if (mobileMedia.matches && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        $(this).trigger('click');
+      }
+    });
+
+    var resizeTimer;
+    $(window).on('resize.tfFilter{{ module_class_id }}', function() {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(configureFilterGroups, 120);
+    });
 
     $filter.find('.tf-filter-close').on('click', function(e) {
       e.preventDefault();
@@ -676,4 +827,4 @@
     });
   });
 </script>
-<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.4" rel="stylesheet" media="screen" />
+<link href="catalog/view/theme/default/stylesheet/tf_filter.css?v=20260730.8" rel="stylesheet" media="screen" />

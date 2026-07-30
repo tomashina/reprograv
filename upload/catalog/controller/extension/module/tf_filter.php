@@ -219,6 +219,7 @@ class ControllerExtensionModuleTfFilter extends Controller
 
         $data['text_close_filter'] = $this->language->get('text_close_filter');
         $data['text_show_products'] = $this->language->get('text_show_products');
+        $data['text_selected_filters'] = $this->language->get('text_selected_filters');
         $data['module_class_id'] = self::$module_class_id++;
 
         return $this->load->view('extension/module/tf_filter', $data);

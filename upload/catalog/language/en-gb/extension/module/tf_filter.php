@@ -21,3 +21,4 @@ $_['text_see_more']     =   'See more';
 $_['text_see_less']     =   'See less';
 $_['text_close_filter']  =   'Close filters';
 $_['text_show_products'] =   'Show products';
+$_['text_selected_filters'] = 'Selected: %s';

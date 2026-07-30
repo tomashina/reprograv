@@ -21,3 +21,4 @@ $_['text_see_more']     =   'Pogledaj više';
 $_['text_see_less']     =   'Pogledaj manje';
 $_['text_close_filter']  =   'Zatvori filtere';
 $_['text_show_products'] =   'Prikaži proizvode';
+$_['text_selected_filters'] = 'Odabrano: %s';
