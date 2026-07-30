@@ -12,6 +12,24 @@ class ModelCatalogCategory extends Model {
 		return $query->rows;
 	}
 
+	public function getCategoriesForNavigation() {
+		$query = $this->db->query("SELECT c.category_id, c.parent_id, c.sort_order, cd.name FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND c.status = '1' ORDER BY c.parent_id, c.sort_order, LCASE(cd.name)");
+
+		return $query->rows;
+	}
+
+	public function getCategoryProductTotals() {
+		$query = $this->db->query("SELECT cp.path_id AS category_id, COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (cp.category_id = p2c.category_id) LEFT JOIN " . DB_PREFIX . "product p ON (p2c.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' GROUP BY cp.path_id");
+
+		$totals = array();
+
+		foreach ($query->rows as $result) {
+			$totals[(int)$result['category_id']] = (int)$result['total'];
+		}
+
+		return $totals;
+	}
+
 	public function getCategoryFilters($category_id) {
 		$implode = array();
 

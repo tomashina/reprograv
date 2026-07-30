@@ -80,8 +80,8 @@ class ControllerExtensionModuleTfFilter extends Controller
             $data['filters'][] = $this->getPriceFilter();
         }
 
-        // Sub category
-        if ($this->info['filter']['sub_category']['status'] && $this->category_id && $this->sub_category) {
+        // Category navigation is rendered as its own hierarchy on category pages.
+        if (!$this->registry->get('category_navigation_active') && $this->info['filter']['sub_category']['status'] && $this->category_id && $this->sub_category) {
             $data['filters'][] = $this->getSubCategoryFilter();
         }
 

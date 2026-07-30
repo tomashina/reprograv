@@ -65,8 +65,8 @@
 		  </div>
 		  <div class="quickcheckoutright">
 
-              <div class="quickcheckout-heading"><i class="fa fa-credit-card"></i>{{ text_basket }}</div>
 			{% if quickcheckout_layout == '2' %}
+              <div class="quickcheckout-heading"><i class="fa fa-credit-card"></i>{{ text_basket }}</div>
 			<div class="totals-slip">
 			  {% if cart_module %}
 			  <div id="cart1">
@@ -94,6 +94,7 @@
 
 		  {% if quickcheckout_layout == '1' or quickcheckout_layout == '3' %}
 			<div class="quickcheckoutleft cart-module-holder">
+			<div class="quickcheckout-heading"><i class="fa fa-shopping-basket"></i>{{ text_basket }}</div>
 			<div class="totals-slip">
 			  {% if cart_module %}
 			  <div id="cart1">

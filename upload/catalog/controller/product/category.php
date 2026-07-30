@@ -216,36 +216,43 @@ class ControllerProductCategory extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
-			$data['category_navigation'] = array();
-			$data['category_navigation_parent'] = array();
+				$navigation_categories = $this->model_catalog_category->getCategoriesForNavigation();
+				$navigation_totals = $this->model_catalog_category->getCategoryProductTotals();
+				$navigation_by_parent = array();
+				$navigation_by_id = array();
 
-			$parent_category_id = (int)$category_info['parent_id'];
+				foreach ($navigation_categories as $navigation_category) {
+					$navigation_category_id = (int)$navigation_category['category_id'];
+					$navigation_parent_id = (int)$navigation_category['parent_id'];
 
-			if ($parent_category_id) {
-				$parent_category_info = $this->model_catalog_category->getCategory($parent_category_id);
-				$parent_path = isset($path) && $path ? $path : (string)$parent_category_id;
-
-				if ($parent_category_info) {
-					$data['category_navigation_parent'] = array(
-						'name' => $parent_category_info['name'],
-						'href' => $this->url->link('product/category', 'path=' . $parent_path)
-					);
+					$navigation_by_id[$navigation_category_id] = $navigation_category;
+					$navigation_by_parent[$navigation_parent_id][] = $navigation_category;
 				}
 
-				foreach ($this->model_catalog_category->getCategories($parent_category_id) as $sibling_category) {
-					$sibling_filter_data = array(
-						'filter_category_id'  => $sibling_category['category_id'],
-						'filter_sub_category' => true
-					);
+				$active_category_ids = array();
+				$active_category_id = $category_id;
+				$active_category_guard = 0;
 
-					$data['category_navigation'][] = array(
-						'name'     => $sibling_category['name'],
-						'total'    => $this->model_catalog_product->getTotalProducts($sibling_filter_data),
-						'current'  => (int)$sibling_category['category_id'] === $category_id,
-						'href'     => $this->url->link('product/category', 'path=' . $parent_path . '_' . (int)$sibling_category['category_id'])
-					);
+				while ($active_category_id && isset($navigation_by_id[$active_category_id]) && $active_category_guard < 20) {
+					array_unshift($active_category_ids, $active_category_id);
+					$active_category_id = (int)$navigation_by_id[$active_category_id]['parent_id'];
+					$active_category_guard++;
 				}
-			}
+
+				$visited_category_ids = array();
+				$data['category_navigation'] = $this->buildCategoryNavigation(
+					0,
+					'',
+					$category_id,
+					$active_category_ids,
+					$navigation_by_parent,
+					$navigation_totals,
+					$visited_category_ids
+				);
+
+				if ($data['category_navigation']) {
+					$this->registry->set('category_navigation_active', true);
+				}
 
 			$data['categories'] = array();
 
@@ -568,5 +575,46 @@ class ControllerProductCategory extends Controller {
 		}
 
 		return $value;
+	}
+
+	private function buildCategoryNavigation($parent_category_id, $parent_path, $current_category_id, $active_category_ids, &$categories_by_parent, &$category_totals, &$visited_category_ids, $depth = 0) {
+		$navigation = array();
+
+		if ($depth > 12 || empty($categories_by_parent[$parent_category_id])) {
+			return $navigation;
+		}
+
+		foreach ($categories_by_parent[$parent_category_id] as $category) {
+			$category_id = (int)$category['category_id'];
+
+			if (isset($visited_category_ids[$category_id])) {
+				continue;
+			}
+
+			$visited_category_ids[$category_id] = true;
+			$category_path = $parent_path ? $parent_path . '_' . $category_id : (string)$category_id;
+			$children = $this->buildCategoryNavigation(
+				$category_id,
+				$category_path,
+				$current_category_id,
+				$active_category_ids,
+				$categories_by_parent,
+				$category_totals,
+				$visited_category_ids,
+				$depth + 1
+			);
+
+			$navigation[] = array(
+				'category_id' => $category_id,
+				'name'        => $category['name'],
+				'total'       => isset($category_totals[$category_id]) ? $category_totals[$category_id] : 0,
+				'current'     => $category_id === (int)$current_category_id,
+				'expanded'    => in_array($category_id, $active_category_ids),
+				'href'        => $this->url->link('product/category', 'path=' . $category_path),
+				'children'    => $children
+			);
+		}
+
+		return $navigation;
 	}
 }

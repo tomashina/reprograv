@@ -1,23 +1,53 @@
-.quickcheckoutleft {
-	width: 49%;
-	float: left;
-	padding-right: 50px;
-border-right: 10px solid #f7f7f7;
-}
-.quickcheckoutright {
-	width: 49%;
-	float: right;
-}
-.quickcheckoutmid {
-	width: 100%;
+#quickcheckout-disable {
+	display:grid;
+	grid-template-columns:minmax(0, 1.12fr) minmax(360px, .88fr);
+	gap:0 20px;
+	align-items:start;
 }
 
-@media (max-width: 991px) {
-
-.quickcheckoutleft {
-  width: 49%;
-  float: left;
-  padding-right: 0px;
-  border-right: none;
+#quickcheckout-disable > .quickcheckoutmid {
+	grid-column:1 / -1;
+	width:auto;
 }
+
+#quickcheckout-disable > .quickcheckoutleft {
+	grid-column:1;
+	width:auto;
+	padding:0;
+	border:0;
+	float:none;
+}
+
+#quickcheckout-disable > .quickcheckoutright {
+	grid-column:2;
+	width:auto;
+	padding:0;
+	float:none;
+}
+
+#quickcheckout-disable > div[style*="clear"] {
+	display:none;
+}
+
+@media (min-width:992px) {
+	#quickcheckout-disable > .quickcheckoutright {
+		position:sticky;
+		top:18px;
 	}
+}
+
+@media (max-width:991px) {
+	#quickcheckout-disable {
+		grid-template-columns:1fr;
+		gap:0;
+	}
+
+	#quickcheckout-disable > .quickcheckoutmid,
+	#quickcheckout-disable > .quickcheckoutleft,
+	#quickcheckout-disable > .quickcheckoutright {
+		grid-column:1;
+		width:100%;
+		padding:0;
+		border:0;
+	}
+}

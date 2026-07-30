@@ -1,3 +1,35 @@
+{% macro category_navigation_items(items, level) %}
+    <ul class="category-sibling-list category-tree-list category-tree-level-{{ level }}">
+        {% for navigation_category in items %}
+            <li class="category-tree-item{{ navigation_category.children ? ' has-children' : '' }}{{ navigation_category.expanded ? ' is-expanded' : '' }}">
+                <div class="category-tree-row{{ navigation_category.current ? ' is-current' : '' }}">
+                    <a href="{{ navigation_category.href }}" class="category-tree-link"{{ navigation_category.current ? ' aria-current="page"' : '' }}>
+                        <span>{{ navigation_category.name }}</span>
+                    </a>
+                    {% if navigation_category.children %}
+                        <button
+                            type="button"
+                            class="category-tree-toggle"
+                            data-category-tree-toggle
+                            aria-expanded="{{ navigation_category.expanded ? 'true' : 'false' }}"
+                            aria-controls="category-tree-children-{{ navigation_category.category_id }}"
+                            aria-label="{{ navigation_category.name }}"
+                        >
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </button>
+                    {% endif %}
+                    <span class="category-sibling-total">{{ navigation_category.total }}</span>
+                </div>
+                {% if navigation_category.children %}
+                    <div id="category-tree-children-{{ navigation_category.category_id }}" class="category-tree-children"{{ not navigation_category.expanded ? ' hidden' : '' }}>
+                        {{ _self.category_navigation_items(navigation_category.children, level + 1) }}
+                    </div>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 {{ header }}
 <div class="container category-catalogue-page">
 
@@ -17,38 +49,45 @@
 
     {% endif %}
 
-    {% set show_category_navigation = category_navigation and not column_left %}
+    {% set show_category_navigation = category_navigation %}
 
     <div class="row">
 
 
 
-        {{ column_left }}
-
         {% if show_category_navigation %}
-            <aside id="category-navigation" class="category-navigation-sidebar column col-sm-4 col-md-3">
-                <nav class="category-sibling-filter" aria-labelledby="category-navigation-title">
-                    <div class="category-sibling-filter-heading">
-                        <h2 id="category-navigation-title">{{ text_category_navigation }}</h2>
+            <aside id="category-navigation" class="category-navigation-sidebar column col-sm-4 col-md-3{{ column_left ? ' category-sidebar-stack' : '' }}">
+                {% if column_left %}
+                    <div class="category-sidebar-tabs" role="tablist" aria-label="{{ text_category_navigation }}">
+                        <button type="button" id="category-sidebar-tab-filters" class="category-sidebar-tab" role="tab" aria-selected="false" aria-controls="category-sidebar-panel-filters" tabindex="-1" data-category-sidebar-tab="filters">
+                            <i class="fa fa-sliders" aria-hidden="true"></i>
+                            <span>Filter</span>
+                        </button>
+                        <button type="button" id="category-sidebar-tab-categories" class="category-sidebar-tab is-active" role="tab" aria-selected="true" aria-controls="category-sidebar-panel-categories" data-category-sidebar-tab="categories">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                            <span>{{ text_category_navigation }}</span>
+                        </button>
                     </div>
-                    {% if category_navigation_parent %}
-                        <a class="category-sibling-parent" href="{{ category_navigation_parent.href }}">
-                            <i class="fa fa-angle-left" aria-hidden="true"></i>
-                            {{ text_back_to_category|format(category_navigation_parent.name) }}
-                        </a>
-                    {% endif %}
-                    <ul class="category-sibling-list">
-                        {% for navigation_category in category_navigation %}
-                            <li>
-                                <a href="{{ navigation_category.href }}" class="category-sibling-link{{ navigation_category.current ? ' is-current' : '' }}"{{ navigation_category.current ? ' aria-current="page"' : '' }}>
-                                    <span>{{ navigation_category.name }}</span>
-                                    <span class="category-sibling-total">{{ navigation_category.total }}</span>
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </nav>
+                {% endif %}
+                <div id="category-sidebar-panel-categories" class="category-sidebar-panel" role="{{ column_left ? 'tabpanel' : 'presentation' }}"{{ column_left ? ' aria-labelledby="category-sidebar-tab-categories"' : '' }} data-category-sidebar-panel="categories">
+                    <nav class="category-sibling-filter category-tree-navigation" aria-labelledby="category-navigation-title">
+                        <div class="category-sibling-filter-heading">
+                            <h2 id="category-navigation-title">{{ text_category_navigation }}</h2>
+                            <button type="button" class="category-mobile-drawer-close hidden-sm hidden-md hidden-lg" aria-label="{{ text_category_navigation }}" title="{{ text_category_navigation }}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {{ _self.category_navigation_items(category_navigation, 0) }}
+                    </nav>
+                </div>
+                {% if column_left %}
+                    <div id="category-sidebar-panel-filters" class="category-filter-column category-sidebar-panel" role="tabpanel" aria-labelledby="category-sidebar-tab-filters" data-category-sidebar-panel="filters" hidden>
+                        {{ column_left }}
+                    </div>
+                {% endif %}
             </aside>
+        {% else %}
+            {{ column_left }}
         {% endif %}
 
         {% if column_left and column_right %}
@@ -228,13 +267,138 @@
 
 </div>
 
+<script>
+    (function($) {
+        var mobileCategoryMedia = window.matchMedia('(max-width: 767px)');
+        var $categoryDrawer = $('#category-navigation');
+        var $categoryDrawerTrigger = $('.filter-trigger-btn');
+
+        function activateCategorySidebarPanel(panelName, focusTab) {
+            var $tabs = $categoryDrawer.find('[data-category-sidebar-tab]');
+            var $panels = $categoryDrawer.find('[data-category-sidebar-panel]');
+            var $activeTab = $tabs.filter('[data-category-sidebar-tab="' + panelName + '"]');
+            var $activePanel = $panels.filter('[data-category-sidebar-panel="' + panelName + '"]');
+
+            if (!$activeTab.length || !$activePanel.length) {
+                return;
+            }
+
+            $tabs
+                .removeClass('is-active')
+                .attr({'aria-selected': 'false', 'tabindex': '-1'});
+            $activeTab
+                .addClass('is-active')
+                .attr({'aria-selected': 'true', 'tabindex': '0'});
+            $panels.prop('hidden', true);
+            $activePanel.prop('hidden', false);
+
+            if (focusTab) {
+                $activeTab.focus();
+            }
+        }
+
+        function closeCategoryDrawer(returnFocus) {
+            $('html').removeClass('no-scroll side-filter-open');
+            $('.body-cover').removeClass('active');
+            $categoryDrawer.find('.tf-filter').attr('aria-hidden', 'true');
+            $categoryDrawerTrigger.attr('aria-expanded', 'false');
+
+            if (returnFocus && $categoryDrawerTrigger.length) {
+                $categoryDrawerTrigger.focus();
+            }
+        }
+
+        function prepareCategoryDrawer() {
+            if (!$categoryDrawer.length || !mobileCategoryMedia.matches) {
+                return;
+            }
+
+            if (!$categoryDrawerTrigger.hasClass('active')) {
+                $categoryDrawerTrigger
+                    .addClass('active')
+                    .attr({
+                        'aria-controls': 'category-navigation',
+                        'aria-expanded': 'false',
+                        'role': 'button',
+                        'tabindex': '0'
+                    })
+                    .html('<i class="fa fa-sliders" aria-hidden="true"></i><span>{{ text_category_navigation }}</span>');
+            }
+
+            $categoryDrawerTrigger
+                .off('click.rgCategoryDrawer keydown.rgCategoryDrawer')
+                .on('click.rgCategoryDrawer', function(e) {
+                    e.preventDefault();
+                    $('html').addClass('no-scroll side-filter-open');
+                    $('.body-cover').addClass('active');
+                    $categoryDrawer.find('.tf-filter').attr('aria-hidden', 'false');
+                    $categoryDrawerTrigger.attr('aria-expanded', 'true');
+                })
+                .on('keydown.rgCategoryDrawer', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        $(this).trigger('click');
+                    }
+                });
+        }
+
+        $(document)
+            .off('click.rgCategoryTree', '[data-category-tree-toggle]')
+            .on('click.rgCategoryTree', '[data-category-tree-toggle]', function() {
+                var $toggle = $(this);
+                var isExpanded = $toggle.attr('aria-expanded') === 'true';
+                var targetId = $toggle.attr('aria-controls');
+                var $item = $toggle.closest('.category-tree-item');
+                var $children = $('#' + targetId);
+
+                $toggle.attr('aria-expanded', isExpanded ? 'false' : 'true');
+                $item.toggleClass('is-expanded', !isExpanded);
+                $children.prop('hidden', isExpanded);
+            })
+            .off('click.rgCategorySidebarTab', '[data-category-sidebar-tab]')
+            .on('click.rgCategorySidebarTab', '[data-category-sidebar-tab]', function() {
+                activateCategorySidebarPanel($(this).data('category-sidebar-tab'), false);
+            })
+            .off('keydown.rgCategorySidebarTab', '[data-category-sidebar-tab]')
+            .on('keydown.rgCategorySidebarTab', '[data-category-sidebar-tab]', function(e) {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                    return;
+                }
+
+                e.preventDefault();
+                activateCategorySidebarPanel($(this).data('category-sidebar-tab') === 'categories' ? 'filters' : 'categories', true);
+            })
+            .off('click.rgCategoryDrawerClose', '.category-mobile-drawer-close')
+            .on('click.rgCategoryDrawerClose', '.category-mobile-drawer-close', function(e) {
+                e.preventDefault();
+                closeCategoryDrawer(true);
+            });
+
+        $(function() {
+            prepareCategoryDrawer();
+        });
+
+        $(window)
+            .off('resize.rgCategoryDrawer')
+            .on('resize.rgCategoryDrawer', function() {
+                if (!mobileCategoryMedia.matches) {
+                    closeCategoryDrawer(false);
+                } else {
+                    prepareCategoryDrawer();
+                }
+            });
+    })(jQuery);
+</script>
+
 {% if description %}
 
     <div class="container-fluid catdesc">
         <div class="container">
             <div class="row short-description">
-                <div class="col-md-12 mb-5">
-                    {{ description }}
+                <div class="col-md-12 mb-0">
+                    <div class="category-description-card">
+                        {{ description }}
+                    </div>
                 </div>
             </div>
         </div>

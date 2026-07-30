@@ -20,7 +20,7 @@ class ControllerExtensionQuickCheckoutCheckout extends Equotix {
 			$this->document->addScript('catalog/view/javascript/jquery/quickcheckout/quickcheckout.countdown.js');
 		}
 				
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout.css?v=20260730.8');
 		
 		$data['column_layout'] = $this->config->get('quickcheckout_layout');
 		
@@ -32,7 +32,7 @@ class ControllerExtensionQuickCheckoutCheckout extends Equotix {
 			$stylesheet = 'three';
 		}
 		
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout_' . $stylesheet . '.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/quickcheckout_' . $stylesheet . '.css?v=20260730.8');
 		
 		if (!$this->config->get('quickcheckout_debug') || !isset($this->request->get['debug'])) {
 			if (!$this->config->get('quickcheckout_status')) {

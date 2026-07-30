@@ -16,44 +16,48 @@
     {% else %}
     {% set class = 'col-sm-12' %}
     {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
+    <div id="content" class="{{ class }} account-dashboard">{{ content_top }}
     <h1 id="page-title">{{ text_my_account }}</h1>
-      <legend>{{ text_my_account }}</legend>
-      <ul class="list-unstyled margin-b30">
-        <li><a href="{{ edit }}">{{ text_edit }}</a></li>
-        <li><a href="{{ password }}">{{ text_password }}</a></li>
-        <li><a href="{{ address }}">{{ text_address }}</a></li>
-        <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
-      </ul>
+      <section class="account-dashboard-section">
+        <legend>{{ text_my_account }}</legend>
+        <ul class="list-unstyled account-dashboard-grid">
+          <li><a href="{{ edit }}"><i class="fa fa-user" aria-hidden="true"></i><span>{{ text_edit }}</span></a></li>
+          <li><a href="{{ password }}"><i class="fa fa-lock" aria-hidden="true"></i><span>{{ text_password }}</span></a></li>
+          <li><a href="{{ address }}"><i class="fa fa-map-marker" aria-hidden="true"></i><span>{{ text_address }}</span></a></li>
+          <li><a href="{{ wishlist }}"><i class="fa fa-heart-o" aria-hidden="true"></i><span>{{ text_wishlist }}</span></a></li>
+        </ul>
+      </section>
       {% if credit_cards %}
-      <h2>{{ text_credit_card }}</h2>
-      <ul class="list-unstyled">
-        {% for credit_card in credit_cards %}
-        <li><a href="{{ credit_card.href }}">{{ credit_card.name }}</a></li>
-        {% endfor %}
-      </ul>
+      <section class="account-dashboard-section">
+        <legend>{{ text_credit_card }}</legend>
+        <ul class="list-unstyled account-dashboard-grid">
+          {% for credit_card in credit_cards %}
+          <li><a href="{{ credit_card.href }}"><i class="fa fa-credit-card" aria-hidden="true"></i><span>{{ credit_card.name }}</span></a></li>
+          {% endfor %}
+        </ul>
+      </section>
       {% endif %}
-      <legend>{{ text_my_orders }}</legend>
-      <ul class="list-unstyled margin-b30">
-        <li><a href="{{ order }}">{{ text_order }}</a></li>
-        
-    
-       
-      </ul>
+      <section class="account-dashboard-section">
+        <legend>{{ text_my_orders }}</legend>
+        <ul class="list-unstyled account-dashboard-grid">
+          <li><a href="{{ order }}"><i class="fa fa-file-text-o" aria-hidden="true"></i><span>{{ text_order }}</span></a></li>
+        </ul>
+      </section>
 
-	  
-      <legend>{{ text_my_newsletter }}</legend>
-      <ul class="list-unstyled margin-b30">
-        <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
-        
-      </ul>
+      <section class="account-dashboard-section">
+        <legend>{{ text_my_newsletter }}</legend>
+        <ul class="list-unstyled account-dashboard-grid">
+          <li><a href="{{ newsletter }}"><i class="fa fa-envelope-o" aria-hidden="true"></i><span>{{ text_newsletter }}</span></a></li>
+        </ul>
+      </section>
 
-      <legend>{{ text_logout }}</legend>
-      <ul class="list-unstyled margin-b30">
-     
-          <li><a href="{{ logout }}">{{ text_logout }}</a></li>
-      </ul>
+      <section class="account-dashboard-section account-dashboard-section-muted">
+        <legend>{{ text_logout }}</legend>
+        <ul class="list-unstyled account-dashboard-grid">
+          <li><a href="{{ logout }}"><i class="fa fa-sign-out" aria-hidden="true"></i><span>{{ text_logout }}</span></a></li>
+        </ul>
+      </section>
       {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>
-{{ footer }} 
+{{ footer }}

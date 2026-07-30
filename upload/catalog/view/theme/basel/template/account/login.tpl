@@ -51,8 +51,8 @@
         <div class="col-sm-6 right">
             <h2 class="lg"><?php echo $text_new_customer; ?></h2>
             <div class="register-text">
-            <p class="margin-b20"><?php echo $text_register_account; ?></p>
-            <a href="<?php echo $register; ?>" class="btn btn-primary"><?php echo $button_continue; ?></a>
+            <div class="register-benefits"><?php echo $text_register_account; ?></div>
+            <a href="<?php echo $register; ?>" class="btn btn-primary register-button"><?php echo $button_continue; ?> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
             </div>
         </div>
         

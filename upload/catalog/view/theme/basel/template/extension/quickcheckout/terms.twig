@@ -1,8 +1,10 @@
 <div id="payment" class="text-left" style="display:none;"></div>
 <div class="terms">
-  <label>{% if text_agree %}
-    {{ text_agree }}
-    <input type="checkbox" name="agree" value="1" />
-  {% endif %}</label>
+  {% if text_agree %}
+    <label class="quickcheckout-agree" for="quickcheckout-agree">
+      <span>{{ text_agree }}</span>
+      <input type="checkbox" name="agree" value="1" id="quickcheckout-agree" />
+    </label>
+  {% endif %}
   <button type="button" id="button-payment-method" class="btn btn-primary" data-loading-text="{{ text_loading }}">{{ button_continue }}</button>
 </div>
