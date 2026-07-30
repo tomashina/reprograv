@@ -14451,3 +14451,655 @@ body[class*="product-product"] .product-detail-tabs .product-specification-row d
 		text-align:center;
 	}
 }
+
+/* Shared editorial typography — home, information pages and site headers */
+:root {
+	--rg-type-heading:#00243d;
+	--rg-type-copy:#526b7a;
+	--rg-type-muted:#6a7e8b;
+	--rg-type-accent:#d10015;
+}
+
+.header6,
+.main-menu-wrapper,
+.breadcrumb-holder,
+.common-home #content,
+body[class^="information-"] #content,
+#footer {
+	font-family:"Source Sans 3", "Segoe UI", Arial, sans-serif;
+	font-optical-sizing:auto;
+}
+
+/* Main, utility and mobile navigation */
+.header6 .top_line {
+	font-weight:600;
+	letter-spacing:.01em;
+}
+
+.header6 .main-menu:not(.vertical) > ul > li {
+	color:var(--rg-type-heading);
+	font-size:18px;
+	font-weight:650;
+	letter-spacing:-.01em;
+}
+
+.header6 .main-menu:not(.vertical) .dropdown-inner ul > li > a {
+	color:#29475a;
+	font-size:15px;
+	font-weight:600;
+	letter-spacing:-.005em;
+	line-height:1.4;
+}
+
+.header6 .main-menu.vertical .menu-heading {
+	color:#fff;
+	font-size:17px;
+	font-weight:700;
+	letter-spacing:-.005em;
+}
+
+.header6 .header-bottom .main-menu.vertical .menu-heading,
+.header6 .header-bottom .main-menu.vertical .menu-heading .icon,
+.header6 .header-bottom .main-menu.vertical .menu-heading .fa {
+	color:#fff !important;
+}
+
+.header6 .main-menu.vertical > ul > li > a {
+	color:#29475a;
+	font-size:15px;
+	font-weight:600;
+	line-height:1.4;
+}
+
+/* Keep the WEB NARUDŽBA tree compact independently of the primary nav. */
+.header6 .header-bottom .main-menu.vertical > ul > li > a {
+	padding:10px 18px;
+	color:#29475a;
+	font-size:16px !important;
+	font-weight:600 !important;
+	line-height:24px;
+}
+
+.header6 .header-bottom .main-menu.vertical > ul > li > .dropdown-content {
+	margin-top:-44px !important;
+}
+
+.header6 .header-bottom .main-menu.vertical > ul > li.dropdown-wrapper > a .fa-angle-down {
+	line-height:44px;
+}
+
+.header6 .header-bottom .main-menu.vertical .dropdown-inner,
+.header6 .header-bottom .main-menu.vertical .narrow .dropdown-inner {
+	padding:12px 14px;
+}
+
+.header6 .header-bottom .main-menu.vertical .dropdown-inner ul > li > a {
+	padding:8px 26px 8px 10px;
+	color:#29475a;
+	font-size:15.5px;
+	font-weight:600;
+	letter-spacing:-.005em;
+	line-height:1.4;
+}
+
+.header6 .header-bottom .main-menu.vertical .dropdown-inner ul > li > a:hover,
+.header6 .header-bottom .main-menu.vertical .dropdown-inner ul > li > a:focus {
+	padding-right:26px;
+	padding-left:10px;
+	color:var(--rg-type-accent);
+}
+
+.header6 .header-bottom .main-menu.vertical .dropdown-inner .hover-menu li.has-sub > ul {
+	min-width:230px;
+	padding:12px 14px;
+}
+
+.header6 .header-bottom .main-menu.vertical .hover-menu li.has-sub .fa-angle-right {
+	right:9px;
+	line-height:38px;
+}
+
+.header6 .full-search-wrapper input,
+.header6 .full-search-wrapper select {
+	color:#29475a;
+	font-family:inherit;
+	font-size:15px;
+	font-weight:500;
+}
+
+.mobile-nav-title {
+	color:var(--rg-type-heading);
+	font-size:19px;
+	font-weight:700;
+	letter-spacing:-.015em;
+}
+
+.mobile-nav-section-title {
+	color:var(--rg-type-muted);
+	font-size:11px;
+	font-weight:700;
+	letter-spacing:.11em;
+}
+
+.main-menu-wrapper > .mobile-nav-scroll > ul > li > a,
+.main-menu-wrapper > .mobile-nav-scroll > ul > li > .menu-parent-button {
+	color:var(--rg-type-heading);
+	font-size:16px;
+	font-weight:650;
+	letter-spacing:-.008em;
+	line-height:1.4;
+}
+
+.main-menu-wrapper .dropdown-inner ul > li > a {
+	color:#29475a;
+	font-size:15px;
+	font-weight:600;
+	line-height:1.45;
+}
+
+/* Page-title headers throughout the site */
+.title_in_bc .breadcrumb-holder #title-holder {
+	font-size:clamp(30px, 2.6vw, 34px);
+	font-weight:700;
+	letter-spacing:-.02em;
+	line-height:1.17;
+	text-transform:none;
+}
+
+.title_in_bc .breadcrumb-holder #title-holder #page-title {
+	line-height:inherit;
+}
+
+.breadcrumb-holder .breadcrumb,
+.breadcrumb-holder .breadcrumb a {
+	color:var(--rg-type-muted);
+	font-size:14px;
+	font-weight:500;
+	line-height:1.5;
+}
+
+/* Reusable module headings on the home and information pages */
+.common-home .widget .widget-title,
+body[class^="information-"] .widget .widget-title {
+	margin-bottom:32px;
+}
+
+.common-home .widget .widget-title .main-title,
+body[class^="information-"] .widget .widget-title .main-title {
+	margin-bottom:9px;
+	color:var(--rg-type-heading);
+	font-size:30px;
+	font-weight:700;
+	letter-spacing:-.02em;
+	line-height:1.2;
+	text-transform:none;
+}
+
+.common-home .widget .widget-title .main-title span,
+body[class^="information-"] .widget .widget-title .main-title span {
+	font:inherit;
+}
+
+.common-home .widget .widget-title .pre-line,
+body[class^="information-"] .widget .widget-title .pre-line {
+	margin-bottom:7px;
+	color:var(--rg-type-accent);
+	font-size:12px;
+	font-weight:700;
+	letter-spacing:.11em;
+	line-height:1.5;
+	text-transform:uppercase;
+}
+
+.common-home .widget .widget-title .sub-line,
+body[class^="information-"] .widget .widget-title .sub-line {
+	max-width:850px;
+	padding-top:0;
+	margin:0 auto 10px;
+	color:var(--rg-type-copy);
+	font-size:17px;
+	font-weight:400;
+	line-height:1.65;
+}
+
+.common-home .widget .widget-title .sub-line span,
+body[class^="information-"] .widget .widget-title .sub-line span {
+	max-width:inherit;
+}
+
+.common-home.widget-title-style2 .widget .widget-title-separator,
+body[class^="information-"].widget-title-style2 .widget .widget-title-separator {
+	margin:11px 0 9px;
+	line-height:2px;
+}
+
+.common-home.widget-title-style2 .widget .widget-title-separator:after,
+body[class^="information-"].widget-title-style2 .widget .widget-title-separator:after {
+	width:44px;
+	height:2px;
+	margin:0;
+	border-radius:2px;
+	background:var(--rg-type-accent) !important;
+}
+
+/* Home category, product and editorial modules */
+.common-home .category-widget .single-category .name {
+	margin:14px 10px 6px;
+	color:var(--rg-type-heading);
+	font-size:18px;
+	font-weight:700;
+	letter-spacing:-.01em;
+	line-height:1.35;
+}
+
+.common-home .category-widget .single-category .u-lined {
+	color:var(--rg-type-copy);
+	font-size:14px;
+	font-weight:650;
+	line-height:1.45;
+}
+
+.common-home .category-widget .single-category .u-lined:hover,
+.common-home .category-widget .single-category .u-lined:focus {
+	color:var(--rg-type-accent);
+}
+
+.common-home .basel-products-module .product-name {
+	color:var(--rg-type-heading);
+	font-size:16px;
+	font-weight:700;
+	letter-spacing:-.008em;
+	line-height:1.38;
+}
+
+.common-home .basel-products-module .btn {
+	font-size:13px;
+	font-weight:700;
+	letter-spacing:0;
+}
+
+.common-home .blog-widget .single-blog .blog-title {
+	margin-bottom:11px;
+	color:var(--rg-type-heading);
+	font-size:21px;
+	font-weight:700;
+	letter-spacing:-.012em;
+	line-height:1.35;
+}
+
+.common-home .blog-widget .single-blog .short-description,
+.common-home .blog-widget .single-blog .short-description p {
+	margin-bottom:0;
+	color:var(--rg-type-copy);
+	font-size:15px;
+	font-weight:400;
+	line-height:1.68;
+}
+
+/* Home and information content-builder copy */
+.common-home .cm_content .cm_item,
+body[class^="information-"] .cm_content .cm_item {
+	color:var(--rg-type-copy);
+	font-size:17px;
+	font-weight:400;
+	line-height:1.68;
+}
+
+.common-home .cm_content .cm_item h2,
+.common-home .cm_content .cm_item h2.homeb,
+body[class^="information-"] .cm_content .cm_item h2,
+body[class^="information-"] .cm_content .cm_item h2.homeb {
+	margin-bottom:14px;
+	color:var(--rg-type-heading) !important;
+	font-size:27px !important;
+	font-weight:700 !important;
+	letter-spacing:-.018em;
+	line-height:1.3;
+}
+
+.common-home .cm_content .cm_item p,
+body[class^="information-"] .cm_content .cm_item p {
+	color:var(--rg-type-copy);
+	font-size:16px;
+	line-height:1.68;
+}
+
+.common-home .cm_content .cm_item p.homeb,
+body[class^="information-"] .cm_content .cm_item p.homeb {
+	margin-bottom:15px;
+	color:var(--rg-type-copy) !important;
+	font-size:17px !important;
+	font-weight:400 !important;
+	line-height:1.68;
+}
+
+.common-home .cm_content .cm_item strong,
+body[class^="information-"] .cm_content .cm_item strong {
+	color:#29495e;
+	font-weight:650;
+}
+
+.common-home .cm_content .cm_item p.xs-red,
+body[class^="information-"] .cm_content .cm_item p.xs-red {
+	margin-bottom:7px;
+	color:var(--rg-type-accent);
+	font-size:12px;
+	font-weight:700;
+	letter-spacing:.11em;
+	line-height:1.5;
+	text-transform:uppercase;
+}
+
+.common-home .cm_content .promo-style-2 h3,
+body[class^="information-"] .cm_content .promo-style-2 h3 {
+	margin-bottom:8px;
+	color:var(--rg-type-heading);
+	font-size:19px;
+	font-weight:700;
+	letter-spacing:-.01em;
+	line-height:1.35;
+}
+
+.common-home .cm_content .promo-style-2 p,
+body[class^="information-"] .cm_content .promo-style-2 p {
+	margin:0 auto 10px;
+	color:var(--rg-type-copy);
+	font-size:15px;
+	line-height:1.65;
+}
+
+.common-home .cm_content .about-widget .btn,
+body[class^="information-"] .cm_content .about-widget .btn {
+	font-size:14px;
+	font-weight:700;
+	letter-spacing:0;
+}
+
+/* Information-page long-form typography */
+body[class^="information-information-"] #content.info {
+	padding-bottom:60px;
+	color:var(--rg-type-copy);
+	font-size:17px;
+	line-height:1.72;
+}
+
+body[class^="information-information-"] #content.info > h2 {
+	margin:0 0 24px;
+	color:var(--rg-type-heading);
+	font-size:28px;
+	font-weight:700;
+	letter-spacing:-.018em;
+	line-height:1.3;
+	text-transform:none;
+}
+
+body[class^="information-information-"] #content.info h3 {
+	margin:30px 0 10px;
+	color:var(--rg-type-heading);
+	font-size:21px;
+	font-weight:700;
+	letter-spacing:-.01em;
+	line-height:1.4;
+	text-transform:none;
+}
+
+body[class^="information-information-"] #content.info h4 {
+	color:var(--rg-type-heading);
+	font-size:18px;
+	font-weight:700;
+	letter-spacing:-.008em;
+	line-height:1.4;
+}
+
+body[class^="information-information-"] #content.info p {
+	margin-bottom:17px;
+	color:var(--rg-type-copy);
+	font-size:17px;
+	line-height:1.72;
+}
+
+body[class^="information-information-"] #content.info strong,
+body[class^="information-information-"] #content.info b {
+	color:#29495e;
+	font-weight:650;
+}
+
+body[class^="information-information-"] #content.info ul,
+body[class^="information-information-"] #content.info ol {
+	margin:0 0 24px 24px;
+	color:var(--rg-type-copy);
+	font-size:17px;
+	line-height:1.65;
+}
+
+body[class^="information-information-"] #content.info ul {
+	list-style:disc;
+}
+
+body[class^="information-information-"] #content.info ol {
+	list-style:decimal;
+}
+
+body[class^="information-information-"] #content.info li + li {
+	margin-top:7px;
+}
+
+body[class^="information-information-"] #content.info a:not(.btn) {
+	color:#183b52;
+	font-weight:600;
+	text-decoration-color:rgba(209, 0, 21, .35);
+	text-decoration-line:underline;
+	text-decoration-thickness:1px;
+	text-underline-offset:3px;
+}
+
+body[class^="information-information-"] #content.info a:not(.btn):hover,
+body[class^="information-information-"] #content.info a:not(.btn):focus {
+	color:var(--rg-type-accent);
+	text-decoration-color:currentColor;
+}
+
+body[class^="information-information-"] #content.info hr {
+	margin:28px 0;
+	border-top-color:#dfe5e8;
+}
+
+body[class^="information-information-"] #content.info table {
+	color:#3f5b6e;
+	font-size:15px;
+	line-height:1.6;
+}
+
+body[class^="information-information-"] #content.info th {
+	color:var(--rg-type-heading);
+	font-weight:700;
+}
+
+/* Catalogue information-page cards */
+.information-information-31 #content.info > p:first-of-type {
+	max-width:850px;
+	margin-bottom:24px;
+}
+
+.information-information-31 #pdf-category-filters .btn {
+	margin:0 6px 8px 0;
+	font-size:13px;
+	font-weight:700;
+	letter-spacing:0;
+}
+
+.information-information-31 .pdf-grid .card {
+	overflow:hidden;
+	border-color:#dfe5e8;
+	border-radius:12px;
+	box-shadow:none;
+}
+
+.information-information-31 .pdf-grid .thumbbox {
+	border-radius:0;
+	border-bottom-color:#dfe5e8;
+	background-color:#f4f6f7;
+}
+
+.information-information-31 .pdf-grid .caption {
+	padding:18px 18px 19px;
+}
+
+.information-information-31 .pdf-grid .caption h4 {
+	min-height:0;
+	margin:0 0 7px !important;
+	color:var(--rg-type-heading);
+	font-size:18px;
+	font-weight:700;
+	letter-spacing:-.01em;
+	line-height:1.4;
+}
+
+.information-information-31 .pdf-grid .caption p {
+	margin:0 0 16px !important;
+	color:var(--rg-type-muted) !important;
+	font-size:12px !important;
+	font-weight:700;
+	letter-spacing:.08em;
+	line-height:1.5 !important;
+	text-transform:uppercase;
+}
+
+.information-information-31 .pdf-grid .caption .btn {
+	font-size:13px;
+	font-weight:700;
+	letter-spacing:0;
+}
+
+/* Footer headings follow the same hierarchy visible in every page header. */
+#footer .h5,
+#footer h5,
+#footer .h5 a {
+	font-size:16px;
+	font-weight:700;
+	letter-spacing:-.005em;
+	line-height:1.4;
+}
+
+#footer .footer-column li,
+#footer .footer-column li a,
+#footer .custom_block {
+	font-size:14px;
+	font-weight:450;
+	line-height:1.6;
+}
+
+@media (min-width:992px) and (max-width:1199px) {
+	.header6 .main-menu:not(.vertical) > ul > li {
+		font-size:17px;
+	}
+}
+
+@media (max-width:991px) {
+	.common-home .widget .widget-title .main-title,
+	body[class^="information-"] .widget .widget-title .main-title {
+		font-size:28px;
+	}
+
+	.common-home .cm_content .cm_item h2,
+	.common-home .cm_content .cm_item h2.homeb,
+	body[class^="information-"] .cm_content .cm_item h2,
+	body[class^="information-"] .cm_content .cm_item h2.homeb {
+		font-size:25px !important;
+	}
+}
+
+@media (max-width:767px) {
+	.title_in_bc.normal_height_bc .breadcrumb-holder {
+		padding:28px 0 18px;
+	}
+
+	.title_in_bc .breadcrumb-holder #title-holder,
+	.title_in_bc .breadcrumb-holder #title-holder #page-title {
+		font-size:30px;
+		line-height:1.2;
+	}
+
+	.breadcrumb-holder .breadcrumb,
+	.breadcrumb-holder .breadcrumb a {
+		font-size:13px;
+	}
+
+	.common-home .widget .widget-title,
+	body[class^="information-"] .widget .widget-title {
+		margin-bottom:26px;
+	}
+
+	.common-home .widget .widget-title .main-title,
+	body[class^="information-"] .widget .widget-title .main-title {
+		font-size:26px;
+		line-height:1.22;
+	}
+
+	.common-home .widget .widget-title .main-title span,
+	body[class^="information-"] .widget .widget-title .main-title span {
+		font-size:inherit;
+	}
+
+	.common-home .widget .widget-title .sub-line,
+	body[class^="information-"] .widget .widget-title .sub-line {
+		font-size:16px;
+		line-height:1.65;
+	}
+
+	.common-home .cm_content .cm_item,
+	body[class^="information-"] .cm_content .cm_item {
+		font-size:16px;
+	}
+
+	.common-home .cm_content .cm_item h2,
+	.common-home .cm_content .cm_item h2.homeb,
+	body[class^="information-"] .cm_content .cm_item h2,
+	body[class^="information-"] .cm_content .cm_item h2.homeb {
+		font-size:24px !important;
+		line-height:1.32;
+	}
+
+	.common-home .cm_content .cm_item p.homeb,
+	body[class^="information-"] .cm_content .cm_item p.homeb {
+		font-size:16px !important;
+		line-height:1.7;
+	}
+
+	.common-home .cm_content .promo-style-2 h3,
+	body[class^="information-"] .cm_content .promo-style-2 h3 {
+		font-size:18px;
+	}
+
+	body[class^="information-information-"] #content.info {
+		padding-bottom:44px;
+		font-size:16px;
+	}
+
+	body[class^="information-information-"] #content.info > h2 {
+		margin-bottom:20px;
+		font-size:25px;
+	}
+
+	body[class^="information-information-"] #content.info h3 {
+		margin-top:26px;
+		font-size:20px;
+	}
+
+	body[class^="information-information-"] #content.info p,
+	body[class^="information-information-"] #content.info ul,
+	body[class^="information-information-"] #content.info ol {
+		font-size:16px;
+		line-height:1.7;
+	}
+
+	.information-information-31 .pdf-grid .caption h4 {
+		font-size:17px;
+	}
+
+	#footer .h5,
+	#footer h5,
+	#footer .h5 a {
+		font-size:15px;
+	}
+}
