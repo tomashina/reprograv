@@ -1,0 +1,207 @@
+{{ header }}
+<div class="container withdrawal-page">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+      {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+      {% set class = 'col-md-9 col-sm-8' %}
+    {% else %}
+      {% set class = 'col-sm-12' %}
+    {% endif %}
+
+    <main id="content" class="{{ class }}">
+      {{ content_top }}
+
+      {% if step == 'review' %}
+        <header class="withdrawal-hero">
+          <span class="withdrawal-eyebrow">{{ text_review_eyebrow }}</span>
+          <h1 id="page-title">{{ text_review_heading }}</h1>
+          <p>{{ text_review_subheading }}</p>
+        </header>
+
+        <section class="withdrawal-review" aria-labelledby="withdrawal-declaration-title">
+          <div class="withdrawal-declaration">
+            <span id="withdrawal-declaration-title">{{ text_declaration_title }}</span>
+            <p>{{ declaration }}</p>
+          </div>
+
+          <dl class="withdrawal-summary">
+            <div><dt>{{ entry_full_name }}</dt><dd>{{ form.full_name }}</dd></div>
+            <div><dt>{{ entry_email }}</dt><dd>{{ form.email }}</dd></div>
+            <div><dt>{{ entry_phone }}</dt><dd>{{ form.phone ?: text_not_provided }}</dd></div>
+            <div><dt>{{ entry_address_line }}</dt><dd>{{ form.address_line }}, {{ form.postal_code }} {{ form.city }}, {{ form.country_code }}</dd></div>
+            <div><dt>{{ entry_order_number }}</dt><dd>{{ form.order_number }}</dd></div>
+            <div><dt>{{ entry_contract_date }}</dt><dd>{{ form.contract_date ?: text_not_provided }}</dd></div>
+            <div><dt>{{ entry_received_date }}</dt><dd>{{ form.received_date ?: text_not_provided }}</dd></div>
+            <div class="withdrawal-summary-wide"><dt>{{ entry_items }}</dt><dd>{{ form.items|nl2br }}</dd></div>
+            <div class="withdrawal-summary-wide"><dt>{{ entry_note }}</dt><dd>{{ form.note ? form.note|nl2br : text_not_provided }}</dd></div>
+          </dl>
+
+          <p class="withdrawal-confirmation-notice">{{ text_confirmation_notice }}</p>
+
+          <div class="withdrawal-review-actions">
+            <a class="withdrawal-button withdrawal-button-secondary" href="{{ edit_url }}">{{ button_edit }}</a>
+            <form method="post" action="{{ action }}">
+              <input type="hidden" name="withdrawal_action" value="confirm">
+              <input type="hidden" name="draft_token" value="{{ draft_token }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button class="withdrawal-button withdrawal-button-primary" type="submit" data-confirm-withdrawal>{{ button_confirm }}</button>
+            </form>
+          </div>
+        </section>
+      {% else %}
+        <header class="withdrawal-hero">
+          <span class="withdrawal-eyebrow">{{ text_eyebrow }}</span>
+          <h1 id="page-title">{{ heading_title }}</h1>
+          <p>{{ text_subheading }}</p>
+        </header>
+
+        {% if success %}
+          <div class="withdrawal-alert withdrawal-alert-{{ success.type }}" role="{{ success.type == 'success' ? 'status' : 'alert' }}">
+            <strong>{{ success.message }}</strong>
+            {% if success.reference %}<span>{{ success.reference }}</span>{% endif %}
+            {% if success.warning %}<small>{{ success.warning }}</small>{% endif %}
+          </div>
+        {% endif %}
+
+        {% if errors.warning %}
+          <div class="withdrawal-alert withdrawal-alert-error" role="alert">{{ errors.warning }}</div>
+        {% endif %}
+
+        <div class="withdrawal-intro">
+          <strong>{{ text_intro }}</strong>
+          <span>{{ text_scope_note }}</span>
+        </div>
+
+        <div class="withdrawal-layout">
+          <form method="post" action="{{ action }}" class="withdrawal-form">
+            <input type="hidden" name="withdrawal_action" value="review">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="form_started_at" value="{{ form_started_at }}">
+            <div class="withdrawal-honeypot" aria-hidden="true">
+              <label for="withdrawal-website">Website</label>
+              <input id="withdrawal-website" type="text" name="website" value="" tabindex="-1" autocomplete="off">
+            </div>
+
+            <fieldset>
+              <legend>{{ text_identity_section }}</legend>
+              <div class="withdrawal-fields">
+                <div class="withdrawal-field withdrawal-field-full">
+                  <label for="withdrawal-full-name">{{ entry_full_name }} <span aria-hidden="true">*</span></label>
+                  <input id="withdrawal-full-name" type="text" name="full_name" value="{{ form.full_name }}" maxlength="191" autocomplete="name" required{% if errors.full_name %} aria-invalid="true"{% endif %}>
+                  {% if errors.full_name %}<small class="withdrawal-error">{{ errors.full_name }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field">
+                  <label for="withdrawal-email">{{ entry_email }} <span aria-hidden="true">*</span></label>
+                  <input id="withdrawal-email" type="email" name="email" value="{{ form.email }}" maxlength="191" autocomplete="email" required{% if errors.email %} aria-invalid="true"{% endif %}>
+                  <small>{{ text_email_help }}</small>
+                  {% if errors.email %}<small class="withdrawal-error">{{ errors.email }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field">
+                  <label for="withdrawal-phone">{{ entry_phone }}</label>
+                  <input id="withdrawal-phone" type="tel" name="phone" value="{{ form.phone }}" maxlength="80" autocomplete="tel"{% if errors.phone %} aria-invalid="true"{% endif %}>
+                  {% if errors.phone %}<small class="withdrawal-error">{{ errors.phone }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field withdrawal-field-full">
+                  <label for="withdrawal-address">{{ entry_address_line }} <span aria-hidden="true">*</span></label>
+                  <input id="withdrawal-address" type="text" name="address_line" value="{{ form.address_line }}" maxlength="255" autocomplete="street-address" required{% if errors.address_line %} aria-invalid="true"{% endif %}>
+                  {% if errors.address_line %}<small class="withdrawal-error">{{ errors.address_line }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field">
+                  <label for="withdrawal-postal-code">{{ entry_postal_code }} <span aria-hidden="true">*</span></label>
+                  <input id="withdrawal-postal-code" type="text" name="postal_code" value="{{ form.postal_code }}" maxlength="32" autocomplete="postal-code" required{% if errors.postal_code %} aria-invalid="true"{% endif %}>
+                  {% if errors.postal_code %}<small class="withdrawal-error">{{ errors.postal_code }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-city-country">
+                  <div class="withdrawal-field">
+                    <label for="withdrawal-city">{{ entry_city }} <span aria-hidden="true">*</span></label>
+                    <input id="withdrawal-city" type="text" name="city" value="{{ form.city }}" maxlength="120" autocomplete="address-level2" required{% if errors.city %} aria-invalid="true"{% endif %}>
+                    {% if errors.city %}<small class="withdrawal-error">{{ errors.city }}</small>{% endif %}
+                  </div>
+                  <div class="withdrawal-field">
+                    <label for="withdrawal-country">{{ entry_country_code }} <span aria-hidden="true">*</span></label>
+                    <input id="withdrawal-country" type="text" name="country_code" value="{{ form.country_code }}" minlength="2" maxlength="2" pattern="[A-Za-z]{2}" autocomplete="country" required{% if errors.country_code %} aria-invalid="true"{% endif %}>
+                    {% if errors.country_code %}<small class="withdrawal-error">{{ errors.country_code }}</small>{% endif %}
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>{{ text_contract_section }}</legend>
+              <div class="withdrawal-fields">
+                <div class="withdrawal-field withdrawal-field-full">
+                  <label for="withdrawal-order-number">{{ entry_order_number }} <span aria-hidden="true">*</span></label>
+                  <input id="withdrawal-order-number" type="text" name="order_number" value="{{ form.order_number }}" maxlength="80" required{% if errors.order_number %} aria-invalid="true"{% endif %}>
+                  {% if errors.order_number %}<small class="withdrawal-error">{{ errors.order_number }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field">
+                  <label for="withdrawal-contract-date">{{ entry_contract_date }}</label>
+                  <input id="withdrawal-contract-date" type="date" name="contract_date" value="{{ form.contract_date }}" max="{{ max_date }}"{% if errors.contract_date %} aria-invalid="true"{% endif %}>
+                  {% if errors.contract_date %}<small class="withdrawal-error">{{ errors.contract_date }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field">
+                  <label for="withdrawal-received-date">{{ entry_received_date }}</label>
+                  <input id="withdrawal-received-date" type="date" name="received_date" value="{{ form.received_date }}" max="{{ max_date }}"{% if errors.received_date %} aria-invalid="true"{% endif %}>
+                  {% if errors.received_date %}<small class="withdrawal-error">{{ errors.received_date }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field withdrawal-field-full">
+                  <label for="withdrawal-items">{{ entry_items }} <span aria-hidden="true">*</span></label>
+                  <textarea id="withdrawal-items" name="items" rows="6" maxlength="5000" placeholder="{{ placeholder_items }}" required{% if errors.items %} aria-invalid="true"{% endif %}>{{ form.items }}</textarea>
+                  {% if errors.items %}<small class="withdrawal-error">{{ errors.items }}</small>{% endif %}
+                </div>
+                <div class="withdrawal-field withdrawal-field-full">
+                  <label for="withdrawal-note">{{ entry_note }}</label>
+                  <textarea id="withdrawal-note" name="note" rows="4" maxlength="5000" placeholder="{{ placeholder_note }}"{% if errors.note %} aria-invalid="true"{% endif %}>{{ form.note }}</textarea>
+                  {% if errors.note %}<small class="withdrawal-error">{{ errors.note }}</small>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <p class="withdrawal-privacy-note">{{ text_privacy_note }}</p>
+            <button class="withdrawal-button withdrawal-button-primary" type="submit">{{ button_review }}</button>
+          </form>
+
+          <aside class="withdrawal-help">
+            <h2>{{ text_help_title }}</h2>
+            <ul>
+              <li>{{ text_help_1 }}</li>
+              <li>{{ text_help_2 }}</li>
+              <li>{{ text_help_3 }}</li>
+            </ul>
+            {% if return_address %}
+              <div>
+                <strong>{{ text_return_address }}</strong>
+                <p>{{ return_address|nl2br }}</p>
+              </div>
+            {% endif %}
+            {% if instructions %}
+              <div>
+                <strong>{{ text_instructions }}</strong>
+                <p>{{ instructions|nl2br }}</p>
+              </div>
+            {% endif %}
+          </aside>
+        </div>
+      {% endif %}
+
+      {{ content_bottom }}
+    </main>
+    {{ column_right }}
+  </div>
+</div>
+<script>
+document.addEventListener('click', function (event) {
+  var button = event.target.closest('[data-confirm-withdrawal]');
+  if (!button || button.disabled) return;
+  button.disabled = true;
+  button.form.submit();
+});
+</script>
+{{ footer }}

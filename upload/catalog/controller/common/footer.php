@@ -28,6 +28,9 @@ class ControllerCommonFooter extends Controller {
 		$data['order'] = $this->url->link('account/order', '', true);
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
+		$data['text_cookie_settings'] = $this->language->get('text_cookie_settings');
+		$data['text_contract_withdrawal'] = $this->language->get('text_contract_withdrawal');
+		$data['contract_withdrawal'] = $this->url->link('information/contract_withdrawal');
 
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 

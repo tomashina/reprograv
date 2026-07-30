@@ -14,6 +14,10 @@ class ControllerCommonHeader extends Controller {
 			}
 		}
 
+		// Third-party analytics markup is injected only after explicit consent.
+		// Installed OCMOD analytics integrations append to this same array.
+		$data['analytics_encoded'] = base64_encode(implode("\n", array_filter($data['analytics'])));
+
 		if ($this->request->server['HTTPS']) {
 			$server = $this->config->get('config_ssl');
 		} else {
@@ -102,6 +106,10 @@ class ControllerCommonHeader extends Controller {
 		else{
 			$data['kode'] = 'hr-hr';
 		}
+
+		// The custom category-based consent manager replaces the obsolete
+		// ModulePoints cookie popup injected by the mpgdpr modification.
+		$data['mpgdpr_cbstatus'] = false;
 
 		return $this->load->view('common/header', $data);
 	}

@@ -32,7 +32,8 @@
 <link rel="stylesheet" type="text/css" href="catalog/view/javascript/slick/slick.css"/>
 <link rel="stylesheet" type="text/css" href="catalog/view/javascript/slick/slick-theme.css"/>
 <script defer src="catalog/view/theme/basel/js/basel_common.js?v=20260729.4"></script>
-<link href="catalog/view/theme/basel/stylesheet/stylesheet.css?v=2.124" rel="stylesheet" />
+<link href="catalog/view/theme/basel/stylesheet/stylesheet.css?v=2.125" rel="stylesheet" />
+<link href="catalog/view/javascript/cookieconsent/reprograv-consent.css?v=20260730.3" rel="stylesheet" />
 
 <!-- Mandatory Theme Settings CSS -->
 <style id="basel-mandatory-css">{{ basel_mandatory_css }}</style>
@@ -54,9 +55,57 @@
 <link href="{{ link.href }}" rel="{{ link.rel }}" />
 {% endif %}
 {% endfor %}
-{% for analytic in analytics %}
-{{ analytic }}
-{% endfor %}
+<script>
+window.dataLayer=window.dataLayer||[];
+window.gkPendingAnalyticsEvents=window.gkPendingAnalyticsEvents||[];
+window.gkAnalyticsConsentGranted=false;
+window.gtag=function(){
+  var args=Array.prototype.slice.call(arguments);
+  if(args[0]==='consent'||window.gkAnalyticsConsentGranted){window.dataLayer.push(arguments);}
+  else{window.gkPendingAnalyticsEvents.push(args);}
+};
+window.gtag('consent','default',{
+  ad_storage:'denied',
+  ad_user_data:'denied',
+  ad_personalization:'denied',
+  analytics_storage:'denied'
+});
+window.gkSetGoogleConsent=function(analytics,marketing){
+  window.gtag('consent','update',{
+    analytics_storage:analytics?'granted':'denied',
+    ad_storage:marketing?'granted':'denied',
+    ad_user_data:marketing?'granted':'denied',
+    ad_personalization:marketing?'granted':'denied'
+  });
+};
+window.gkInjectEncodedMarkup=function(encoded){
+  if(!encoded){return false;}
+  var holder=document.createElement('div');
+  try{holder.innerHTML=window.atob(encoded);}catch(error){return false;}
+  Array.prototype.slice.call(holder.childNodes).forEach(function(node){
+    if(node.nodeName==='SCRIPT'){
+      var script=document.createElement('script');
+      Array.prototype.slice.call(node.attributes||[]).forEach(function(attr){script.setAttribute(attr.name,attr.value);});
+      script.text=node.text||node.textContent||'';
+      document.head.appendChild(script);
+    }else{
+      document.head.appendChild(node.cloneNode(true));
+    }
+  });
+  return true;
+};
+window.gkLoadAnalytics=function(){
+  if(window.gkAnalyticsLoaded){return true;}
+  var encoded='{{ analytics_encoded }}';
+  if(!encoded){return false;}
+  window.gkAnalyticsLoaded=true;
+  window.gkAnalyticsConsentGranted=true;
+  window.gkInjectEncodedMarkup(encoded);
+  var pending=window.gkPendingAnalyticsEvents.splice(0);
+  pending.forEach(function(args){window.gtag.apply(window,args);});
+  return true;
+};
+</script>
 {% if basel_styles_status %}
 <!-- Custom Color Scheme -->
 <style id="basel-color-scheme">{{ basel_styles_cache }};</style>

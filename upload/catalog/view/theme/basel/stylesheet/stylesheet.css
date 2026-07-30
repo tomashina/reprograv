@@ -4538,7 +4538,7 @@ h4.follow-title {
 	border: 1px solid transparent;
 	border-radius: 50%;
 	position: fixed;
-	bottom: 140px;
+	bottom: 130px;
 	right: 20px;
 	transition:all 400ms;
 }

@@ -1,0 +1,72 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" data-toggle="tooltip" title="{{ button_filter }}" onclick="$('#filter-withdrawal').toggleClass('hidden-sm hidden-xs');" class="btn btn-default hidden-md hidden-lg"><i class="fa fa-filter"></i></button>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if success %}<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>{% endif %}
+    <div class="row">
+      <div id="filter-withdrawal" class="col-md-3 col-md-push-9 col-sm-12 hidden-sm hidden-xs">
+        <div class="panel panel-default">
+          <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3></div>
+          <div class="panel-body">
+            <div class="form-group"><label for="filter-reference">{{ entry_reference }}</label><input id="filter-reference" class="form-control" type="text" name="filter_reference" value="{{ filter_reference }}"></div>
+            <div class="form-group"><label for="filter-order">{{ entry_order_number }}</label><input id="filter-order" class="form-control" type="text" name="filter_order_number" value="{{ filter_order_number }}"></div>
+            <div class="form-group"><label for="filter-email">{{ entry_email }}</label><input id="filter-email" class="form-control" type="text" name="filter_email" value="{{ filter_email }}"></div>
+            <div class="form-group"><label for="filter-status">{{ entry_status }}</label><select id="filter-status" class="form-control" name="filter_status"><option value=""></option>{% for key, label in statuses %}<option value="{{ key }}"{% if key == filter_status %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+            <div class="form-group"><label for="filter-date">{{ entry_submitted_at }}</label><input id="filter-date" class="form-control" type="date" name="filter_date_added" value="{{ filter_date_added }}"></div>
+            <button id="button-filter" type="button" class="btn btn-default pull-right"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9 col-md-pull-3 col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-file-text-o"></i> {{ text_list }}</h3></div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead><tr><th>{{ entry_reference }}</th><th>{{ entry_order_number }}</th><th>{{ entry_customer }}</th><th>{{ entry_email }}</th><th>{{ entry_status }}</th><th>{{ entry_submitted_at }}</th><th></th></tr></thead>
+                <tbody>
+                  {% if withdrawals %}
+                    {% for withdrawal in withdrawals %}
+                      <tr>
+                        <td>{{ withdrawal.reference }}{% if withdrawal.notification_warning %} <i class="fa fa-exclamation-triangle text-warning" data-toggle="tooltip" title="{{ text_notification_warning }}"></i>{% endif %}</td>
+                        <td>{{ withdrawal.order_number }}</td>
+                        <td>{{ withdrawal.full_name }}</td>
+                        <td>{{ withdrawal.email }}</td>
+                        <td>{{ withdrawal.status }}</td>
+                        <td>{{ withdrawal.submitted_at }}</td>
+                        <td class="text-right"><a href="{{ withdrawal.edit }}" class="btn btn-primary" data-toggle="tooltip" title="{{ button_edit }}"><i class="fa fa-pencil"></i></a></td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr><td colspan="7" class="text-center">{{ text_no_results }}</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+            <div class="row"><div class="col-sm-6 text-left">{{ pagination }}</div><div class="col-sm-6 text-right">{{ results }}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('#button-filter').on('click', function () {
+  var url = 'index.php?route=sale/contract_withdrawal&user_token={{ user_token }}';
+  $('#filter-withdrawal').find('input, select').each(function () {
+    if (this.value) url += '&' + encodeURIComponent(this.name) + '=' + encodeURIComponent(this.value);
+  });
+  location = url;
+});
+</script>
+{{ footer }}

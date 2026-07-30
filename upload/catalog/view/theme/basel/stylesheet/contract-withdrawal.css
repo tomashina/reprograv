@@ -1,0 +1,461 @@
+.withdrawal-page {
+  color: #00243d;
+  padding-bottom: 70px;
+}
+
+.withdrawal-page .breadcrumb {
+  margin-bottom: 24px;
+}
+
+.withdrawal-hero {
+  margin: 12px 0 28px;
+  padding: 34px 38px;
+  background: linear-gradient(135deg, #f3f6f8 0%, #fff 76%);
+  border: 1px solid #d9e2e7;
+  border-radius: 18px;
+}
+
+.withdrawal-eyebrow {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #d10015;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.withdrawal-hero h1 {
+  margin: 0;
+  color: #00243d;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.12;
+}
+
+.withdrawal-hero p {
+  max-width: 760px;
+  margin: 13px 0 0;
+  color: #4c6371;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.withdrawal-intro,
+.withdrawal-alert {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.withdrawal-intro {
+  color: #173b4c;
+  background: #f3f6f8;
+  border: 1px solid #d5e0e5;
+}
+
+.withdrawal-intro span {
+  color: #55707c;
+}
+
+.withdrawal-alert-success {
+  color: #00243d;
+  background: #f3f6f8;
+  border: 1px solid #ccd9df;
+}
+
+.withdrawal-alert-error {
+  color: #8a2431;
+  background: #fff3f4;
+  border: 1px solid #f1c4ca;
+}
+
+.withdrawal-alert small {
+  display: block;
+  color: inherit;
+}
+
+.withdrawal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+  align-items: start;
+}
+
+.withdrawal-form,
+.withdrawal-review {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #dde7ea;
+  border-radius: 16px;
+  box-shadow: 0 12px 34px rgba(0, 36, 61, .06);
+}
+
+.withdrawal-form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.withdrawal-form fieldset + fieldset {
+  margin-top: 32px;
+  padding-top: 27px;
+  border-top: 1px solid #e4ecef;
+}
+
+.withdrawal-form legend {
+  margin: 0 0 20px;
+  padding: 0;
+  color: #00243d;
+  border: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.withdrawal-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.withdrawal-field {
+  min-width: 0;
+}
+
+.withdrawal-field-full {
+  grid-column: 1 / -1;
+}
+
+.withdrawal-city-country {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 116px;
+  gap: 12px;
+}
+
+.withdrawal-field label {
+  display: block;
+  margin: 0 0 7px;
+  color: #345160;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .035em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.withdrawal-field label span {
+  color: #d10015;
+}
+
+.withdrawal-field input,
+.withdrawal-field textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: #102f40;
+  background: #fff;
+  border: 1px solid #cbd9df;
+  border-radius: 9px;
+  box-shadow: none;
+  font: inherit;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.withdrawal-field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.withdrawal-field input:focus,
+.withdrawal-field textarea:focus {
+  border-color: #d10015;
+  box-shadow: 0 0 0 3px rgba(209, 0, 21, .1);
+  outline: 0;
+}
+
+.withdrawal-field [aria-invalid="true"] {
+  border-color: #d04b5a;
+}
+
+.withdrawal-field small {
+  display: block;
+  margin-top: 6px;
+  color: #71838d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.withdrawal-field .withdrawal-error {
+  color: #b12e3d;
+  font-weight: 600;
+}
+
+.withdrawal-privacy-note {
+  margin: 22px 0;
+  color: #71838d;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.withdrawal-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 21px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .035em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background .18s, border-color .18s, color .18s, transform .18s;
+}
+
+.withdrawal-button:hover,
+.withdrawal-button:focus {
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.withdrawal-button-primary {
+  color: #fff;
+  background: #00243d;
+  border: 1px solid #00243d;
+}
+
+.withdrawal-button-primary:hover,
+.withdrawal-button-primary:focus {
+  color: #fff;
+  background: #d10015;
+  border-color: #d10015;
+}
+
+.withdrawal-button-primary:disabled {
+  cursor: wait;
+  opacity: .65;
+  transform: none;
+}
+
+.withdrawal-button-secondary {
+  color: #00243d;
+  background: #fff;
+  border: 1px solid #c8d6dc;
+}
+
+.withdrawal-button-secondary:hover,
+.withdrawal-button-secondary:focus {
+  color: #d10015;
+  background: #fff4f5;
+  border-color: #df9ba2;
+}
+
+.withdrawal-help {
+  padding: 25px;
+  background: #f7fafb;
+  border: 1px solid #dce6ea;
+  border-radius: 14px;
+}
+
+.withdrawal-help h2 {
+  margin: 0 0 16px;
+  color: #00243d;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.withdrawal-help ul {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.withdrawal-help li {
+  position: relative;
+  padding-left: 18px;
+  color: #4c6371;
+  font-size: 14px;
+  line-height: 1.58;
+}
+
+.withdrawal-help li::before {
+  position: absolute;
+  top: .64em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: #d10015;
+  border-radius: 50%;
+  content: "";
+}
+
+.withdrawal-help > div {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #dce6ea;
+}
+
+.withdrawal-help strong {
+  color: #506874;
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.withdrawal-help p {
+  margin: 8px 0 0;
+  color: #304d5c;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.withdrawal-honeypot {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+
+.withdrawal-declaration {
+  padding: 20px 22px;
+  color: #153c4c;
+  background: #f3f6f8;
+  border: 1px solid #d5e0e5;
+  border-radius: 12px;
+}
+
+.withdrawal-declaration span {
+  color: #d10015;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.withdrawal-declaration p {
+  margin: 8px 0 0;
+  color: #00243d;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.withdrawal-summary {
+  margin: 22px 0 0;
+  overflow: hidden;
+  border: 1px solid #dfe8eb;
+  border-radius: 12px;
+}
+
+.withdrawal-summary > div {
+  display: grid;
+  grid-template-columns: minmax(180px, 31%) 1fr;
+  gap: 20px;
+  padding: 13px 18px;
+  border-bottom: 1px solid #edf1f3;
+}
+
+.withdrawal-summary > div:last-child {
+  border-bottom: 0;
+}
+
+.withdrawal-summary dt {
+  color: #69808b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.withdrawal-summary dd {
+  margin: 0;
+  color: #16394a;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.withdrawal-summary-wide {
+  grid-template-columns: 1fr !important;
+  gap: 7px !important;
+}
+
+.withdrawal-confirmation-notice {
+  margin: 20px 0 0;
+  padding: 16px 18px;
+  color: #72541a;
+  background: #fff9ea;
+  border: 1px solid #efdca8;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.58;
+}
+
+.withdrawal-review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 24px;
+}
+
+.withdrawal-review-actions form {
+  margin: 0;
+}
+
+@media (max-width: 991px) {
+  .withdrawal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .withdrawal-help {
+    order: -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .withdrawal-hero {
+    padding: 25px 22px;
+    border-radius: 13px;
+  }
+
+  .withdrawal-form,
+  .withdrawal-review {
+    padding: 21px 17px;
+  }
+
+  .withdrawal-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .withdrawal-field-full {
+    grid-column: auto;
+  }
+
+  .withdrawal-city-country {
+    grid-template-columns: minmax(0, 1fr) 100px;
+  }
+
+  .withdrawal-summary > div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .withdrawal-review-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .withdrawal-review-actions form,
+  .withdrawal-review-actions .withdrawal-button {
+    width: 100%;
+  }
+}

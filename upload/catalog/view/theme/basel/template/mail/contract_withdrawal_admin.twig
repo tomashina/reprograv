@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="hr">
+<head><meta charset="utf-8"><title>{{ labels.mail_admin_heading }}</title></head>
+<body style="margin:0;background:#f4f7f8;color:#173747;font-family:Arial,sans-serif">
+  <div style="max-width:680px;margin:0 auto;padding:28px 16px">
+    <div style="overflow:hidden;background:#fff;border:1px solid #dce7ea;border-radius:14px">
+      <div style="height:5px;background:linear-gradient(90deg,#00243d 0 82%,#d10015 82% 100%)"></div>
+      <div style="padding:28px">
+        <h1 style="margin:0 0 10px;color:#00243d;font-size:24px">{{ labels.mail_admin_heading }}</h1>
+        <p style="margin:0 0 22px;color:#506b78;line-height:1.6">{{ labels.mail_admin_intro }}</p>
+        <div style="padding:16px 18px;background:#f3f6f8;border:1px solid #d5e0e5;border-radius:10px"><strong>{{ labels.mail_reference }}: {{ reference }}</strong><br>{{ labels.mail_submitted_at }}: {{ submitted_at }}</div>
+        <p style="margin:22px 0 8px;font-size:12px;font-weight:bold;text-transform:uppercase">{{ labels.mail_declaration }}</p>
+        <p style="margin:0;padding:16px;background:#f7fafb;border-radius:8px;line-height:1.65">{{ declaration }}</p>
+        <table style="width:100%;margin-top:20px;border-collapse:collapse;font-size:14px">
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_full_name }}</td><td style="padding:9px 0">{{ full_name }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_email }}</td><td style="padding:9px 0">{{ email }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_phone }}</td><td style="padding:9px 0">{{ phone ?: '—' }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_address }}</td><td style="padding:9px 0">{{ address_line }}, {{ postal_code }} {{ city }}, {{ country_code }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_order_number }}</td><td style="padding:9px 0">{{ order_number }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_contract_date }}</td><td style="padding:9px 0">{{ contract_date ?: '—' }}</td></tr>
+          <tr><td style="padding:9px 0;color:#6b7e87">{{ labels.mail_received_date }}</td><td style="padding:9px 0">{{ received_date ?: '—' }}</td></tr>
+        </table>
+        <h2 style="margin:22px 0 8px;font-size:15px">{{ labels.mail_items }}</h2>
+        <p style="margin:0;white-space:pre-line;line-height:1.6">{{ items }}</p>
+        <h2 style="margin:22px 0 8px;font-size:15px">{{ labels.mail_note }}</h2>
+        <p style="margin:0;white-space:pre-line;line-height:1.6">{{ note ?: '—' }}</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
