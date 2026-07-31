@@ -381,10 +381,19 @@ class ControllerCatalogInformation extends Controller {
 		$data['information_block_placeholder'] = $this->model_tool_image->resize('no_image.png', 160, 120);
 		$data['information_blocks'] = array_values($data['information_blocks']);
 
+		require_once(DIR_SYSTEM . 'library/information_block_html.php');
+
 		foreach ($data['information_blocks'] as &$information_block) {
 			if (!isset($information_block['description']) || !is_array($information_block['description'])) {
 				$information_block['description'] = array();
 			}
+
+			foreach ($information_block['description'] as &$information_block_description) {
+				if (isset($information_block_description['description'])) {
+					$information_block_description['description'] = InformationBlockHtml::decode($information_block_description['description']);
+				}
+			}
+			unset($information_block_description);
 
 			if (!isset($information_block['actions']) || !is_array($information_block['actions'])) {
 				$information_block['actions'] = array();

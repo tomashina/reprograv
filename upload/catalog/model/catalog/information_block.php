@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_SYSTEM . 'library/information_block_html.php');
+
 class ModelCatalogInformationBlock extends Model {
 	private $table_exists;
 
@@ -41,7 +43,7 @@ class ModelCatalogInformationBlock extends Model {
 				'image'                => $block['image'],
 				'layout'               => $block['layout'],
 				'title'                => $block['title'],
-				'description'          => html_entity_decode($block['description'], ENT_QUOTES, 'UTF-8'),
+				'description'          => InformationBlockHtml::decode($block['description']),
 				'image_alt'            => $block['image_alt'],
 				'actions'              => $actions
 			);
