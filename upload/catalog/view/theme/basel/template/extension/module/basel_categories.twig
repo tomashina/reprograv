@@ -46,6 +46,7 @@
 
                 {% for category in categories %}
                     <div class="item single-category no-subs">
+                        <article class="rg-category-tile">
                         <div class="banner_wrap hover-zoom">
                             <a href="{{ category.href }}"><img class="zoom_image" src="{{ category.thumb }}" alt="{{ category.alt }}" title="{{ category.title }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" /></a>
                             {% if count %}
@@ -56,8 +57,11 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <h3 class="name contrast-heading">{{ category.name }}</h3>
-                        <a class="u-lined" href="{{ category.href }}">{{ basel_text_view_products }}</a>
+                        <div class="rg-category-tile__body">
+                            <h3 class="name contrast-heading"><a href="{{ category.href }}">{{ category.name }}</a></h3>
+                            <a class="u-lined rg-content-link" href="{{ category.href }}">{{ basel_text_view_products }}<span aria-hidden="true">→</span></a>
+                        </div>
+                        </article>
                     </div><!-- .single-category ends -->
                 {% endfor %}
 

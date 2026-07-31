@@ -17,7 +17,7 @@
 {% endif %}
 <div class="cm_block_wrapper">
 {% if bg_video %}<div class="vid-holder"></div>{% endif %}
-<div class="cm_block {{ module }}" style="{{ block_style }};">
+<div class="cm_block {{ module }}{% if bg_img and content_no_margin %} rg-padded-split-section{% endif %}" style="{{ block_style }};">
 <div class="{% if not content_full_width and block_full_width %}container{% endif %}">
 {% if columns %}
 <div class="cm_content" style="{{ content_style }};">

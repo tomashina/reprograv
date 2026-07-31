@@ -1,6 +1,6 @@
 
 </div>
-<div class="container-fluid widget contrast-bg">
+<div class="container-fluid widget contrast-bg blog-widget-shell">
 <div class="widget blog-widget grid{% if contrast %} contrast-bg{% endif %}" {% if use_margin %} style="margin-bottom:{{ margin }}"{% endif %}>
 
     <div class="container">
@@ -20,6 +20,7 @@
     <div class="grid-holder blog grid{{ columns }}{% if carousel %} carousel{% endif %} module{{ module }}{% if carousel_a and rows > 1 %} sticky-arrows{% endif %}">
             {% for blog in posts %}
                 <div class="item single-blog">
+                <article class="rg-editorial-item">
                   {% if blog.image and thumb %}
                     <div class="banner_wrap notbck hover-zoom hover-darken"{% if columns == 'list' %} style="width:{{img_width}}px"{% endif %}>
                     <img class="zoom_image" src="{{ blog.image }}" width="{{ img_width }}" height="{{ img_height }}" loading="lazy" decoding="async" alt="{{ blog.title }}" title="{{ blog.title }}" />
@@ -38,13 +39,18 @@
                     {% endif %}
                     </div>
                   {% endif %}
-                <div class="summary">
+                                  <div class="summary">
+                {% if date_added_status %}
+                <p class="rg-editorial-meta"><i class="fa fa-calendar-o" aria-hidden="true"></i>{{ blog.date_added }}</p>
+                {% endif %}
                 <h3 class="blog-title"><a href="{{ blog.href }}">{{ blog.title }}</a></h3>
             
                 {% if blog.short_description %}
                 <div class="short-description">{{ blog.short_description }}</div>
                 {% endif %}
+                <a class="rg-content-link" href="{{ blog.href }}">{{ text_read_more }}<span aria-hidden="true">→</span></a>
                 </div>
+                </article>
                 </div>
             {% endfor %}
         </div> <!-- .grid-holder ends -->

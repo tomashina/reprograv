@@ -1,5 +1,5 @@
 {% for item in items %}
-    <li class="default-menu-li{% if item.children %} has-sub dropdown-wrapper from-bottom{% endif %}" style="--mobile-menu-indent: {{ 28 + (depth * 8) }}px;">
+    <li class="default-menu-li menu-depth-{{ depth }}{% if item.children %} has-sub dropdown-wrapper from-bottom{% endif %}">
         <a href="{{ item.href }}">
             {{ item.name }}
             {% if item.children %}<i class="fa fa-angle-right"></i>{% endif %}
