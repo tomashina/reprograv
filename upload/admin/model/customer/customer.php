@@ -79,7 +79,8 @@ class ModelCustomerCustomer extends Model {
 	}
 	
 	public function getCustomers($data = array()) {
-		$sql = "SELECT *, CONCAT(c.firstname, ' ', c.lastname) AS name, cgd.name AS customer_group FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id)";
+		// Account custom fields configured for this store: 1 = Naziv tvrtke, 2 = OIB.
+		$sql = "SELECT *, CONCAT(c.firstname, ' ', c.lastname) AS name, cgd.name AS customer_group, COALESCE(JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(c.custom_field) THEN c.custom_field ELSE '{}' END, '$.\"1\"')), '') AS company_name, COALESCE(JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(c.custom_field) THEN c.custom_field ELSE '{}' END, '$.\"2\"')), '') AS oib FROM " . DB_PREFIX . "customer c LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id)";
 		
 		if (!empty($data['filter_affiliate'])) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "customer_affiliate ca ON (c.customer_id = ca.customer_id)";
@@ -95,6 +96,14 @@ class ModelCustomerCustomer extends Model {
 
 		if (!empty($data['filter_email'])) {
 			$implode[] = "c.email LIKE '" . $this->db->escape($data['filter_email']) . "%'";
+		}
+
+		if (!empty($data['filter_company_name'])) {
+			$implode[] = "JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(c.custom_field) THEN c.custom_field ELSE '{}' END, '$.\"1\"')) LIKE '%" . $this->db->escape($data['filter_company_name']) . "%'";
+		}
+
+		if (!empty($data['filter_oib'])) {
+			$implode[] = "JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(c.custom_field) THEN c.custom_field ELSE '{}' END, '$.\"2\"')) LIKE '%" . $this->db->escape($data['filter_oib']) . "%'";
 		}
 
 		if (isset($data['filter_newsletter']) && !is_null($data['filter_newsletter'])) {
@@ -128,6 +137,8 @@ class ModelCustomerCustomer extends Model {
 		$sort_data = array(
 			'name',
 			'c.email',
+			'company_name',
+			'oib',
 			'customer_group',
 			'c.status',
 			'c.ip',
@@ -241,6 +252,14 @@ class ModelCustomerCustomer extends Model {
 
 		if (!empty($data['filter_email'])) {
 			$implode[] = "email LIKE '" . $this->db->escape($data['filter_email']) . "%'";
+		}
+
+		if (!empty($data['filter_company_name'])) {
+			$implode[] = "JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(custom_field) THEN custom_field ELSE '{}' END, '$.\"1\"')) LIKE '%" . $this->db->escape($data['filter_company_name']) . "%'";
+		}
+
+		if (!empty($data['filter_oib'])) {
+			$implode[] = "JSON_UNQUOTE(JSON_EXTRACT(CASE WHEN JSON_VALID(custom_field) THEN custom_field ELSE '{}' END, '$.\"2\"')) LIKE '%" . $this->db->escape($data['filter_oib']) . "%'";
 		}
 
 		if (isset($data['filter_newsletter']) && !is_null($data['filter_newsletter'])) {

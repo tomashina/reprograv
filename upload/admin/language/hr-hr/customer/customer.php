@@ -14,6 +14,8 @@ $_['text_balance']          = 'Stanje (saldo)';
 // Column
 $_['column_name']           = 'Naziv kupca';
 $_['column_email']          = 'E-Mail';
+$_['column_company_name']    = 'Naziv tvrtke';
+$_['column_oib']             = 'OIB';
 $_['column_customer_group'] = 'Grupa kupaca';
 $_['column_status']         = 'Status';
 $_['column_date_added']     = 'Datum dodavanja';
@@ -51,6 +53,8 @@ $_['entry_description']     = 'Opis';
 $_['entry_amount']          = 'Iznos';
 $_['entry_points']          = 'Bodovi';
 $_['entry_name']            = 'Naziv kupca';
+$_['entry_company_name']     = 'Naziv tvrtke';
+$_['entry_oib']              = 'OIB';
 $_['entry_ip']              = 'IP';
 $_['entry_date_added']      = 'Datum dodavanja';
 

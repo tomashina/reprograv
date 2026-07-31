@@ -31,6 +31,8 @@ $_['text_unlock']               = 'Unlock Account';
 // Column
 $_['column_name']               = 'Customer Name';
 $_['column_email']              = 'E-Mail';
+$_['column_company_name']        = 'Company Name';
+$_['column_oib']                 = 'OIB';
 $_['column_customer_group']     = 'Customer Group';
 $_['column_status']             = 'Status';
 $_['column_date_added']         = 'Date Added';
@@ -80,6 +82,8 @@ $_['entry_description']         = 'Description';
 $_['entry_amount']              = 'Amount';
 $_['entry_points']              = 'Points';
 $_['entry_name']                = 'Customer Name';
+$_['entry_company_name']         = 'Company Name';
+$_['entry_oib']                  = 'OIB';
 $_['entry_ip']                  = 'IP';
 $_['entry_date_added']          = 'Date Added';
 
