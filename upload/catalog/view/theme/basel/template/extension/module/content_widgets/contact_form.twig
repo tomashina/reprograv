@@ -1,4 +1,4 @@
-<div class="contact_form">
+<div class="contact_form rg-content-contact-form">
 <form class="form-horizontal" id="mail_form{{ module }}">
 <div class="form-group">
   <div class="col-sm-12">
@@ -18,7 +18,12 @@
     <textarea name="text" rows="4" class="form-control"></textarea>
   </div>
 </div>
-  <div class="form-group required">
+{% if captcha %}
+<div class="rg-content-contact-form__captcha">
+  {{ captcha }}
+</div>
+{% else %}
+<div class="form-group required">
   <div class="col-sm-12">
   <label>{{ basel_text_captcha }}</label>
     <div class="input-group">
@@ -27,6 +32,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 <div class="form-group">
 <div class="col-sm-12">
   <button type="button" class="btn btn-contrast" onclick="contact_form_send({{ module }});">{{ basel_text_submit }}</button>

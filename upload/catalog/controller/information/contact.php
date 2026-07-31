@@ -76,7 +76,8 @@ class ControllerInformationContact extends Controller {
 		}
 
 		$data['store'] = $this->config->get('config_name');
-		$data['address'] = nl2br($this->config->get('config_address'));
+		$data['address'] = nl2br("Ulica Vjekoslava Babukića 3A\n10000 Zagreb");
+		$data['contact_email'] = $this->config->get('config_email');
 		$data['geocode'] = $this->config->get('config_geocode');
 		$data['geocode_hl'] = $this->config->get('config_language');
 		$data['telephone'] = $this->config->get('config_telephone');

@@ -22,6 +22,13 @@ class ControllerExtensionModuleBaselContent extends Controller {
 		$data['basel_text_message'] = $this->language->get('basel_text_message');
 		$data['basel_text_captcha'] = $this->language->get('basel_text_captcha');
 		$data['basel_text_submit'] = $this->language->get('basel_text_submit');
+
+		// Reuse the store captcha so content-builder contact forms have the
+		// same protection as the main contact page.
+		$data['captcha'] = '';
+		if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status')) {
+			$data['captcha'] = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha'));
+		}
 		
 		// Google map widget
 		$data['basel_map_lat'] = $this->config->get('basel_map_lat');

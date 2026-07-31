@@ -19,6 +19,7 @@
                     {% if custom_links %}
                         {% for column in basel_footer_columns %}
                             {% set is_first_footer_column = loop.first %}
+                            {% set is_service_footer_column = loop.index == 2 %}
                             <div class="footer-column col-xs-12 col-sm-3 eq_height">
                                 {% if column.title %}
                                     <p class="h5">
@@ -35,8 +36,10 @@
                                                 <li><a href="{{ link.target }}">{{ link.title }}</a></li>
                                             {% endfor %}
                                             {% if is_first_footer_column %}
-                                                <li><a href="{{ contract_withdrawal }}">{{ text_contract_withdrawal }}</a></li>
                                                 <li><a href="#cookie-settings" data-cookie-consent-trigger>{{ text_cookie_settings }}</a></li>
+                                            {% endif %}
+                                            {% if is_service_footer_column %}
+                                                <li><a href="{{ contract_withdrawal }}">{{ text_contract_withdrawal }}</a></li>
                                             {% endif %}
                                         </ul>
                                     {% endif %}
@@ -65,9 +68,9 @@
                                     {% for information in informations %}
                                         <li><a href="{{ information.href }}">{{ information.title }}</a></li>
                                     {% endfor %}
-                                    <li><a href="{{ contract_withdrawal }}">{{ text_contract_withdrawal }}</a></li>
                                     <li><a href="#cookie-settings" data-cookie-consent-trigger>{{ text_cookie_settings }}</a></li>
                                     <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+                                    <li><a href="{{ contract_withdrawal }}">{{ text_contract_withdrawal }}</a></li>
                                 </ul>
                             </div>
                         {% endif %}
@@ -118,11 +121,16 @@
                 </div><!-- .row ends -->
             </div><!-- .col-md-8 ends -->
 
-            <div class="col-xs-12 text-center cards-holder" >
-               <!-- <p class="infoline"><a href="#" aria-label="Follow us on Facebook"><i class="fa fa-2x fa-facebook-square"></i> </a></p>-->
-                <p class="infoline"><a href="https://www.instagram.com/reprograv.hr/" aria-label="Pratite Repro-Grav na Instagramu"><i class="fa fa-2x fa-instagram"></i> </a> </p>
-                <!--<p class="infoline">
-                    <a href="#" aria-label="Follow us on Linkedin"><i class="fa fa-2x fa-linkedin"></i> </a></p> -->
+            <div class="col-xs-12 text-center cards-holder footer-social" aria-label="Društvene mreže">
+                <span class="footer-social__label">Pratite nas</span>
+                <div class="footer-social__links">
+                    <a class="footer-social__link" href="https://www.instagram.com/reprograv.hr/" target="_blank" rel="noopener noreferrer" aria-label="Pratite Repro-Grav na Instagramu" title="Instagram">
+                        <i class="fa fa-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a class="footer-social__link" href="https://www.facebook.com/profile.php?id=61590301781660" target="_blank" rel="noopener noreferrer" aria-label="Pratite Repro-Grav na Facebooku" title="Facebook">
+                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                    </a>
+                </div>
             </div>
             <div class="clearfix"></div>
 

@@ -551,15 +551,21 @@ public function basel_send_message () {
 		if ((utf8_strlen($this->request->post['name']) < 2) || (utf8_strlen($this->request->post['name']) > 100)) {
 			$json['error'] = $this->language->get('basel_error_name');
 		}
-		if ((utf8_strlen($this->request->post['email']) < 2) || (utf8_strlen($this->request->post['email']) > 60)) {
+		if ((utf8_strlen($this->request->post['email']) < 2) || (utf8_strlen($this->request->post['email']) > 60) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
 			$json['error'] = $this->language->get('basel_error_email');
 		}
 		if ((utf8_strlen($this->request->post['text']) < 5) || (utf8_strlen($this->request->post['text']) > 1000)) {
 			$json['error'] = $this->language->get('basel_error_message');
 		}
-		if (empty($this->session->data['captcha_contact_form']) || ($this->session->data['captcha_contact_form'] != $this->request->post['captcha'])) {
-			$json['error'] = $this->language->get('basel_error_captcha');
-
+		if (!isset($json['error'])) {
+			if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status')) {
+				$captcha = $this->load->controller('extension/captcha/' . $this->config->get('config_captcha') . '/validate');
+				if ($captcha) {
+					$json['error'] = $captcha;
+				}
+			} elseif (empty($this->session->data['captcha_contact_form']) || !isset($this->request->post['captcha']) || ($this->session->data['captcha_contact_form'] != $this->request->post['captcha'])) {
+				$json['error'] = $this->language->get('basel_error_captcha');
+			}
 		}
 
 		if (!isset($json['error'])) {

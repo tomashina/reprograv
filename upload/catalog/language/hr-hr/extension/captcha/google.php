@@ -5,4 +5,4 @@ $_['text_captcha'] = 'Sigurnosni kod (Captcha)';
 $_['entry_captcha'] = 'Označite kućicu/okvir ispod';
 
 // Error
-$_['error_captcha'] = 'Verifikacijski kod ne odgovara slici!';
+$_['error_captcha'] = 'reCAPTCHA provjera nije uspjela. Pokušajte ponovno.';

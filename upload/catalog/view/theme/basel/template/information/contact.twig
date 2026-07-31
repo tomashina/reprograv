@@ -153,7 +153,10 @@
               <span class="contact-detail-icon icon-location-pin" aria-hidden="true"></span>
               <div>
                 <h3>Adresa</h3>
-                <div class="contact-detail-copy">{{ address }}</div>
+                <div class="contact-detail-copy">
+                  {{ address }}<br />
+                  E-mail: <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+                </div>
               </div>
             </div>
 
